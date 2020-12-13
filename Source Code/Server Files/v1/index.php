@@ -24,6 +24,9 @@ Route::add('/fcm/([0-9]+)/token', function(int $userId) {
     $data = Security::escapeData($data);
     $db = Patient::get($userId);
 
+    if($db->hasError || count($db->data) <= 0)
+        $db = Doctor::get($userId);
+
     if(!$db->hasError && count($db->data) > 0)
     {
         $query = "SELECT * FROM fcm_users WHERE owner='$userId'";
@@ -57,6 +60,9 @@ Route::add('/fcm/([0-9]+)/logout', function(int $userId) {
     $data = json_decode($data);
     $data = Security::escapeData($data);
     $db = Patient::get($userId);
+
+    if($db->hasError || count($db->data) <= 0)
+            $db = Doctor::get($userId);
 
     if(!$db->hasError && count($db->data) > 0)
     {
