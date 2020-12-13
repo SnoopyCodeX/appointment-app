@@ -16,6 +16,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.appointment.app.R;
 import com.appointment.app.SplashActivity;
+import com.appointment.app.util.Constants;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -44,7 +45,37 @@ public class FCMNotificationService extends FirebaseMessagingService
 
     private void processData(Map<String, String> data)
     {
-        data.forEach((key, val) -> Log.i(FCMNotificationService.class.getSimpleName(), String.format("%s -> %s", key, val)));
+        String action = data.get("action");
+
+        if(action != null && !action.isEmpty())
+        {
+            String trigger = "";
+
+            switch(action)
+            {
+                case "doctor_approveAppointment":
+                case "patient_approveAppointment":
+                    trigger = Constants.ACTION_APPOINTMENT_APPROVE;
+                break;
+
+                case "doctor_declineAppointment":
+                case "patient_declineAppointment":
+                    trigger = Constants.ACTION_APPOINTMENT_DECLINE;
+                break;
+
+                case "doctor_updateAppointment":
+                case "patient_updateAppointment":
+                    trigger = Constants.ACTION_APPOINTMENT_UPDATE;
+                break;
+
+                case "doctor_cancelAppointment":
+                case "patient_cancelAppointment":
+                    trigger = Constants.ACTION_APPOINTMENT_CANCEL;
+                break;
+            }
+
+            sendBroadcast(new Intent(trigger));
+        }
     }
 
     private void sendNotification(RemoteMessage.Notification notification)
