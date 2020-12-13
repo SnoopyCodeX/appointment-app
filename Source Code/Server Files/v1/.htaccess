@@ -1,0 +1,15 @@
+# HTID:15749228: DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES BELOW
+php_value display_errors 1
+# DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES ABOVE HTID:15749228:
+
+Options All -Indexes
+
+DirectoryIndex index.php
+RewriteEngine on
+RewriteBase /v1/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{HTTP:Authorization} ^(.*)
+
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+RewriteRule ^(.*)$ index.php [L,QSA]

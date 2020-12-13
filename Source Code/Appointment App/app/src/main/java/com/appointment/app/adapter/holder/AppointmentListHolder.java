@@ -1,0 +1,425 @@
+package com.appointment.app.adapter.holder;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.provider.Settings;
+import android.text.Html;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.appointment.app.AppInstance;
+import com.appointment.app.R;
+import com.appointment.app.api.DoctorAPI;
+import com.appointment.app.api.PatientAPI;
+import com.appointment.app.model.AppointmentModel;
+import com.appointment.app.model.ServerResponse;
+import com.appointment.app.net.InternetReceiver;
+import com.appointment.app.util.DialogUtil;
+import com.appointment.app.util.PreferenceUtil;
+import com.robertlevonyan.views.chip.Chip;
+
+import java.util.List;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import es.dmoral.toasty.Toasty;
+import info.androidhive.fontawesome.FontTextView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+@SuppressWarnings("FieldMayBeFinal")
+public class AppointmentListHolder extends BaseListHolder
+{
+    private List<AppointmentModel> items;
+    private View itemView;
+
+    // Parent Layout of the appointment and it's buttons
+    private LinearLayout appointmentParent;
+    private LinearLayout appointmentButtonParent;
+
+    // Buttons of the appointment (decline, approve, edit, cancel)
+    private FontTextView appointmentPositiveButton;
+    private FontTextView appointmentNegativeButton;
+    private FontTextView appointmentNeutralButton;
+
+    // Text fields of the appointment
+    private TextView patientName;
+    private TextView patientGender;
+    private Chip appointmentStatus;
+    private TextView appointmentSchedule;
+
+    // Profile Icon based on gender
+    private ImageView patientIcon;
+
+    // Parent Activity for Push Notification
+    private AppCompatActivity activity;
+
+    public AppointmentListHolder(@NonNull View itemView, List<AppointmentModel> items, @NonNull AppCompatActivity activity)
+    {
+        super(itemView);
+
+        this.items = items;
+        this.itemView = itemView;
+        this.activity = activity;
+        this.initViews();
+    }
+
+    @Override
+    protected void clear()
+    {}
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onBind(int position)
+    {
+        super.onBind(position);
+
+        try {
+            PreferenceUtil.bindWith(activity);
+            AppointmentModel appointment = items.get(position);
+            patientName.setText("Name: " + appointment.name);
+            patientGender.setText("Gender: " + appointment.gender);
+            appointmentStatus.setText(appointment.status.toUpperCase());
+
+            String schedule = String.format("%s @ %s", parseDate(appointment.date), parseTime(appointment.time));
+            appointmentSchedule.setText("Schedule: " + schedule);
+
+            appointmentButtonParent.setVisibility(appointment.isDoctor ? View.VISIBLE : (appointment.status.toUpperCase().equals(AppointmentModel.Status.APPROVED.name().toUpperCase()) ? View.GONE : View.VISIBLE));
+            appointmentNeutralButton.setVisibility(appointment.isDoctor ? View.GONE : View.VISIBLE);
+
+            if(appointment.status.toLowerCase().equals("approved"))
+                appointmentStatus.setChipBackgroundColor(activity.getColor(R.color.successColor));
+            if(appointment.status.toLowerCase().equals("declined"))
+                appointmentStatus.setChipBackgroundColor(activity.getColor(R.color.errorColor));
+            if(appointment.status.toLowerCase().equals("cancelled"))
+                appointmentStatus.setChipBackgroundColor(activity.getColor(R.color.errorColor));
+            if(appointment.status.toLowerCase().equals("pending"))
+                appointmentStatus.setChipBackgroundColor(activity.getColor(R.color.warningColor));
+
+            patientIcon.setImageResource(appointment.gender.toLowerCase().equals("male") ? R.drawable.person_male : R.drawable.person_female);
+
+            if(appointment.isDoctor && appointment.status.toUpperCase().equals(AppointmentModel.Status.APPROVED.name().toUpperCase()))
+            {
+                appointmentNegativeButton.setText(R.string.fa_window_close);
+                appointmentNegativeButton.setVisibility(View.VISIBLE);
+                appointmentPositiveButton.setVisibility(View.GONE);
+                appointmentNeutralButton.setVisibility(View.GONE);
+            }
+            else if(appointment.isDoctor && appointment.status.toUpperCase().equals(AppointmentModel.Status.PENDING.name().toUpperCase()))
+            {
+                appointmentNegativeButton.setVisibility(View.VISIBLE);
+                appointmentPositiveButton.setVisibility(View.VISIBLE);
+                appointmentNeutralButton.setVisibility(View.GONE);
+            }
+            else if(!appointment.isDoctor && appointment.status.toUpperCase().equals(AppointmentModel.Status.PENDING.name().toUpperCase()))
+            {
+                appointmentNegativeButton.setVisibility(View.VISIBLE);
+                appointmentPositiveButton.setVisibility(View.GONE);
+                appointmentNeutralButton.setVisibility(View.VISIBLE);
+            }
+            else if(!appointment.isDoctor && appointment.status.toUpperCase().equals(AppointmentModel.Status.CANCELLED.name().toUpperCase()))
+            {
+                appointmentNegativeButton.setText(R.string.fa_trash_alt);
+                appointmentNegativeButton.setVisibility(View.VISIBLE);
+                appointmentPositiveButton.setVisibility(View.GONE);
+                appointmentNeutralButton.setVisibility(View.GONE);
+            }
+
+            appointmentParent.setOnClickListener(view -> {
+                // TODO: Show up further details of the appointment
+                showAppointmentDetails(appointment);
+            });
+
+            appointmentPositiveButton.setOnClickListener(
+                    view -> DialogUtil.warningDialog(activity, "Confirm Action", "Are you sure you want to approve this appointment?", "Yes", "No",
+                    dlg -> approveAppointment(appointment.id),
+                    SweetAlertDialog::cancel,
+                    false));
+
+            appointmentNegativeButton.setOnClickListener(
+                    view -> DialogUtil.warningDialog(activity, "Confirm Action", "Do you really want to execute this action? This action can not be reverted.", "Yes", "No",
+                    dlg -> {
+                        if(appointment.isDoctor)
+                            doctorCancelDeclineAppointment(appointment);
+                        else
+                            patientCancelAppointment(appointment.id);
+                    },
+                    SweetAlertDialog::cancel,
+                    false));
+
+            appointmentNeutralButton.setOnClickListener(view -> {
+                // TODO: Edit appointment details
+            });
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initViews()
+    {
+        appointmentParent = itemView.findViewById(R.id.appointment_parent);
+        appointmentButtonParent = itemView.findViewById(R.id.appointment_btn_parent);
+
+        appointmentPositiveButton = itemView.findViewById(R.id.appointment_btn_positive);
+        appointmentNegativeButton = itemView.findViewById(R.id.appointment_btn_negative);
+        appointmentNeutralButton = itemView.findViewById(R.id.appointment_btn_neutral);
+
+        patientName = itemView.findViewById(R.id.appointment_name);
+        patientGender = itemView.findViewById(R.id.appointment_gender);
+        appointmentStatus = itemView.findViewById(R.id.appointment_status);
+        appointmentSchedule = itemView.findViewById(R.id.appointment_schedule);
+
+        patientIcon = itemView.findViewById(R.id.appointment_profile);
+    }
+
+    private void approveAppointment(int appointmentId)
+    {
+        if(!InternetReceiver.isConnected(activity))
+        {
+            DialogUtil.warningDialog(activity, "Network Unavailable", "You are not connected to an active network", "Wifi Settings", "Cancel",
+                    dlg -> activity.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)),
+                    dlg -> {
+                        dlg.dismissWithAnimation();
+                        activity.finish();
+                    }, false);
+
+            return;
+        }
+
+        DialogUtil.progressDialog(activity, "Approving appointment...", activity.getColor(R.color.successColor), false);
+        DoctorAPI api = AppInstance.retrofit().create(DoctorAPI.class);
+        Call<ServerResponse<AppointmentModel>> call = api.approveAppointment(PreferenceUtil.getInt("user_id", 0), appointmentId);
+        call.enqueue(new Callback<ServerResponse<AppointmentModel>>() {
+            @Override
+            public void onResponse(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Response<ServerResponse<AppointmentModel>> response)
+            {
+                ServerResponse<AppointmentModel> server = response.body();
+                DialogUtil.dismissDialog();
+
+                if(server != null && !server.hasError)
+                    Toasty.success(activity, "Appointment has been approved successfully, refresh list now!", Toasty.LENGTH_LONG).show();
+                else if(server != null)
+                    DialogUtil.warningDialog(activity, "Process Unsuccessful", server.message, "Okay", false);
+                else
+                    DialogUtil.errorDialog(activity, "Process Unsuccessful", "Server failed to respond to your request", "Okay", false);
+
+                call.cancel();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Throwable t)
+            {
+                DialogUtil.errorDialog(activity, "Request Failed", t.getLocalizedMessage(), "Okay", false);
+                call.cancel();
+            }
+        });
+    }
+
+    private void doctorCancelDeclineAppointment(AppointmentModel appointment)
+    {
+        if(!InternetReceiver.isConnected(activity))
+        {
+            DialogUtil.warningDialog(activity, "Network Unavailable", "You are not connected to an active network", "Wifi Settings", "Cancel",
+                    dlg -> activity.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)),
+                    dlg -> {
+                        dlg.dismissWithAnimation();
+                        activity.finish();
+                    }, false);
+
+            return;
+        }
+
+        DialogUtil.progressDialog(activity, appointment.status.toLowerCase().equals(AppointmentModel.Status.APPROVED.name().toLowerCase()) ? "Cancelling appointment..." : "Declining appointment...", activity.getColor(R.color.successColor), false);
+        DoctorAPI api = AppInstance.retrofit().create(DoctorAPI.class);
+        Call<ServerResponse<AppointmentModel>> call = (appointment.status.toLowerCase().equals(AppointmentModel.Status.APPROVED.name().toLowerCase())) ? api.cancelAppointment(PreferenceUtil.getInt("user_id", 0), appointment.id) : api.declineAppointment(PreferenceUtil.getInt("user_id", 0), appointment.id);
+        call.enqueue(new Callback<ServerResponse<AppointmentModel>>() {
+            @Override
+            public void onResponse(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Response<ServerResponse<AppointmentModel>> response)
+            {
+                ServerResponse<AppointmentModel> server = response.body();
+                DialogUtil.dismissDialog();
+
+                if(server != null && !server.hasError)
+                    Toasty.success(activity, String.format("Appointment has been %s successfully, refresh list now!", appointment.status.toLowerCase().equals(AppointmentModel.Status.APPROVED.name().toLowerCase()) ? "cancelled" : "declined"), Toasty.LENGTH_LONG).show();
+                else if(server != null)
+                    DialogUtil.warningDialog(activity, "Process Unsuccessful", server.message, "Okay", false);
+                else
+                    DialogUtil.errorDialog(activity, "Process Unsuccessful", "Server failed to respond to your request", "Okay", false);
+
+                call.cancel();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Throwable t)
+            {
+                DialogUtil.errorDialog(activity, "Request Failed", t.getLocalizedMessage(), "Okay", false);
+                call.cancel();
+            }
+        });
+    }
+
+    private void showAppointmentDetails(AppointmentModel appointment)
+    {
+        SweetAlertDialog sweet = new SweetAlertDialog(activity, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        sweet.setTitleText(appointment.name);
+        sweet.setContentText("");
+        sweet.setConfirmText("Okay");
+        sweet.setCancelable(false);
+        sweet.setCanceledOnTouchOutside(false);
+
+        StringBuilder str = new StringBuilder();
+        str.append("<strong>").append("Schedule: ").append("</strong>").append(parseDate(appointment.date)).append(" @ ").append(parseTime(appointment.time)).append("<br/>")
+                .append("<strong>").append("Gender: ").append("</strong>").append(appointment.gender.substring(0,1).toUpperCase()).append(appointment.gender.substring(1, appointment.gender.length()).toLowerCase()).append("<br/>")
+                .append("<strong>").append("Status: ").append("</strong>").append(appointment.status.substring(0,1).toUpperCase()).append(appointment.status.substring(1, appointment.status.length()).toLowerCase()).append("<br/>")
+                .append("<strong>").append("Age: ").append("</strong>").append(appointment.age).append(" yrs old").append("<br/>")
+                .append("<strong>").append("Address: ").append("</strong>").append("- - -").append("<br/>");
+
+        if(appointment.status.toLowerCase().equals(AppointmentModel.Status.CANCELLED.name().toLowerCase()))
+            str.append("<strong>").append("Reason: ").append("</strong>").append(appointment.reason).append("<br/>");
+
+        sweet.setCustomImage(appointment.gender.toLowerCase().equals("male") ? R.drawable.person_male : R.drawable.person_female);
+        sweet.show();
+
+        TextView content = sweet.findViewById(R.id.content_text);
+        content.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        content.setText(Html.fromHtml(str.toString()));
+    }
+
+    private void patientCancelAppointment(int appointmentId)
+    {
+        if(!InternetReceiver.isConnected(activity))
+        {
+            DialogUtil.warningDialog(activity, "Network Unavailable", "You are not connected to an active network", "Wifi Settings", "Cancel",
+                    dlg -> activity.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)),
+                    dlg -> {
+                        dlg.dismissWithAnimation();
+                        activity.finish();
+                    }, false);
+
+            return;
+        }
+
+        DialogUtil.progressDialog(activity, "Cancelling appointment...", activity.getColor(R.color.successColor), false);
+        PatientAPI api = AppInstance.retrofit().create(PatientAPI.class);
+        Call<ServerResponse<AppointmentModel>> call = api.deleteAppointment(PreferenceUtil.getInt("user_id", 0), appointmentId);
+        call.enqueue(new Callback<ServerResponse<AppointmentModel>>() {
+            @Override
+            public void onResponse(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Response<ServerResponse<AppointmentModel>> response)
+            {
+                ServerResponse<AppointmentModel> server = response.body();
+                DialogUtil.dismissDialog();
+
+                if(server != null && !server.hasError)
+                    Toasty.success(activity, "Appointment has been canceled successfully, refresh list now!", Toasty.LENGTH_LONG).show();
+                else if(server != null)
+                    DialogUtil.warningDialog(activity, "Process Unsuccessful", server.message, "Okay", false);
+                else
+                    DialogUtil.errorDialog(activity, "Process Unsuccessful", "Server failed to respond to your request", "Okay", false);
+
+                call.cancel();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Throwable t)
+            {
+                DialogUtil.errorDialog(activity, "Request Failed", t.getLocalizedMessage(), "Okay", false);
+                call.cancel();
+            }
+        });
+    }
+
+    private String parseDate(String date)
+    {
+        String[] vals = date.split("-");
+        String parsed;
+
+        String year = vals[0];
+        String month = vals[1];
+        String day = vals[2];
+
+        switch(month)
+        {
+            case "1":
+                month = "Jan";
+                break;
+            case "2":
+                month = "Feb";
+                break;
+            case "3":
+                month = "Mar";
+                break;
+            case "4":
+                month = "Apr";
+                break;
+            case "5":
+                month = "May";
+                break;
+            case "6":
+                month = "Jun";
+                break;
+            case "7":
+                month = "Jul";
+                break;
+            case "8":
+                month = "Aug";
+                break;
+            case "9":
+                month = "Sep";
+                break;
+            case "10":
+                month = "Oct";
+                break;
+            case "11":
+                month = "Nov";
+                break;
+            case "12":
+                month = "Dec";
+                break;
+        }
+
+        parsed = String.format("%s %s, %s", month, day, year);
+        return parsed;
+    }
+
+    private String parseTime(String time)
+    {
+        String[] vals = time.split(":");
+        String meridiem = "";
+        String parsed;
+
+        String hour = vals[0];
+        String minute = vals[1];
+
+        int hrs = Integer.parseInt(hour);
+        int min = Integer.parseInt(minute);
+
+        if(hrs >= 12 && hrs <= 23)
+            meridiem = "PM";
+
+        if(hrs >= 0 && hrs <= 11)
+            meridiem = "AM";
+
+        if(hrs > 12 && hrs <= 23)
+            hrs = hrs - 12;
+        else if(hrs == 0)
+            hrs = 12;
+
+        if(min < 10)
+            minute = "0" + min;
+        else
+            minute = String.valueOf(min);
+
+        if(hrs < 10)
+            hour = "0" + hrs;
+        else
+            hour = String.valueOf(hrs);
+
+        parsed = String.format("%s:%s %s", hour, minute, meridiem);
+        return parsed;
+    }
+}

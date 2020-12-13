@@ -1,0 +1,5 @@
+{
+    "require": {
+        "paragraph1/php-fcm": "^0.7.0"
+    }
+}

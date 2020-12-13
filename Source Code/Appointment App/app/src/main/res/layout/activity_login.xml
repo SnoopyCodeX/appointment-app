@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    tools:context=".LoginActivity"
+    android:gravity="center">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:id="@+id/login_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/login_background"
+                android:focusableInTouchMode="true"
+                android:focusable="true"
+                android:clickable="true"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:focusableInTouchMode="true"
+                android:focusable="true"
+                android:clickable="true"/>
+
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:fitsSystemWindows="true"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:focusableInTouchMode="true"
+                android:focusable="true"
+                android:clickable="true"
+                android:gravity="center">
+
+                <include
+                    android:id="@+id/patient_login_ui"
+                    android:visibility="visible"
+                    layout="@layout/login_patient"/>
+
+                <include
+                    android:id="@+id/doctor_login_ui"
+                    android:visibility="gone"
+                    layout="@layout/login_doctor"/>
+
+                <include
+                    android:id="@+id/patient_register_ui"
+                    android:visibility="gone"
+                    layout="@layout/register_patient"/>
+
+                <LinearLayout
+                    android:id="@+id/patient_sign_up_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"
+                        android:text="@string/patient_sign_up_text_1"/>
+
+                    <TextView
+                        android:id="@+id/text_patient_login_prompt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="#16AA24"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"
+                        android:text="@string/patient_sign_up_text_2"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/patient_sign_in_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"
+                        android:text="@string/patient_login_text_1"/>
+
+                    <TextView
+                        android:id="@+id/text_patient_register_prompt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="#16AA24"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"
+                        android:text="@string/patient_login_text_2"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/doctor_sign_in_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"
+                        android:text="@string/doctor_sign_in_text_1"/>
+
+                    <TextView
+                        android:id="@+id/text_login_as_patient"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="#16AA24"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"
+                        android:text="@string/doctor_sign_in_text_2"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/doctor_prompt_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"
+                        android:text="@string/doctor_prompt_text"/>
+
+                    <TextView
+                        android:id="@+id/text_login_as_doctor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="#16AA24"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"
+                        android:text="@string/doctor_sign_in_text_2"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </RelativeLayout>
+
+</LinearLayout>
