@@ -68,4 +68,12 @@
     <string name="text_hint_preview">Preview your appointment</string>
     <string name="cdata_doctor_no_schedule">You have no scheduled appointments</string>
     <string name="cdata_doctor_no_pending_schedule">You have no pending appointments</string>
+    <string name="text_medical_field">Medical Field</string>
+    <string name="text_doctor">Doctor Name</string>
+    <string name="text_patient">Patient Identity</string>
+    <string name="text_patient_name">Patient Name</string>
+    <string name="text_gender">Patient Gender</string>
+    <string name="text_age">Patient Age</string>
+    <string name="text_reason">Reason of Appointment</string>
+    <string name="text_date">Date of Appointment</string>
 </resources>

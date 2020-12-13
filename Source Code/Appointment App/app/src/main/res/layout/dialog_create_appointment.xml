@@ -53,7 +53,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <TextView
                             android:layout_width="match_parent"
@@ -405,7 +405,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="gone">
+                        android:visibility="visible">
 
                         <TextView
                             android:layout_width="match_parent"
@@ -417,6 +417,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_margin="3dp"
                             android:orientation="horizontal"
                             android:background="@drawable/input_underline"
                             android:padding="14dp">
@@ -428,8 +429,8 @@
                                 android:layout_weight="1"
                                 android:textAppearance="?android:textAppearanceSmall"
                                 android:textColor="@color/black"
-                                android:hint="@string/text_hint_time"
-                                android:inputType="date"
+                                android:hint="@string/text_medical_field"
+                                android:inputType="text"
                                 tools:ignore="NestedWeights,TextViewEdits" />
 
                             <ImageView
@@ -437,7 +438,7 @@
                                 android:layout_height="14dp"
                                 android:layout_marginStart="8dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/calendar"
+                                android:src="@drawable/ic_select"
                                 app:tint="#5E676C"
                                 android:contentDescription="@string/desc_add" />
 
@@ -446,6 +447,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_margin="3dp"
                             android:orientation="horizontal"
                             android:background="@drawable/input_underline"
                             android:padding="14dp">
@@ -457,8 +459,8 @@
                                 android:layout_weight="1"
                                 android:textAppearance="?android:textAppearanceSmall"
                                 android:textColor="@color/black"
-                                android:hint="@string/text_hint_time"
-                                android:inputType="date"
+                                android:hint="@string/text_doctor"
+                                android:inputType="text"
                                 tools:ignore="NestedWeights,TextViewEdits" />
 
                             <ImageView
@@ -466,7 +468,7 @@
                                 android:layout_height="14dp"
                                 android:layout_marginStart="8dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/calendar"
+                                android:src="@drawable/ic_select"
                                 app:tint="#5E676C"
                                 android:contentDescription="@string/desc_add" />
 
@@ -475,6 +477,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_margin="3dp"
                             android:orientation="horizontal"
                             android:background="@drawable/input_underline"
                             android:padding="14dp">
@@ -486,8 +489,8 @@
                                 android:layout_weight="1"
                                 android:textAppearance="?android:textAppearanceSmall"
                                 android:textColor="@color/black"
-                                android:hint="@string/text_hint_time"
-                                android:inputType="date"
+                                android:hint="@string/text_patient"
+                                android:inputType="text"
                                 tools:ignore="NestedWeights,TextViewEdits" />
 
                             <ImageView
@@ -495,7 +498,7 @@
                                 android:layout_height="14dp"
                                 android:layout_marginStart="8dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/calendar"
+                                android:src="@drawable/ic_select"
                                 app:tint="#5E676C"
                                 android:contentDescription="@string/desc_add" />
 
@@ -504,6 +507,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_margin="3dp"
                             android:orientation="horizontal"
                             android:background="@drawable/input_underline"
                             android:padding="14dp">
@@ -515,8 +519,8 @@
                                 android:layout_weight="1"
                                 android:textAppearance="?android:textAppearanceSmall"
                                 android:textColor="@color/black"
-                                android:hint="@string/text_hint_time"
-                                android:inputType="date"
+                                android:hint="@string/text_patient_name"
+                                android:inputType="text"
                                 tools:ignore="NestedWeights,TextViewEdits" />
 
                             <ImageView
@@ -524,7 +528,7 @@
                                 android:layout_height="14dp"
                                 android:layout_marginStart="8dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/calendar"
+                                android:src="@drawable/ic_select"
                                 app:tint="#5E676C"
                                 android:contentDescription="@string/desc_add" />
 
@@ -533,6 +537,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_margin="3dp"
                             android:orientation="horizontal"
                             android:background="@drawable/input_underline"
                             android:padding="14dp">
@@ -544,8 +549,8 @@
                                 android:layout_weight="1"
                                 android:textAppearance="?android:textAppearanceSmall"
                                 android:textColor="@color/black"
-                                android:hint="@string/text_hint_time"
-                                android:inputType="date"
+                                android:hint="@string/text_gender"
+                                android:inputType="text"
                                 tools:ignore="NestedWeights,TextViewEdits" />
 
                             <ImageView
@@ -553,7 +558,7 @@
                                 android:layout_height="14dp"
                                 android:layout_marginStart="8dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/calendar"
+                                android:src="@drawable/ic_select"
                                 app:tint="#5E676C"
                                 android:contentDescription="@string/desc_add" />
 
@@ -562,6 +567,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_margin="3dp"
                             android:orientation="horizontal"
                             android:background="@drawable/input_underline"
                             android:padding="14dp">
@@ -573,7 +579,7 @@
                                 android:layout_weight="1"
                                 android:textAppearance="?android:textAppearanceSmall"
                                 android:textColor="@color/black"
-                                android:hint="@string/text_hint_time"
+                                android:hint="@string/text_age"
                                 android:inputType="date"
                                 tools:ignore="NestedWeights,TextViewEdits" />
 
@@ -582,7 +588,7 @@
                                 android:layout_height="14dp"
                                 android:layout_marginStart="8dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/calendar"
+                                android:src="@drawable/ic_select"
                                 app:tint="#5E676C"
                                 android:contentDescription="@string/desc_add" />
 
@@ -591,6 +597,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_margin="3dp"
                             android:orientation="horizontal"
                             android:background="@drawable/input_underline"
                             android:padding="14dp">
@@ -602,7 +609,7 @@
                                 android:layout_weight="1"
                                 android:textAppearance="?android:textAppearanceSmall"
                                 android:textColor="@color/black"
-                                android:hint="@string/text_hint_time"
+                                android:hint="@string/text_reason"
                                 android:inputType="date"
                                 tools:ignore="NestedWeights,TextViewEdits" />
 
@@ -611,7 +618,7 @@
                                 android:layout_height="14dp"
                                 android:layout_marginStart="8dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/calendar"
+                                android:src="@drawable/ic_select"
                                 app:tint="#5E676C"
                                 android:contentDescription="@string/desc_add" />
 
@@ -620,6 +627,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_margin="3dp"
                             android:orientation="horizontal"
                             android:background="@drawable/input_underline"
                             android:padding="14dp">
@@ -631,7 +639,7 @@
                                 android:layout_weight="1"
                                 android:textAppearance="?android:textAppearanceSmall"
                                 android:textColor="@color/black"
-                                android:hint="@string/text_hint_time"
+                                android:hint="@string/text_date"
                                 android:inputType="date"
                                 tools:ignore="NestedWeights,TextViewEdits" />
 
@@ -640,7 +648,7 @@
                                 android:layout_height="14dp"
                                 android:layout_marginStart="8dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/calendar"
+                                android:src="@drawable/ic_select"
                                 app:tint="#5E676C"
                                 android:contentDescription="@string/desc_add" />
 
@@ -649,6 +657,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_margin="3dp"
                             android:orientation="horizontal"
                             android:background="@drawable/input_underline"
                             android:padding="14dp">
@@ -669,7 +678,7 @@
                                 android:layout_height="14dp"
                                 android:layout_marginStart="8dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/calendar"
+                                android:src="@drawable/ic_select"
                                 app:tint="#5E676C"
                                 android:contentDescription="@string/desc_add" />
 

@@ -273,10 +273,16 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                 forms.get(currentStep).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right));
                 forms.get(currentStep).setVisibility(View.VISIBLE);
 
-                if(currentStep >= forms.size()-1)
+                if(currentStep >= forms.size()-2)
                 {
                     ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Preview"));
                     ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_warning_selector);
+                }
+
+                if(currentStep >= forms.size()-1)
+                {
+                    ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Submit"));
+                    ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_success_selector);
                 }
 
                 if(currentStep == 1)
