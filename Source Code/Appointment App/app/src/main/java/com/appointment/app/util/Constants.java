@@ -13,4 +13,5 @@ public class Constants
     public static final String ACTION_APPOINTMENT_DECLINE = "com.appointment.app.action.APPOINTMENT_DECLINE";
     public static final String ACTION_APPOINTMENT_CANCEL = "com.appointment.app.action.APPOINTMENT_CANCEL";
     public static final String ACTION_APPOINTMENT_UPDATE = "com.appointment.app.action.APPOINTMENT_UPDATE";
+    public static final String ACTION_APPOINTMENT_NEW = "com.appointment.app.action.APPOINTMENT_NEW";
 }

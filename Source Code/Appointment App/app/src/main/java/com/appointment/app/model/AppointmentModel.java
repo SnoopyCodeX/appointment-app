@@ -61,6 +61,14 @@ public class AppointmentModel
     @Expose
     public int age;
 
+    @SerializedName("address")
+    @Expose
+    public String address;
+
+    @SerializedName("medical_field")
+    @Expose
+    public String medicalField;
+
     @SerializedName("ownerId")
     @Expose(deserialize = false)
     public int ownerId;
@@ -85,21 +93,22 @@ public class AppointmentModel
     @Expose(serialize = false)
     public boolean isDoctor = false;
 
-    public AppointmentModel(int ownerId, int doctorId, String name, String gender, int age, String reason, String date, String time, String status)
+    public AppointmentModel(int ownerId, int doctorId, String medicalField, String name, String gender, String address, int age, String reason, String date, String time, String status)
     {
         this.ownerId = ownerId;
         this.doctorId = doctorId;
+        this.medicalField = medicalField;
         this.name = name;
         this.gender = gender;
+        this.address = address;
         this.age = age;
         this.reason = reason;
         this.date = date;
         this.time = time;
-        this.status = status;
     }
 
-    public static AppointmentModel newAppointment(int ownerId, int doctorId, String name, String gender, int age, String reason, String date, String time, String status)
+    public static AppointmentModel newAppointment(int ownerId, int doctorId, String medicalField, String name, String gender, String address, int age, String reason, String date, String time, String status)
     {
-        return new AppointmentModel(ownerId, doctorId, name, gender, age, reason, date, time,status);
+        return new AppointmentModel(ownerId, doctorId, medicalField, name, gender, address, age, reason, date, time,status);
     }
 }

@@ -50,18 +50,40 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<BaseListHolder>
 
     public void removeAppointment(int position)
     {
-        if(items != null && position < items.size())
+        if(items != null && items.size() > 0 && position < items.size())
             this.items.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeRemoved(position, items.size());
     }
 
-    public void addAppointment(AppointmentModel appointment, int position)
+    public void addAppointment(AppointmentModel appointment)
     {
         if(items != null)
-            items.add(position, appointment);
-        notifyItemInserted(position);
-        notifyItemRangeInserted(position, items.size());
+            items.add(0, appointment);
+        notifyItemInserted(0);
+        notifyItemRangeInserted(0, items.size());
+    }
+
+    public void updateAppointment(AppointmentModel appointment, int position)
+    {
+        if(items != null && items.size() > 0 && position < items.size())
+        {
+            this.items.add(position, appointment);
+            notifyItemChanged(position);
+
+            moveAppointmentToTop(appointment);
+        }
+    }
+
+    public void moveAppointmentToTop(AppointmentModel appointment)
+    {
+        if(items != null && items.size() > 0)
+        {
+            int fromIndex = items.indexOf(appointment);
+            this.items.remove(fromIndex);
+            this.items.add(0, appointment);
+            notifyItemMoved(fromIndex, 0);
+        }
     }
 
     public void clearList()

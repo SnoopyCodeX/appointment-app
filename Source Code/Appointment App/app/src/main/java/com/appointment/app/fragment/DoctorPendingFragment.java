@@ -1,5 +1,7 @@
 package com.appointment.app.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -21,8 +23,11 @@ import com.appointment.app.api.DoctorAPI;
 import com.appointment.app.model.AppointmentModel;
 import com.appointment.app.model.ServerResponse;
 import com.appointment.app.net.InternetReceiver;
+import com.appointment.app.util.Constants;
 import com.appointment.app.util.DialogUtil;
 import com.appointment.app.util.PreferenceUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 
@@ -161,4 +166,31 @@ public class DoctorPendingFragment extends Fragment implements WaveSwipeRefreshL
             }
         });
     }
+
+    private BroadcastReceiver appointmentStatusReceiver = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            String action = intent.getAction();
+
+            if(action != null && !action.isEmpty())
+            {
+                String jsonData = intent.getExtras().getString("data");
+                AppointmentModel appointment = new Gson().fromJson(jsonData, AppointmentModel.class);
+
+                switch(action)
+                {
+                    case Constants.ACTION_APPOINTMENT_CANCEL:
+                    break;
+
+                    case Constants.ACTION_APPOINTMENT_UPDATE:
+                    break;
+
+                    case Constants.ACTION_APPOINTMENT_NEW:
+                    break;
+                }
+            }
+        }
+    };
 }

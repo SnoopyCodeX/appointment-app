@@ -1,5 +1,7 @@
 package com.appointment.app;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -8,6 +10,7 @@ import android.view.MenuItem;
 
 import com.appointment.app.adapter.SectionsPagerAdapter;
 import com.appointment.app.net.InternetReceiver;
+import com.appointment.app.util.Constants;
 import com.appointment.app.util.DialogUtil;
 import com.appointment.app.util.PreferenceUtil;
 import com.google.android.material.tabs.TabLayout;
