@@ -538,7 +538,7 @@ Route::add('/doctor/medical-fields', function() {
     echo json_encode($result);
 }, 'GET');
 
-Route::add('/doctor/medical-fields/([a-zA-Z]+)', function(string $name) {
+Route::add('/doctor/medical-fields/([a-zA-Z\-\s]+)', function(string $name) {
     $query = "SELECT * FROM doctors WHERE specialty='" . Security::escapeString($name) . "'";
     $res = Database::$conn->query($query);
 

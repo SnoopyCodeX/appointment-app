@@ -249,6 +249,12 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                 }
 
                 if(currentStep >= forms.size()-1)
+                {
+                    ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Submit"));
+                    ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_success_selector);
+                }
+
+                if(currentStep >= forms.size()-1)
                     return;
 
                 lastStep = currentStep++;
@@ -277,12 +283,6 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                 {
                     ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Preview"));
                     ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_warning_selector);
-                }
-
-                if(currentStep >= forms.size()-1)
-                {
-                    ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Submit"));
-                    ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_success_selector);
                 }
 
                 if(currentStep == 1)
@@ -385,6 +385,12 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
 
     private boolean isCurrentStepCleared()
     {
+        if(currentStep == forms.size()-2)
+            return true;
+
+        if(currentStep >= forms.size()-1)
+            return true;
+
         Object field = fields.get(currentStep);
 
         if(field instanceof AppCompatSpinner)
