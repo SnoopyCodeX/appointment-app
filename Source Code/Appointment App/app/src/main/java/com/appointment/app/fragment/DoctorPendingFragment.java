@@ -72,6 +72,9 @@ public class DoctorPendingFragment extends Fragment implements WaveSwipeRefreshL
 
                     if(isConnected)
                         fetchPendingAppointments();
+
+                    if(isConnected)
+                        AppInstance.getFCMToken(getContext());
                 });
 
         refreshLayout = root.findViewById(R.id.refresh_layout);

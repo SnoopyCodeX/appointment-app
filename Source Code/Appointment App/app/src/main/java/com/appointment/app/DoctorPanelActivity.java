@@ -41,24 +41,6 @@ public class DoctorPanelActivity extends AppCompatActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        InternetReceiver.initiateSelf(this)
-                .setOnConnectivityChangedListener(isConnected -> {
-                    if(!isConnected)
-                    {
-                        DialogUtil.warningDialog(this, "Network Unavailable", "You are not connected to an active network", "Wifi Settings", "Exit",
-                                dlg -> startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)),
-                                dlg -> {
-                                    dlg.dismissWithAnimation();
-                                    DoctorPanelActivity.this.finish();
-                                }, false);
-                    }
-                    else
-                        DialogUtil.dismissDialog();
-
-                    if(isConnected)
-                        AppInstance.getFCMToken(this);
-                });
     }
 
     @Override
