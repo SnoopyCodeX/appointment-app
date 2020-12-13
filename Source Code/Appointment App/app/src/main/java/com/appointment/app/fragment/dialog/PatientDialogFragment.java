@@ -97,6 +97,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
     private int lastStep = 0;
 
     // Selected values from dropdowns
+    private String[] names;
     private String medicalName;
     private int doctorId;
 
@@ -120,9 +121,19 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
     private PatientDialogFragment()
     {}
 
+    private PatientDialogFragment(String[] medicalNames)
+    {
+        this.names = medicalNames;
+    }
+
     public static PatientDialogFragment getInstance()
     {
         return new PatientDialogFragment();
+    }
+
+    public static PatientDialogFragment getInstance(String[] medicalNames)
+    {
+        return new PatientDialogFragment(medicalNames);
     }
 
     @Override
@@ -136,9 +147,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState)
     {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setOnShowListener(dialogInterface -> {
-            setupDialog(dialogInterface);
-        });
+        dialog.setOnShowListener(dialogInterface -> setupDialog(dialogInterface));
         return dialog;
     }
 
@@ -169,61 +178,6 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         BottomSheetDialog bsd = (BottomSheetDialog) di;
         View bottomSheet = bsd.findViewById(com.google.android.material.R.id.design_bottom_sheet);
         bottomSheet.setBackgroundColor(Color.TRANSPARENT);
-    }
-
-    private void setupMedFieldSelection()
-    {
-        DialogUtil.progressDialog(getContext(), "Fetching medical fields...", getContext().getResources().getColor(R.color.successColor), false);
-        SpecialtyAPI api = AppInstance.retrofit().create(SpecialtyAPI.class);
-        Call<ServerResponse<SpecialtyModel>> call = api.fetchMedicalFields();
-        call.enqueue(new Callback<ServerResponse<SpecialtyModel>>() {
-            @Override
-            public void onResponse(Call<ServerResponse<SpecialtyModel>> call, Response<ServerResponse<SpecialtyModel>> response)
-            {
-                ServerResponse<SpecialtyModel> server = response.body();
-                DialogUtil.dismissDialog();
-
-                if(server != null && !server.hasError)
-                {
-                    final List<SpecialtyModel> data = server.data;
-                    String[] names = new String[data.size()];
-
-                    for(int i = 0; i < names.length; i++)
-                        names[i] = data.get(i).name;
-
-                    medicalFieldNamesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, names);
-                    medicalFieldSelection.setAdapter(medicalFieldNamesAdapter);
-                    medicalFieldSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-                        {
-                            medicalName = data.get(position).name;
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent)
-                        {}
-                    });
-                }
-                else if(server != null && server.hasError)
-                {
-                    PatientDialogFragment.this.dismiss();
-                    Toasty.error(getContext(), server.message, Toasty.LENGTH_LONG).show();
-                }
-                else
-                    Toasty.warning(getContext(), "An unexpected event has occured in the server", Toasty.LENGTH_LONG).show();
-
-                call.cancel();
-            }
-
-            @Override
-            public void onFailure(Call<ServerResponse<SpecialtyModel>> call, Throwable t)
-            {
-                Toasty.warning(getContext(), "[Server]: " + t.getLocalizedMessage(), Toasty.LENGTH_LONG).show();
-                DialogUtil.dismissDialog();
-                call.cancel();
-            }
-        });
     }
 
     private void setupDoctorNames(String medicalField)
@@ -409,7 +363,19 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
             showTimePicker();
         });
 
-        setupMedFieldSelection();
+        medicalFieldNamesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, names);
+        medicalFieldSelection.setAdapter(medicalFieldNamesAdapter);
+        medicalFieldSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                medicalName = names[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {}
+        });
     }
 
     private boolean isCurrentStepCleared()

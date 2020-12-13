@@ -27,7 +27,6 @@ import com.appointment.app.util.Constants;
 import com.appointment.app.util.DialogUtil;
 import com.appointment.app.util.PreferenceUtil;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 

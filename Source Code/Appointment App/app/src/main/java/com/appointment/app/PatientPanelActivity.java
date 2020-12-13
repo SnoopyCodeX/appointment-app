@@ -6,13 +6,17 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
 import com.appointment.app.adapter.AppointmentListAdapter;
 import com.appointment.app.api.PatientAPI;
+import com.appointment.app.api.SpecialtyAPI;
 import com.appointment.app.fragment.dialog.PatientDialogFragment;
 import com.appointment.app.model.AppointmentModel;
 import com.appointment.app.model.ServerResponse;
+import com.appointment.app.model.SpecialtyModel;
 import com.appointment.app.net.InternetReceiver;
 import com.appointment.app.util.DialogUtil;
 import com.appointment.app.util.PreferenceUtil;
@@ -49,9 +53,7 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
         overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 
         // Floating Action Button
-        findViewById(R.id.fab).setOnClickListener(view -> {
-            showCreateNewAppointmentModal();
-        });
+        findViewById(R.id.fab).setOnClickListener(view -> setupMedicalFields());
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -209,10 +211,50 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
         });
     }
 
-    private void showCreateNewAppointmentModal()
+    private void showCreateNewAppointmentModal(String[] medicalNames)
     {
-        PatientDialogFragment createFragmentDialog = PatientDialogFragment.getInstance();
+        PatientDialogFragment createFragmentDialog = PatientDialogFragment.getInstance(medicalNames);
         createFragmentDialog.show(getSupportFragmentManager(), PatientDialogFragment.class.getSimpleName());
         refreshLayout.setRefreshing(false);
+    }
+
+    private void setupMedicalFields()
+    {
+        DialogUtil.progressDialog(this, "Fetching medical fields...", this.getResources().getColor(R.color.successColor), false);
+        SpecialtyAPI api = AppInstance.retrofit().create(SpecialtyAPI.class);
+        Call<ServerResponse<SpecialtyModel>> call = api.fetchMedicalFields();
+        call.enqueue(new Callback<ServerResponse<SpecialtyModel>>() {
+            @Override
+            public void onResponse(Call<ServerResponse<SpecialtyModel>> call, Response<ServerResponse<SpecialtyModel>> response)
+            {
+                ServerResponse<SpecialtyModel> server = response.body();
+                DialogUtil.dismissDialog();
+
+                if(server != null && !server.hasError)
+                {
+                    final List<SpecialtyModel> data = server.data;
+                    String[] names = new String[data.size()];
+
+                    for(int i = 0; i < names.length; i++)
+                        names[i] = data.get(i).name;
+
+                    showCreateNewAppointmentModal(names);
+                }
+                else if(server != null && server.hasError)
+                    Toasty.error(PatientPanelActivity.this, server.message, Toasty.LENGTH_LONG).show();
+                else
+                    Toasty.warning(PatientPanelActivity.this, "An unexpected event has occured in the server", Toasty.LENGTH_LONG).show();
+
+                call.cancel();
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponse<SpecialtyModel>> call, Throwable t)
+            {
+                Toasty.warning(PatientPanelActivity.this, "[Server]: " + t.getLocalizedMessage(), Toasty.LENGTH_LONG).show();
+                DialogUtil.dismissDialog();
+                call.cancel();
+            }
+        });
     }
 }
