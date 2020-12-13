@@ -324,7 +324,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         patientDateSelection = parent.findViewById(R.id.input_date);
         patientTimeSelection = parent.findViewById(R.id.input_time);
 
-        forms = Arrays.asList(parentMedicalField, parentDoctor, parentPatient, parentName, parentGender, parentAge, parentReason, parentDate, parentTime);
+        forms = Arrays.asList(parentMedicalField, parentDoctor, parentPatient, parentName, parentGender, parentAge, parentReason, parentDate, parentTime, parentPreview);
         fields = Arrays.asList(medicalFieldSelection, doctorSelection, patientIdentitySelection, patientNameInput, patientGenderSelection, patientAgeInput, patientReasonInput, patientDateSelection, patientTimeSelection);
 
         patientReasonInput.getEditText().addTextChangedListener(new TextWatcher() {

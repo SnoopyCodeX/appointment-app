@@ -66,12 +66,12 @@ Route::add('/fcm/([0-9]+)/logout', function(int $userId) {
 
     if(!$db->hasError && count($db->data) > 0)
     {
-        $query = "SELECT * FROM fcm_users WHERE `owner`='$userId'";
+        $query = "SELECT * FROM fcm_users WHERE `owner`='$userId' AND token='" . $data->token . "'";
         $res = Database::$conn->query($query);
 
         if($res && $res->num_rows > 0)
         {
-            $query = "DELETE FROM fcm_users WHERE `owner`='$userId'";
+            $query = "DELETE FROM fcm_users WHERE `owner`='$userId' AND token='" . $data->token . "'";
             $res = Database::$conn->query($query);
 
             $response = (object) ['message' => '', 'hasError' => false];
@@ -221,7 +221,7 @@ Route::add('/patient/([0-9]+)/appointment/new', function(int $id) {
             $data->doctorId, 
             "New Appointment Request", 
             ((object) Patient::get($data->ownerId)->data[0])->fullname . " scheduled an appointment with you and is waiting for your approval.", 
-            ['action' => 'patient_createAppointment']
+            ['action' => 'patient_newAppointment', 'data' => json_encode($data)]
         );
 
     echo json_encode($result);
@@ -238,16 +238,16 @@ Route::add('/patient/([0-9]+)/appointment/new', function(int $id) {
 Route::add('/patient/([0-9]+)/appointment/([0-9]+)/delete', function(int $patientId, int $appointmentId) {
     $db = Patient::get($patientId);
 
+    $saved = Appointment::getFromPatient($patientId, $appointmentId);
     $result = $db->hasError ? $db : Appointment::delete($appointmentId);
-    $db = Appointment::getFromPatient($patientId, $appointmentId);
 
     // Send notification to the doctor if appointment has been successfully cancelled
     if(!$result->hasError)
         notify(
-            $db->doctor, 
+            $saved->doctor, 
             "Appointment Cancelled", 
             ((object) Patient::get($patientId)->data[0])->fullname . " cancelled an appointment with you.", 
-            ['action' => 'patient_cancelAppointment']
+            ['action' => 'patient_cancelAppointment', 'data' => json_encode($saved->data[0])]
         );
 
     Request::sendHTTPHeader(201, "");
@@ -277,7 +277,7 @@ Route::add('/patient/([0-9]+)/appointment/([0-9]+)/update', function(int $patien
             $db->doctor, 
             "Appointment Updated", 
             ((object) Patient::get($patientId)->data[0])->fullname . " edited his/her appointment with you and still waiting for your approval.", 
-            ['action' => 'patient_updateAppointment']
+            ['action' => 'patient_updateAppointment', 'data' => json_encode($db->data[0])]
         );
 
     echo json_encode($result);
@@ -418,7 +418,7 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/approve', function(int $doctor
             $data->owner, 
             "Appointment Approved", 
             "Your appointment with Dr. " . ((object) Doctor::get($doctorId)->data[0])->fullname . " has been approved and is now scheduled.", 
-            ['action' => 'doctor_approveAppointment']
+            ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
 
     echo json_encode($result);
@@ -444,7 +444,7 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/decline', function(int $doctor
             $data->owner, 
             "Appointment Declined", 
             "Your appointment with Dr. " . ((object) Doctor::get($doctorId)->data[0])->fullname . " has been declined", 
-            ['action' => 'doctor_approveAppointment']
+            ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
 
     echo json_encode($result);
@@ -470,7 +470,7 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/cancel', function(int $doctorI
             $data->owner, 
             "Appointment Cancelled", 
             "Your appointment with Dr. " . ((object) Doctor::get($doctorId)->data[0])->fullname . " has been cancelled.", 
-            ['action' => 'doctor_approveAppointment']
+            ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
 
     echo json_encode($result);
