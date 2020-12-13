@@ -16,6 +16,7 @@ import com.appointment.app.util.PreferenceUtil;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,10 +32,15 @@ public class DoctorPanelActivity extends AppCompatActivity
         setContentView(R.layout.activity_doctor_panel);
         overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
+
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         InternetReceiver.initiateSelf(this)
                 .setOnConnectivityChangedListener(isConnected -> {

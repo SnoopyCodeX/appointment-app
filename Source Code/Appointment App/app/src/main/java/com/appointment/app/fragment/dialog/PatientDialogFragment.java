@@ -30,7 +30,6 @@ import com.appointment.app.R;
 import com.appointment.app.api.SpecialtyAPI;
 import com.appointment.app.model.DoctorModel;
 import com.appointment.app.model.ServerResponse;
-import com.appointment.app.model.SpecialtyModel;
 import com.appointment.app.util.Constants;
 import com.appointment.app.util.DialogUtil;
 import com.balysv.materialripple.MaterialRippleLayout;
