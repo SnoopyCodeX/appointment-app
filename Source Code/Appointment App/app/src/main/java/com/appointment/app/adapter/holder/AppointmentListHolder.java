@@ -130,10 +130,7 @@ public class AppointmentListHolder extends BaseListHolder
                 appointmentNeutralButton.setVisibility(View.GONE);
             }
 
-            appointmentParent.setOnClickListener(view -> {
-                // TODO: Show up further details of the appointment
-                showAppointmentDetails(appointment);
-            });
+            appointmentParent.setOnClickListener(view -> showAppointmentDetails(appointment));
 
             appointmentPositiveButton.setOnClickListener(
                     view -> DialogUtil.warningDialog(activity, "Confirm Action", "Are you sure you want to approve this appointment?", "Yes", "No",
@@ -142,7 +139,7 @@ public class AppointmentListHolder extends BaseListHolder
                     false));
 
             appointmentNegativeButton.setOnClickListener(
-                    view -> DialogUtil.warningDialog(activity, "Confirm Action", "Do you really want to execute this action? This action can not be reverted.", "Yes", "No",
+                    view -> DialogUtil.warningDialog(activity, "Confirm Action", String.format("Do you really want to %s this appointment? This action can not be reverted.", appointment.isDoctor ? (appointment.status.toLowerCase().equals("approved") ? "cancel" : "decline") : "cancel"), "Yes", "No",
                     dlg -> {
                         if(appointment.isDoctor)
                             doctorCancelDeclineAppointment(appointment);

@@ -1,5 +1,7 @@
 package com.appointment.app;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -16,8 +18,10 @@ import com.appointment.app.model.AppointmentModel;
 import com.appointment.app.model.ServerResponse;
 import com.appointment.app.model.SpecialtyModel;
 import com.appointment.app.net.InternetReceiver;
+import com.appointment.app.util.Constants;
 import com.appointment.app.util.DialogUtil;
 import com.appointment.app.util.PreferenceUtil;
+import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -255,4 +259,34 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
             }
         });
     }
+
+    private BroadcastReceiver appointmentEventReceiver = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            String action = intent.getExtras().getString("action");
+
+            if(action != null && !action.isEmpty())
+            {
+                String jsonData = intent.getExtras().getString("data");
+                AppointmentModel appointment = new Gson().fromJson(jsonData, AppointmentModel.class);
+
+                switch(action)
+                {
+                    case Constants.ACTION_APPOINTMENT_APPROVE:
+                        adapter.updateAppointment(appointment, adapter.getIndexOf(appointment.id));
+                    break;
+
+                    case Constants.ACTION_APPOINTMENT_CANCEL:
+                        adapter.updateAppointment(appointment, adapter.getIndexOf(appointment.id));
+                    break;
+
+                    case Constants.ACTION_APPOINTMENT_DECLINE:
+                        adapter.updateAppointment(appointment, adapter.getIndexOf(appointment.id));
+                    break;
+                }
+            }
+        }
+    };
 }

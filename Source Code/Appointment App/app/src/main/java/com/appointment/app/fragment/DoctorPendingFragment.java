@@ -184,12 +184,15 @@ public class DoctorPendingFragment extends Fragment implements WaveSwipeRefreshL
                 switch(action)
                 {
                     case Constants.ACTION_APPOINTMENT_CANCEL:
+                        adapter.removeAppointment(adapter.getIndexOf(appointment.id));
                     break;
 
                     case Constants.ACTION_APPOINTMENT_UPDATE:
+                        adapter.updateAppointment(appointment, adapter.getIndexOf(appointment.id));
                     break;
 
                     case Constants.ACTION_APPOINTMENT_NEW:
+                        adapter.addAppointment(appointment);
                     break;
                 }
             }

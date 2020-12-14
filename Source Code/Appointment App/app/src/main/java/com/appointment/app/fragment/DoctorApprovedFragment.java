@@ -166,25 +166,4 @@ public class DoctorApprovedFragment extends Fragment implements WaveSwipeRefresh
             }
         });
     }
-
-    private BroadcastReceiver appointmentStatusReceiver = new BroadcastReceiver()
-    {
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            String action = intent.getAction();
-
-            if(action != null && !action.isEmpty())
-            {
-                switch(action)
-                {
-                    case Constants.ACTION_APPOINTMENT_CANCEL:
-                    break;
-
-                    case Constants.ACTION_APPOINTMENT_UPDATE:
-                    break;
-                }
-            }
-        }
-    };
 }

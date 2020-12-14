@@ -13,6 +13,7 @@ import com.appointment.app.adapter.holder.BaseListHolder;
 import com.appointment.app.model.AppointmentModel;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AppointmentListAdapter extends RecyclerView.Adapter<BaseListHolder>
 {
@@ -53,7 +54,6 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<BaseListHolder>
         if(items != null && items.size() > 0 && position < items.size())
             this.items.remove(position);
         notifyItemRemoved(position);
-        notifyItemRangeRemoved(position, items.size());
     }
 
     public void addAppointment(AppointmentModel appointment)
@@ -61,7 +61,6 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<BaseListHolder>
         if(items != null)
             items.add(0, appointment);
         notifyItemInserted(0);
-        notifyItemRangeInserted(0, items.size());
     }
 
     public void updateAppointment(AppointmentModel appointment, int position)
@@ -84,6 +83,25 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<BaseListHolder>
             this.items.add(0, appointment);
             notifyItemMoved(fromIndex, 0);
         }
+    }
+
+    public int getIndexOf(int appointmentId)
+    {
+        AtomicInteger index = new AtomicInteger();
+        index.set(-1);
+
+        activity.runOnUiThread(() -> {
+            for(AppointmentModel appointment : items)
+                if(appointmentId != appointment.id)
+                    index.addAndGet(1);
+                else
+                {
+                    index.addAndGet(1);
+                    break;
+                }
+        });
+
+        return index.get();
     }
 
     public void clearList()
