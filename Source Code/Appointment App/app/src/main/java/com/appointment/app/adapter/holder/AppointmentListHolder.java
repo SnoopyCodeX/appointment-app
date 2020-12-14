@@ -241,47 +241,35 @@ public class AppointmentListHolder extends BaseListHolder
 
         if(appointment.status.toLowerCase().equals("approved"))
         {
-            TextInputEditText reasonInput = new TextInputEditText(activity);
-            SweetAlertDialog sweet = new SweetAlertDialog(activity, SweetAlertDialog.NORMAL_TYPE);
-            sweet.setTitleText("Cancel Appointment");
-            sweet.setContentText("Specify reason of cancellation:");
+            DialogUtil.dismissDialog();
 
-            reasonInput.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-            reasonInput.setSingleLine(false);
-            sweet.addContentView(reasonInput, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            sweet.setConfirmText("Submit");
-            sweet.setConfirmClickListener(dlg -> {
-                appointment.reason = Objects.requireNonNull(reasonInput.getText()).toString();
+            /*DialogUtil.progressDialog(activity, "Cancelling appointment...", activity.getColor(R.color.successColor), false);
+            DoctorAPI api = AppInstance.retrofit().create(DoctorAPI.class);
+            Call<ServerResponse<AppointmentModel>> call = api.cancelAppointment(PreferenceUtil.getInt("user_id", 0), appointment.id);
+            call.enqueue(new Callback<ServerResponse<AppointmentModel>>() {
+                @Override
+                public void onResponse(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Response<ServerResponse<AppointmentModel>> response)
+                {
+                    ServerResponse<AppointmentModel> server = response.body();
+                    DialogUtil.dismissDialog();
 
-                DialogUtil.progressDialog(activity, "Cancelling appointment...", activity.getColor(R.color.successColor), false);
-                DoctorAPI api = AppInstance.retrofit().create(DoctorAPI.class);
-                Call<ServerResponse<AppointmentModel>> call = api.cancelAppointment(PreferenceUtil.getInt("user_id", 0), appointment.id);
-                call.enqueue(new Callback<ServerResponse<AppointmentModel>>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Response<ServerResponse<AppointmentModel>> response)
-                    {
-                        ServerResponse<AppointmentModel> server = response.body();
-                        DialogUtil.dismissDialog();
+                    if(server != null && !server.hasError)
+                        Toasty.success(activity, "Appointment has been cancelled successfully, refresh list now!", Toasty.LENGTH_LONG).show();
+                    else if(server != null)
+                        DialogUtil.warningDialog(activity, "Process Unsuccessful", server.message, "Okay", false);
+                    else
+                        DialogUtil.errorDialog(activity, "Process Unsuccessful", "Server failed to respond to your request", "Okay", false);
 
-                        if(server != null && !server.hasError)
-                            Toasty.success(activity, "Appointment has been cancelled successfully, refresh list now!", Toasty.LENGTH_LONG).show();
-                        else if(server != null)
-                            DialogUtil.warningDialog(activity, "Process Unsuccessful", server.message, "Okay", false);
-                        else
-                            DialogUtil.errorDialog(activity, "Process Unsuccessful", "Server failed to respond to your request", "Okay", false);
+                    call.cancel();
+                }
 
-                        call.cancel();
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Throwable t)
-                    {
-                        DialogUtil.errorDialog(activity, "Request Failed", t.getLocalizedMessage(), "Okay", false);
-                        call.cancel();
-                    }
-                });
-            });
-            sweet.show();
+                @Override
+                public void onFailure(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Throwable t)
+                {
+                    DialogUtil.errorDialog(activity, "Request Failed", t.getLocalizedMessage(), "Okay", false);
+                    call.cancel();
+                }
+            });*/
 
             return;
         }
