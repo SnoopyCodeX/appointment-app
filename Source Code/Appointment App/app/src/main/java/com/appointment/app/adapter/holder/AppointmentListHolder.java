@@ -3,12 +3,10 @@ package com.appointment.app.adapter.holder;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 import android.text.Html;
 import android.text.InputType;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,17 +24,12 @@ import com.appointment.app.model.ServerResponse;
 import com.appointment.app.net.InternetReceiver;
 import com.appointment.app.util.DialogUtil;
 import com.appointment.app.util.PreferenceUtil;
-import com.google.android.material.textfield.TextInputEditText;
 import com.robertlevonyan.views.chip.Chip;
+import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import java.util.List;
-import java.util.Objects;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import de.mrapp.android.dialog.EditTextDialog;
-import de.mrapp.android.validation.Validateable;
-import de.mrapp.android.validation.ValidationListener;
-import de.mrapp.android.validation.Validator;
 import es.dmoral.toasty.Toasty;
 import info.androidhive.fontawesome.FontTextView;
 import retrofit2.Call;
@@ -248,76 +241,47 @@ public class AppointmentListHolder extends BaseListHolder
         {
             DialogUtil.dismissDialog();
 
-            final EditTextDialog dialog = new EditTextDialog.Builder(activity)
-                    .setMessage("Reason of Cancellation")
+            new LovelyTextInputDialog(activity, R.style.TintTheme)
+                    .setTopColorRes(android.R.color.holo_orange_light)
                     .setTitle("Cancel Appointment")
-                    .setPositiveButton("Submit", (di, btn) -> {
-                    })
-                    .setNegativeButton("Cancel", (di, btn) -> {
-                        di.dismiss();
-                    })
-                    .setTitleColor(activity.getColor(R.color.successColor))
-                    .addValidator(new Validator<CharSequence>() {
-                        @Override
-                        public boolean validate(CharSequence value)
-                        {
-                            return (value.length() < 255 && value.length() > 0);
-                        }
+                    .setMessage("Type reason of cancellation below...")
+                    .setIcon(appointment.gender.toLowerCase().equals("male") ? R.drawable.person_male : R.drawable.person_female)
+                    .setInputType(InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE|InputType.TYPE_TEXT_FLAG_MULTI_LINE)
+                    .setInputFilter("Reason of cancellation must not exceed 255 characters nor less than 10 characters", s -> s.length() >= 10 && s.length() <= 255)
+                    .setConfirmButton("Submit", s -> {
+                        appointment.reason = s;
 
-                        @Override
-                        public CharSequence getErrorMessage() {
-                            return "Reason of cancellation can't be too short nor too long!";
-                        }
+                        DialogUtil.progressDialog(activity, "Cancelling appointment...", activity.getColor(R.color.successColor), false);
+                        DoctorAPI api = AppInstance.retrofit().create(DoctorAPI.class);
+                        Call<ServerResponse<AppointmentModel>> call = api.cancelAppointment(PreferenceUtil.getInt("user_id", 0), appointment.id);
+                        call.enqueue(new Callback<ServerResponse<AppointmentModel>>() {
+                            @Override
+                            public void onResponse(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Response<ServerResponse<AppointmentModel>> response)
+                            {
+                                ServerResponse<AppointmentModel> server = response.body();
+                                DialogUtil.dismissDialog();
 
-                        @Override
-                        public Drawable getIcon() {
-                            return null;
-                        }
+                                if(server != null && !server.hasError)
+                                    Toasty.success(activity, "Appointment has been cancelled successfully, refresh list now!", Toasty.LENGTH_LONG).show();
+                                else if(server != null)
+                                    DialogUtil.warningDialog(activity, "Process Unsuccessful", server.message, "Okay", false);
+                                else
+                                    DialogUtil.errorDialog(activity, "Process Unsuccessful", "Server failed to respond to your request", "Okay", false);
+
+                                call.cancel();
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Throwable t)
+                            {
+                                DialogUtil.errorDialog(activity, "Request Failed", t.getLocalizedMessage(), "Okay", false);
+                                call.cancel();
+                            }
+                        });
                     })
-                    .setErrorColor(activity.getColor(android.R.color.holo_red_dark))
-                    .setHelperText("Maximum of 255 characters only")
                     .setCancelable(false)
-                    .setCanceledOnTouchOutside(false)
-                    .create();
-
-            dialog.addValidationListener(new ValidationListener<CharSequence>() {
-                @Override
-                public void onValidationSuccess(@NonNull Validateable<CharSequence> view)
-                {}
-
-                @Override
-                public void onValidationFailure(@NonNull Validateable<CharSequence> view, @NonNull Validator<CharSequence> validator)
-                {}
-            });
-            dialog.show();
-
-            /*DialogUtil.progressDialog(activity, "Cancelling appointment...", activity.getColor(R.color.successColor), false);
-            DoctorAPI api = AppInstance.retrofit().create(DoctorAPI.class);
-            Call<ServerResponse<AppointmentModel>> call = api.cancelAppointment(PreferenceUtil.getInt("user_id", 0), appointment.id);
-            call.enqueue(new Callback<ServerResponse<AppointmentModel>>() {
-                @Override
-                public void onResponse(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Response<ServerResponse<AppointmentModel>> response)
-                {
-                    ServerResponse<AppointmentModel> server = response.body();
-                    DialogUtil.dismissDialog();
-
-                    if(server != null && !server.hasError)
-                        Toasty.success(activity, "Appointment has been cancelled successfully, refresh list now!", Toasty.LENGTH_LONG).show();
-                    else if(server != null)
-                        DialogUtil.warningDialog(activity, "Process Unsuccessful", server.message, "Okay", false);
-                    else
-                        DialogUtil.errorDialog(activity, "Process Unsuccessful", "Server failed to respond to your request", "Okay", false);
-
-                    call.cancel();
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Throwable t)
-                {
-                    DialogUtil.errorDialog(activity, "Request Failed", t.getLocalizedMessage(), "Okay", false);
-                    call.cancel();
-                }
-            });*/
+                    .setNegativeButton("Cancel", v -> {})
+                    .show();
 
             return;
         }
