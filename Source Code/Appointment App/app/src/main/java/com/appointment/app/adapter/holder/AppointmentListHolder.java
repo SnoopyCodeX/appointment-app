@@ -1,5 +1,6 @@
 package com.appointment.app.adapter.holder;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.provider.Settings;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.appointment.app.AppInstance;
@@ -178,6 +180,7 @@ public class AppointmentListHolder extends BaseListHolder
         patientIcon = itemView.findViewById(R.id.appointment_profile);
     }
 
+    @RequiresPermission(allOf = {Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE})
     private void approveAppointment(int appointmentId)
     {
         if(!InternetReceiver.isConnected(activity))
@@ -221,6 +224,7 @@ public class AppointmentListHolder extends BaseListHolder
         });
     }
 
+    @RequiresPermission(allOf = {Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE})
     private void doctorCancelDeclineAppointment(AppointmentModel appointment)
     {
         if(!InternetReceiver.isConnected(activity))
@@ -338,6 +342,7 @@ public class AppointmentListHolder extends BaseListHolder
         content.setText(Html.fromHtml(str.toString()));
     }
 
+    @RequiresPermission(allOf = {Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE})
     private void patientCancelAppointment(int appointmentId)
     {
         if(!InternetReceiver.isConnected(activity))

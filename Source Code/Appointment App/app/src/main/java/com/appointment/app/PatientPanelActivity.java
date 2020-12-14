@@ -1,5 +1,6 @@
 package com.appointment.app;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import com.appointment.app.util.PreferenceUtil;
 import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -129,6 +131,7 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
         return true;
     }
 
+    @RequiresPermission(allOf = {Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE})
     private void fetchAllAppointments()
     {
         if(!InternetReceiver.isConnected(this))
@@ -220,6 +223,7 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
         refreshLayout.setRefreshing(false);
     }
 
+    @RequiresPermission(allOf = {Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE})
     private void setupMedicalFields()
     {
         DialogUtil.progressDialog(this, "Fetching medical fields...", this.getResources().getColor(R.color.successColor), false);
