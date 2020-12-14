@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.provider.Settings;
 import android.text.Html;
+import android.text.InputType;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,9 +23,11 @@ import com.appointment.app.model.ServerResponse;
 import com.appointment.app.net.InternetReceiver;
 import com.appointment.app.util.DialogUtil;
 import com.appointment.app.util.PreferenceUtil;
+import com.google.android.material.textfield.TextInputEditText;
 import com.robertlevonyan.views.chip.Chip;
 
 import java.util.List;
+import java.util.Objects;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import es.dmoral.toasty.Toasty;
@@ -231,9 +235,56 @@ public class AppointmentListHolder extends BaseListHolder
             return;
         }
 
-        DialogUtil.progressDialog(activity, appointment.status.toLowerCase().equals(AppointmentModel.Status.APPROVED.name().toLowerCase()) ? "Cancelling appointment..." : "Declining appointment...", activity.getColor(R.color.successColor), false);
+        if(appointment.status.toLowerCase().equals("approved"))
+        {
+            TextInputEditText reasonInput = new TextInputEditText(activity);
+            SweetAlertDialog sweet = new SweetAlertDialog(activity, SweetAlertDialog.NORMAL_TYPE);
+            sweet.setTitleText("Cancel Appointment");
+            sweet.setContentText("Specify reason of cancellation:");
+
+            reasonInput.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+            reasonInput.setSingleLine(false);
+            sweet.addContentView(reasonInput, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            sweet.setConfirmText("Submit");
+            sweet.setConfirmClickListener(dlg -> {
+                appointment.reason = Objects.requireNonNull(reasonInput.getText()).toString();
+
+                DialogUtil.progressDialog(activity, "Cancelling appointment...", activity.getColor(R.color.successColor), false);
+                DoctorAPI api = AppInstance.retrofit().create(DoctorAPI.class);
+                Call<ServerResponse<AppointmentModel>> call = api.cancelAppointment(PreferenceUtil.getInt("user_id", 0), appointment.id);
+                call.enqueue(new Callback<ServerResponse<AppointmentModel>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Response<ServerResponse<AppointmentModel>> response)
+                    {
+                        ServerResponse<AppointmentModel> server = response.body();
+                        DialogUtil.dismissDialog();
+
+                        if(server != null && !server.hasError)
+                            Toasty.success(activity, "Appointment has been cancelled successfully, refresh list now!", Toasty.LENGTH_LONG).show();
+                        else if(server != null)
+                            DialogUtil.warningDialog(activity, "Process Unsuccessful", server.message, "Okay", false);
+                        else
+                            DialogUtil.errorDialog(activity, "Process Unsuccessful", "Server failed to respond to your request", "Okay", false);
+
+                        call.cancel();
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Throwable t)
+                    {
+                        DialogUtil.errorDialog(activity, "Request Failed", t.getLocalizedMessage(), "Okay", false);
+                        call.cancel();
+                    }
+                });
+            });
+            sweet.show();
+
+            return;
+        }
+
+        DialogUtil.progressDialog(activity, "Declining appointment...", activity.getColor(R.color.successColor), false);
         DoctorAPI api = AppInstance.retrofit().create(DoctorAPI.class);
-        Call<ServerResponse<AppointmentModel>> call = (appointment.status.toLowerCase().equals(AppointmentModel.Status.APPROVED.name().toLowerCase())) ? api.cancelAppointment(PreferenceUtil.getInt("user_id", 0), appointment.id) : api.declineAppointment(PreferenceUtil.getInt("user_id", 0), appointment.id);
+        Call<ServerResponse<AppointmentModel>> call = api.declineAppointment(PreferenceUtil.getInt("user_id", 0), appointment.id);
         call.enqueue(new Callback<ServerResponse<AppointmentModel>>() {
             @Override
             public void onResponse(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Response<ServerResponse<AppointmentModel>> response)
@@ -242,7 +293,7 @@ public class AppointmentListHolder extends BaseListHolder
                 DialogUtil.dismissDialog();
 
                 if(server != null && !server.hasError)
-                    Toasty.success(activity, String.format("Appointment has been %s successfully, refresh list now!", appointment.status.toLowerCase().equals(AppointmentModel.Status.APPROVED.name().toLowerCase()) ? "cancelled" : "declined"), Toasty.LENGTH_LONG).show();
+                    Toasty.success(activity, "Appointment has been declined, refresh list now!", Toasty.LENGTH_LONG).show();
                 else if(server != null)
                     DialogUtil.warningDialog(activity, "Process Unsuccessful", server.message, "Okay", false);
                 else
