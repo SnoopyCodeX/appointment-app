@@ -296,18 +296,10 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
             }
 
             if(((AppCompatButton) view).getText().toString().toLowerCase().equals("preview"))
-            {
-                /**
-                 * TODO: Show summary of his/her appointment
-                 */
-            }
+                showPreviewOfAppointment();
 
             if(((AppCompatButton) view).getText().toString().toLowerCase().equals("submit"))
-            {
-                /**
-                 * TODO: Submit appointment to the database
-                 */
-            }
+                submitAppointment();
         });
 
         parentMedicalField = parent.findViewById(R.id.parent_medical_field);
@@ -329,6 +321,16 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         patientReasonInput = parent.findViewById(R.id.input_patient_reason);
         patientDateSelection = parent.findViewById(R.id.input_date);
         patientTimeSelection = parent.findViewById(R.id.input_time);
+
+        previewMedicalField = parent.findViewById(R.id.preview_medical_field);
+        previewDoctor = parent.findViewById(R.id.preview_doctor);
+        previewIdentity = parent.findViewById(R.id.preview_patient);
+        previewName = parent.findViewById(R.id.preview_name);
+        previewGender = parent.findViewById(R.id.preview_gender);
+        previewAge = parent.findViewById(R.id.preview_age);
+        previewReason = parent.findViewById(R.id.preview_reason);
+        previewDate = parent.findViewById(R.id.preview_date);
+        previewTime = parent.findViewById(R.id.preview_time);
 
         forms = Arrays.asList(parentMedicalField, parentDoctor, parentPatient, parentName, parentGender, parentAge, parentReason, parentDate, parentTime, parentPreview);
         fields = Arrays.asList(medicalFieldSelection, doctorSelection, patientIdentitySelection, patientNameInput, patientGenderSelection, patientAgeInput, patientReasonInput, patientDateSelection, patientTimeSelection);
@@ -513,7 +515,17 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
     }
 
     private void showPreviewOfAppointment()
-    {}
+    {
+        previewMedicalField.setText(medicalName);
+        previewDoctor.setText(doctorNamesAdapter.getItem(doctorSelection.getSelectedItemPosition()));
+        previewIdentity.setText(determineRadioSelection(patientIdentitySelection.getCheckedRadioButtonId()));
+        previewName.setText(patientNameInput.getEditText().getText().toString());
+        previewGender.setText(determineRadioSelection(patientGenderSelection.getCheckedRadioButtonId()));
+        previewAge.setText(patientAgeInput.getEditText().getText().toString());
+        previewReason.setText(patientReasonInput.getEditText().getText().toString());
+        previewDate.setText(patientDateSelection.getText().toString());
+        previewTime.setText(patientTimeSelection.getText().toString());
+    }
 
     private void submitAppointment()
     {
@@ -558,12 +570,24 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                 call.cancel();
 
                 if(server != null && !server.hasError)
-                {}
+                    Toasty.success(getContext(), "Your appointment has been successfully created!");
+                else if(server != null)
+                    DialogUtil.errorDialog(getContext(), "Request Failed", server.message, "Okay", false);
+                else
+                    DialogUtil.errorDialog(getContext(), "Server Error", "Server failed to respond to your request", "Okay", false);
+
+                PatientDialogFragment.this.dismiss();
             }
 
             @Override
             public void onFailure(Call<ServerResponse<AppointmentModel>> call, Throwable t)
-            {}
+            {
+                DialogUtil.dismissDialog();
+                DialogUtil.errorDialog(getContext(), "Server Error", t.getLocalizedMessage(), "Okay", false);
+                call.cancel();
+
+                PatientDialogFragment.this.dismiss();
+            }
         });
     }
 
