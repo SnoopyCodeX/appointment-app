@@ -2,9 +2,11 @@ package com.appointment.app.fragment.dialog;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -27,11 +29,15 @@ import androidx.appcompat.widget.AppCompatSpinner;
 
 import com.appointment.app.AppInstance;
 import com.appointment.app.R;
+import com.appointment.app.api.PatientAPI;
 import com.appointment.app.api.SpecialtyAPI;
+import com.appointment.app.model.AppointmentModel;
 import com.appointment.app.model.DoctorModel;
 import com.appointment.app.model.ServerResponse;
+import com.appointment.app.net.InternetReceiver;
 import com.appointment.app.util.Constants;
 import com.appointment.app.util.DialogUtil;
+import com.appointment.app.util.PreferenceUtil;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -360,13 +366,8 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
             {}
         });
 
-        patientDateSelection.setOnClickListener(view -> {
-            showDatePicker();
-        });
-
-        patientTimeSelection.setOnClickListener(view -> {
-            showTimePicker();
-        });
+        patientDateSelection.setOnClickListener(view -> showDatePicker());
+        patientTimeSelection.setOnClickListener(view -> showTimePicker());
 
         medicalFieldNamesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, names);
         medicalFieldSelection.setAdapter(medicalFieldNamesAdapter);
@@ -509,5 +510,90 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         tpd.setTitle("Pick appointment time");
         tpd.enableSeconds(false);
         tpd.show(getFragmentManager(), PatientDialogFragment.class.getSimpleName().toUpperCase());
+    }
+
+    private void showPreviewOfAppointment()
+    {}
+
+    private void submitAppointment()
+    {
+        if(!InternetReceiver.isConnected(getContext()))
+        {
+            DialogUtil.warningDialog(getContext(), "Disconnected", "You are not connected to an active network", "Wifi Settings",
+                    dlg -> startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)), false);
+            return;
+        }
+
+        String medicalField = medicalName;
+        int doctorId = this.doctorId;
+        String identity = determineRadioSelection(patientIdentitySelection.getCheckedRadioButtonId());
+        String name = patientNameInput.getEditText().getText().toString();
+        String gender = determineRadioSelection(patientGenderSelection.getCheckedRadioButtonId());
+        int age = Integer.valueOf(patientAgeInput.getEditText().getText().toString());
+        String reason = patientReasonInput.getEditText().getText().toString();
+        String date = patientDateSelection.getText().toString();
+        String time = patientTimeSelection.getText().toString();
+
+        DialogUtil.progressDialog(getContext(), "Creating appointment...", getContext().getResources().getColor(R.color.warningColor), false);
+        PatientAPI api = AppInstance.retrofit().create(PatientAPI.class);
+        Call<ServerResponse<AppointmentModel>> call = api.createAppointment(PreferenceUtil.getInt("user_id", 0), AppointmentModel.newAppointment(
+                PreferenceUtil.getInt("user_id", 0),
+                doctorId,
+                identity,
+                name,
+                gender,
+                "- - -",
+                age,
+                reason,
+                date,
+                time,
+                AppointmentModel.Status.PENDING.name()
+        ));
+        call.enqueue(new Callback<ServerResponse<AppointmentModel>>() {
+            @Override
+            public void onResponse(Call<ServerResponse<AppointmentModel>> call, Response<ServerResponse<AppointmentModel>> response)
+            {
+                ServerResponse<AppointmentModel> server = response.body();
+                DialogUtil.dismissDialog();
+                call.cancel();
+
+                if(server != null && !server.hasError)
+                {}
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponse<AppointmentModel>> call, Throwable t)
+            {}
+        });
+    }
+
+    private String determineRadioSelection(int id)
+    {
+        String selection = "";
+
+        switch(id)
+        {
+            case R.id.radio_choice_myself:
+                selection = "Myself";
+            break;
+
+            case R.id.radio_choice_other:
+                selection = "Other";
+            break;
+
+            case R.id.radio_choice_male:
+                selection = "Male";
+            break;
+
+            case R.id.radio_choice_female:
+                selection = "Female";
+            break;
+
+            case R.id.radio_choice_lgbtqp:
+                selection = "LGBTQ+";
+            break;
+        }
+
+        return selection;
     }
 }
