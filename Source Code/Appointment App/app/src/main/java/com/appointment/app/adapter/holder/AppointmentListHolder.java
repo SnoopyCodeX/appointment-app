@@ -3,6 +3,7 @@ package com.appointment.app.adapter.holder;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 import android.text.Html;
 import android.text.InputType;
@@ -32,6 +33,10 @@ import java.util.List;
 import java.util.Objects;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import de.mrapp.android.dialog.EditTextDialog;
+import de.mrapp.android.validation.Validateable;
+import de.mrapp.android.validation.ValidationListener;
+import de.mrapp.android.validation.Validator;
 import es.dmoral.toasty.Toasty;
 import info.androidhive.fontawesome.FontTextView;
 import retrofit2.Call;
@@ -242,6 +247,49 @@ public class AppointmentListHolder extends BaseListHolder
         if(appointment.status.toLowerCase().equals("approved"))
         {
             DialogUtil.dismissDialog();
+
+            final EditTextDialog dialog = new EditTextDialog.Builder(activity)
+                    .setMessage("Reason of Cancellation")
+                    .setTitle("Cancel Appointment")
+                    .setPositiveButton("Submit", (di, btn) -> {
+                    })
+                    .setNegativeButton("Cancel", (di, btn) -> {
+                        di.dismiss();
+                    })
+                    .setTitleColor(activity.getColor(R.color.successColor))
+                    .addValidator(new Validator<CharSequence>() {
+                        @Override
+                        public boolean validate(CharSequence value)
+                        {
+                            return (value.length() < 255 && value.length() > 0);
+                        }
+
+                        @Override
+                        public CharSequence getErrorMessage() {
+                            return "Reason of cancellation can't be too short nor too long!";
+                        }
+
+                        @Override
+                        public Drawable getIcon() {
+                            return null;
+                        }
+                    })
+                    .setErrorColor(activity.getColor(android.R.color.holo_red_dark))
+                    .setHelperText("Maximum of 255 characters only")
+                    .setCancelable(false)
+                    .setCanceledOnTouchOutside(false)
+                    .create();
+
+            dialog.addValidationListener(new ValidationListener<CharSequence>() {
+                @Override
+                public void onValidationSuccess(@NonNull Validateable<CharSequence> view)
+                {}
+
+                @Override
+                public void onValidationFailure(@NonNull Validateable<CharSequence> view, @NonNull Validator<CharSequence> validator)
+                {}
+            });
+            dialog.show();
 
             /*DialogUtil.progressDialog(activity, "Cancelling appointment...", activity.getColor(R.color.successColor), false);
             DoctorAPI api = AppInstance.retrofit().create(DoctorAPI.class);

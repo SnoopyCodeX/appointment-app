@@ -74,6 +74,9 @@ dependencies {
     // Wave Swipe Refresh Layout
     implementation 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6'
 
+    // Material Dialog
+    implementation 'com.github.michael-rapp:android-material-dialog:5.2.3'
+
     // AndroidX Test Implementation
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
