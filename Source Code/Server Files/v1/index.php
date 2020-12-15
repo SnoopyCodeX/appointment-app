@@ -32,6 +32,9 @@ Route::add('/fcm/([0-9]+)/token', function(int $userId) {
         $query = "SELECT * FROM fcm_users WHERE owner='$userId'";
         $res = Database::$conn->query($query);
 
+        if($res && $res->num_rows > 0)
+            Database::$conn->query("DELETE FROM fcm_users WHERE owner='$userId'");
+
         if($res && $res->num_rows <= 0)
         {
             $query = "INSERT INTO fcm_users(`token`, `owner`, `active`) VALUES('" . $data->token . "', '$userId', '1')";
@@ -224,6 +227,9 @@ Route::add('/patient/([0-9]+)/appointment/new', function(int $id) {
             ['action' => 'patient_newAppointment', 'data' => json_encode($data)]
         );
 
+    if(isset($db->data))
+        unset($db->data);
+
     echo json_encode($result);
 }, 'POST');
 
@@ -249,6 +255,9 @@ Route::add('/patient/([0-9]+)/appointment/([0-9]+)/delete', function(int $patien
             ((object) Patient::get($patientId)->data[0])->fullname . " cancelled an appointment with you.", 
             ['action' => 'patient_cancelAppointment', 'data' => json_encode($saved->data[0])]
         );
+
+    if(isset($db->data))
+        unset($db->data);
 
     Request::sendHTTPHeader(201, "");
     echo json_encode($result);
@@ -279,6 +288,9 @@ Route::add('/patient/([0-9]+)/appointment/([0-9]+)/update', function(int $patien
             ((object) Patient::get($patientId)->data[0])->fullname . " edited his/her appointment with you and still waiting for your approval.", 
             ['action' => 'patient_updateAppointment', 'data' => json_encode($db->data[0])]
         );
+
+    if(isset($db->data))
+        unset($db->data);
 
     echo json_encode($result);
 }, 'POST');
@@ -420,9 +432,6 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/approve', function(int $doctor
             "Your appointment with Dr. " . ((object) Doctor::get($doctorId)->data[0])->fullname . " has been approved and is now scheduled.", 
             ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
-
-    if(isset($db->data))
-        unset($db->data);
 
     echo json_encode($result);
 }, 'POST');
