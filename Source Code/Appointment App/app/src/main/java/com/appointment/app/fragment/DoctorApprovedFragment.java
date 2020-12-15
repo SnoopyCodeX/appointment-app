@@ -72,9 +72,6 @@ public class DoctorApprovedFragment extends Fragment implements WaveSwipeRefresh
 
                     if(isConnected)
                         fetchApprovedAppointments();
-
-                    if(isConnected)
-                        AppInstance.getFCMToken(getContext());
                 });
 
         refreshLayout = root.findViewById(R.id.refresh_layout);

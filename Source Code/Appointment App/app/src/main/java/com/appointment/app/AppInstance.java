@@ -98,7 +98,7 @@ public class AppInstance extends Application
                     listener.onLogout("Server failed to respond to your request", false);
 
                 call.cancel();
-                Log.i("RESP_LOG_OUT_FUNC", response.raw().message());
+                Log.i("RESP_LOG_OUT_FUNC", response.body().toString());
             }
 
             @Override
@@ -125,7 +125,7 @@ public class AppInstance extends Application
             {
                 call.cancel();
                 PreferenceUtil.putString("user_token", token);
-                Log.i("RESP_SAVE_TOKEN_ID_FUNC", response.raw().message());
+                Log.i("RESP_SAVE_TOKEN_ID_FUNC", response.body().toString());
             }
 
             @Override

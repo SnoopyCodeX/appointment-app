@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.appointment.app.adapter.SectionsPagerAdapter;
+import com.appointment.app.net.InternetReceiver;
 import com.appointment.app.util.DialogUtil;
 import com.appointment.app.util.PreferenceUtil;
 import com.google.android.material.tabs.TabLayout;
@@ -36,6 +37,9 @@ public class DoctorPanelActivity extends AppCompatActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if(InternetReceiver.isConnected(this))
+            AppInstance.getFCMToken(this);
     }
 
     @Override

@@ -34,6 +34,7 @@ import com.appointment.app.api.SpecialtyAPI;
 import com.appointment.app.model.AppointmentModel;
 import com.appointment.app.model.DoctorModel;
 import com.appointment.app.model.ServerResponse;
+import com.appointment.app.model.SpecialtyModel;
 import com.appointment.app.net.InternetReceiver;
 import com.appointment.app.util.Constants;
 import com.appointment.app.util.DialogUtil;
@@ -68,6 +69,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
     private LinearLayout parentName;
     private LinearLayout parentGender;
     private LinearLayout parentAge;
+    private LinearLayout parentAddress;
     private LinearLayout parentReason;
     private LinearLayout parentDate;
     private LinearLayout parentTime;
@@ -79,6 +81,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
     private TextInputLayout patientNameInput;
     private RadioGroup patientGenderSelection;
     private TextInputLayout patientAgeInput;
+    private TextInputLayout patientAddress;
     private TextInputLayout patientReasonInput;
     private TextView patientDateSelection;
     private TextView patientTimeSelection;
@@ -89,6 +92,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
     private TextView previewName;
     private TextView previewGender;
     private TextView previewAge;
+    private TextView previewAddress;
     private TextView previewReason;
     private TextView previewDate;
     private TextView previewTime;
@@ -114,6 +118,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
             "Please enter the patient's full name",
             "Please select the patient's gender",
             "Please enter a valid age",
+            "Please enter a valid home address",
             "Reason is too short, please elaborate as much as you can",
             "Please select the date of the appointment",
             "Please select the time of the appointment"
@@ -189,7 +194,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
     {
         DialogUtil.progressDialog(getContext(), "Fetching doctors...", getContext().getResources().getColor(R.color.successColor), false);
         SpecialtyAPI api = AppInstance.retrofit().create(SpecialtyAPI.class);
-        Call<ServerResponse<DoctorModel>> call = api.fetchDoctorsInMedicalField(medicalField);
+        Call<ServerResponse<DoctorModel>> call = api.fetchDoctorsInMedicalField(SpecialtyModel.newSpecialtyModel(medicalField));
         call.enqueue(new Callback<ServerResponse<DoctorModel>>() {
             @Override
             public void onResponse(Call<ServerResponse<DoctorModel>> call, Response<ServerResponse<DoctorModel>> response)
@@ -246,6 +251,19 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         btnNextConfirm = parent.findViewById(R.id.btn_next_confirm);
         ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Next"));
         btnNextConfirm.setOnClickListener(view -> {
+            if(((AppCompatButton) view).getText().toString().toLowerCase().equals("preview"))
+                showPreviewOfAppointment();
+
+            if(((AppCompatButton) view).getText().toString().toLowerCase().equals("submit"))
+                submitAppointment();
+
+            if(currentStep >= forms.size()-1)
+            {
+                ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Submit"));
+                ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_success_selector);
+                return;
+            }
+
             if(isCurrentStepCleared())
             {
                 if(medicalName == null)
@@ -254,16 +272,9 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                     return;
                 }
 
-                if(currentStep >= forms.size()-1)
-                {
-                    ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Submit"));
-                    ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_success_selector);
-                }
+                lastStep = currentStep;
+                currentStep += 1;
 
-                if(currentStep >= forms.size()-1)
-                    return;
-
-                lastStep = currentStep++;
                 forms.get(lastStep).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left));
                 forms.get(lastStep).getAnimation().setAnimationListener(new Animation.AnimationListener() {
                     @Override
@@ -294,12 +305,6 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                 if(currentStep == 1)
                     setupDoctorNames(medicalName);
             }
-
-            if(((AppCompatButton) view).getText().toString().toLowerCase().equals("preview"))
-                showPreviewOfAppointment();
-
-            if(((AppCompatButton) view).getText().toString().toLowerCase().equals("submit"))
-                submitAppointment();
         });
 
         parentMedicalField = parent.findViewById(R.id.parent_medical_field);
@@ -308,9 +313,11 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         parentName = parent.findViewById(R.id.parent_name);
         parentGender = parent.findViewById(R.id.parent_gender);
         parentAge = parent.findViewById(R.id.parent_age);
+        parentAddress = parent.findViewById(R.id.parent_address);
         parentReason = parent.findViewById(R.id.parent_reason);
         parentDate = parent.findViewById(R.id.parent_date);
         parentTime = parent.findViewById(R.id.parent_time);
+        parentPreview = parent.findViewById(R.id.parent_preview);
 
         medicalFieldSelection = parent.findViewById(R.id.spinner_medical_field);
         doctorSelection = parent.findViewById(R.id.spinner_doctor);
@@ -318,6 +325,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         patientNameInput = parent.findViewById(R.id.input_patient_full_name);
         patientGenderSelection = parent.findViewById(R.id.radio_gender);
         patientAgeInput = parent.findViewById(R.id.input_patient_age);
+        patientAddress = parent.findViewById(R.id.input_patient_address);
         patientReasonInput = parent.findViewById(R.id.input_patient_reason);
         patientDateSelection = parent.findViewById(R.id.input_date);
         patientTimeSelection = parent.findViewById(R.id.input_time);
@@ -328,12 +336,13 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         previewName = parent.findViewById(R.id.preview_name);
         previewGender = parent.findViewById(R.id.preview_gender);
         previewAge = parent.findViewById(R.id.preview_age);
+        previewAddress = parent.findViewById(R.id.preview_address);
         previewReason = parent.findViewById(R.id.preview_reason);
         previewDate = parent.findViewById(R.id.preview_date);
         previewTime = parent.findViewById(R.id.preview_time);
 
-        forms = Arrays.asList(parentMedicalField, parentDoctor, parentPatient, parentName, parentGender, parentAge, parentReason, parentDate, parentTime, parentPreview);
-        fields = Arrays.asList(medicalFieldSelection, doctorSelection, patientIdentitySelection, patientNameInput, patientGenderSelection, patientAgeInput, patientReasonInput, patientDateSelection, patientTimeSelection);
+        forms = Arrays.asList(parentMedicalField, parentDoctor, parentPatient, parentName, parentGender, parentAge, parentAddress, parentReason, parentDate, parentTime, parentPreview);
+        fields = Arrays.asList(medicalFieldSelection, doctorSelection, patientIdentitySelection, patientNameInput, patientGenderSelection, patientAgeInput, patientAddress, patientReasonInput, patientDateSelection, patientTimeSelection);
 
         patientReasonInput.getEditText().addTextChangedListener(new TextWatcher() {
             private String tempReason = "";
@@ -522,6 +531,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         previewName.setText(patientNameInput.getEditText().getText().toString());
         previewGender.setText(determineRadioSelection(patientGenderSelection.getCheckedRadioButtonId()));
         previewAge.setText(patientAgeInput.getEditText().getText().toString());
+        previewAddress.setText(patientAddress.getEditText().getText().toString());
         previewReason.setText(patientReasonInput.getEditText().getText().toString());
         previewDate.setText(patientDateSelection.getText().toString());
         previewTime.setText(patientTimeSelection.getText().toString());
@@ -542,6 +552,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         String name = patientNameInput.getEditText().getText().toString();
         String gender = determineRadioSelection(patientGenderSelection.getCheckedRadioButtonId());
         int age = Integer.valueOf(patientAgeInput.getEditText().getText().toString());
+        String address = patientAddress.getEditText().getText().toString();
         String reason = patientReasonInput.getEditText().getText().toString();
         String date = patientDateSelection.getText().toString();
         String time = patientTimeSelection.getText().toString();
@@ -552,15 +563,17 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                 PreferenceUtil.getInt("user_id", 0),
                 doctorId,
                 identity,
+                medicalField,
                 name,
                 gender,
-                "- - -",
+                address,
                 age,
                 reason,
                 date,
                 time,
                 AppointmentModel.Status.PENDING.name()
         ));
+
         call.enqueue(new Callback<ServerResponse<AppointmentModel>>() {
             @Override
             public void onResponse(Call<ServerResponse<AppointmentModel>> call, Response<ServerResponse<AppointmentModel>> response)
@@ -570,7 +583,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                 call.cancel();
 
                 if(server != null && !server.hasError)
-                    Toasty.success(getContext(), "Your appointment has been successfully created!");
+                    Toasty.success(getContext(), server.message, Toasty.LENGTH_LONG).show();
                 else if(server != null)
                     DialogUtil.errorDialog(getContext(), "Request Failed", server.message, "Okay", false);
                 else

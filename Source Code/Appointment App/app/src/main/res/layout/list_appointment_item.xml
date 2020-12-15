@@ -101,12 +101,13 @@
                 android:gravity="center"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="@string/fa_calendar_check"
+                android:text="@string/fa_calendar_check_solid"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/white"
                 android:background="@color/successColor"
                 tools:ignore="NestedWeights"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                app:solid_icon="true"/>
 
             <info.androidhive.fontawesome.FontTextView
                 android:id="@+id/appointment_btn_neutral"
@@ -121,7 +122,8 @@
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/white"
                 android:background="@color/infoColor"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                app:solid_icon="true"/>
 
             <info.androidhive.fontawesome.FontTextView
                 android:id="@+id/appointment_btn_negative"
@@ -132,11 +134,12 @@
                 android:gravity="center"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="@string/fa_window_close"
+                android:text="@string/fa_window_close_solid"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/white"
                 android:background="@color/errorColor"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                app:solid_icon="true"/>
 
         </LinearLayout>
 

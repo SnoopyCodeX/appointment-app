@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.RequiresPermission;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,9 +76,6 @@ public class DoctorPendingFragment extends Fragment implements WaveSwipeRefreshL
 
                     if(isConnected)
                         fetchPendingAppointments();
-
-                    if(isConnected)
-                        AppInstance.getFCMToken(getContext());
                 });
 
         refreshLayout = root.findViewById(R.id.refresh_layout);
@@ -89,6 +88,26 @@ public class DoctorPendingFragment extends Fragment implements WaveSwipeRefreshL
         appointmentList.setHasFixedSize(false);
 
         return root;
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constants.ACTION_APPOINTMENT_CANCEL);
+        filter.addAction(Constants.ACTION_APPOINTMENT_NEW);
+        filter.addAction(Constants.ACTION_APPOINTMENT_UPDATE);
+        getContext().registerReceiver(appointmentStatusReceiver, filter);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+
+        getContext().unregisterReceiver(appointmentStatusReceiver);
     }
 
     @Override
@@ -183,6 +202,7 @@ public class DoctorPendingFragment extends Fragment implements WaveSwipeRefreshL
             {
                 String jsonData = intent.getExtras().getString("data");
                 AppointmentModel appointment = new Gson().fromJson(jsonData, AppointmentModel.class);
+                Log.i(DoctorPendingFragment.class.getSimpleName(), action + " -> " + jsonData);
 
                 switch(action)
                 {

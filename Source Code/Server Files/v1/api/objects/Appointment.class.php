@@ -49,11 +49,16 @@ class Appointment {
 
         if(!$db->hasError && count($db->data) > 0)
         {
-            $query = "SELECT * FROM " . self::$table . " WHERE date='" . $data->date . "' AND time='" . $data->time . "' AND status='" . STATUS_APPROVED . "'";
+            $query = "SELECT * FROM " . self::$table . " WHERE date='" . $data->date . "' AND time='" . $data->time . "' AND status='" . self::STATUS_APPROVED . "'";
             $res = self::$conn->query($query);
 
             if($res && $res->num_rows <= 0)
             {
+                $data->date = date("Y-m-d", strtotime($data->date));
+                $data->time = date("H:i:s", strtotime($data->time));
+                $data->status = self::STATUS_PENDING;
+                $data->created_at = date("Y-m-d H:i:s", now());
+
                 $query = "INSERT INTO " . self::$table . "(";
 
                 foreach($data as $key => $val)

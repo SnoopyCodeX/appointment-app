@@ -32,7 +32,7 @@ Route::add('/fcm/([0-9]+)/token', function(int $userId) {
         $query = "SELECT * FROM fcm_users WHERE owner='$userId'";
         $res = Database::$conn->query($query);
 
-        if($res && $res->num_rows > 0)
+        if($res && $res->num_rows <= 0)
         {
             $query = "INSERT INTO fcm_users(`token`, `owner`, `active`) VALUES('" . $data->token . "', '$userId', '1')";
             $res = Database::$conn->query($query);
@@ -62,7 +62,7 @@ Route::add('/fcm/([0-9]+)/logout', function(int $userId) {
     $db = Patient::get($userId);
 
     if($db->hasError || count($db->data) <= 0)
-            $db = Doctor::get($userId);
+        $db = Doctor::get($userId);
 
     if(!$db->hasError && count($db->data) > 0)
     {
@@ -415,11 +415,14 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/approve', function(int $doctor
     // Send notification to the patient if appointment has been successfully approved
     if(!$result->hasError)
         notify(
-            $data->owner, 
+            ((object) $db->data[0])->owner, 
             "Appointment Approved", 
             "Your appointment with Dr. " . ((object) Doctor::get($doctorId)->data[0])->fullname . " has been approved and is now scheduled.", 
             ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
+
+    if(isset($db->data))
+        unset($db->data);
 
     echo json_encode($result);
 }, 'POST');
@@ -441,11 +444,14 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/decline', function(int $doctor
     // Send notification to the patient if appointment has been successfully approved
     if(!$result->hasError)
         notify(
-            $data->owner, 
+            ((object) $db->data[0])->owner,  
             "Appointment Declined", 
             "Your appointment with Dr. " . ((object) Doctor::get($doctorId)->data[0])->fullname . " has been declined", 
             ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
+
+    if(isset($db->data))
+        unset($db->data);
 
     echo json_encode($result);
 }, 'POST');
@@ -467,11 +473,14 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/cancel', function(int $doctorI
     // Send notification to the patient if appointment has been successfully approved
     if(!$result->hasError)
         notify(
-            $data->owner, 
+            ((object) $db->data[0])->owner, 
             "Appointment Cancelled", 
             "Your appointment with Dr. " . ((object) Doctor::get($doctorId)->data[0])->fullname . " has been cancelled.", 
             ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
+
+    if(isset($db->data))
+        unset($db->data);
 
     echo json_encode($result);
 }, 'POST');
@@ -538,7 +547,11 @@ Route::add('/doctor/medical-fields', function() {
     echo json_encode($result);
 }, 'GET');
 
-Route::add('/doctor/medical-fields/([a-zA-Z\-\s]+)', function(string $name) {
+Route::add('/doctor/medical-fields', function() {
+    $data = file_get_contents("php://input");
+    $data = json_decode($data);
+    $name = $data->name;
+
     $query = "SELECT * FROM doctors WHERE specialty='" . Security::escapeString($name) . "'";
     $res = Database::$conn->query($query);
 
@@ -555,7 +568,7 @@ Route::add('/doctor/medical-fields/([a-zA-Z\-\s]+)', function(string $name) {
     else
         echo json_encode(['message' => 'No doctor has that specialty', 'hasError' => true]);
         
-}, 'GET');
+}, 'POST');
 
  /***************************
  * END MEDICAL FIELD ROUTES *

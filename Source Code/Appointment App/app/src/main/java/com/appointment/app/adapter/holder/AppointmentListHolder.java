@@ -109,7 +109,7 @@ public class AppointmentListHolder extends BaseListHolder
 
             if(appointment.isDoctor && appointment.status.toUpperCase().equals(AppointmentModel.Status.APPROVED.name().toUpperCase()))
             {
-                appointmentNegativeButton.setText(R.string.fa_window_close);
+                appointmentNegativeButton.setText(R.string.fa_window_close_solid);
                 appointmentNegativeButton.setVisibility(View.VISIBLE);
                 appointmentPositiveButton.setVisibility(View.GONE);
                 appointmentNeutralButton.setVisibility(View.GONE);
@@ -392,45 +392,46 @@ public class AppointmentListHolder extends BaseListHolder
         String parsed;
 
         String year = vals[0];
-        String month = vals[1];
+        String month = "";
+        int m = Integer.parseInt(vals[1]);
         String day = vals[2];
 
-        switch(month)
+        switch(m)
         {
-            case "1":
+            case 1:
                 month = "Jan";
                 break;
-            case "2":
+            case 2:
                 month = "Feb";
                 break;
-            case "3":
+            case 3:
                 month = "Mar";
                 break;
-            case "4":
+            case 4:
                 month = "Apr";
                 break;
-            case "5":
+            case 5:
                 month = "May";
                 break;
-            case "6":
+            case 6:
                 month = "Jun";
                 break;
-            case "7":
+            case 7:
                 month = "Jul";
                 break;
-            case "8":
+            case 8:
                 month = "Aug";
                 break;
-            case "9":
+            case 9:
                 month = "Sep";
                 break;
-            case "10":
+            case 10:
                 month = "Oct";
                 break;
-            case "11":
+            case 11:
                 month = "Nov";
                 break;
-            case "12":
+            case 12:
                 month = "Dec";
                 break;
         }

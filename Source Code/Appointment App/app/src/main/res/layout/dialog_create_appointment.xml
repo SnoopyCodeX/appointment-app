@@ -269,6 +269,47 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/parent_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:textAppearanceSmall"
+                            android:fontFamily="@font/poppins_light"
+                            android:text="@string/text_hint_patient_age"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/input_patient_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:hint="@string/hint_address"
+                            android:fontFamily="@font/roboto_regular"
+                            app:errorEnabled="true"
+                            app:boxCornerRadiusBottomEnd="8dp"
+                            app:boxCornerRadiusTopEnd="8dp"
+                            app:boxCornerRadiusBottomStart="8dp"
+                            app:boxCornerRadiusTopStart="8dp"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_light"
+                                android:padding="10dp"
+                                android:inputType="text"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:id="@+id/parent_reason"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -580,6 +621,36 @@
                                 android:textAppearance="?android:textAppearanceSmall"
                                 android:textColor="@color/black"
                                 android:hint="@string/text_age"
+                                android:inputType="date"
+                                tools:ignore="NestedWeights,TextViewEdits" />
+
+                            <ImageView
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_gravity="center_vertical"
+                                android:src="@drawable/ic_select"
+                                app:tint="#5E676C"
+                                android:contentDescription="@string/desc_add" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="3dp"
+                            android:orientation="horizontal"
+                            android:background="@drawable/input_underline"
+                            android:padding="14dp">
+
+                            <TextView
+                                android:id="@+id/preview_address"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textColor="@color/black"
+                                android:hint="@string/text_address"
                                 android:inputType="date"
                                 tools:ignore="NestedWeights,TextViewEdits" />
 

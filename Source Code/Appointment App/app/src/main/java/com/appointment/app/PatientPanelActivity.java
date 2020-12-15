@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Menu;
@@ -97,6 +98,26 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
     public void onRefresh()
     {
         fetchAllAppointments();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constants.ACTION_APPOINTMENT_APPROVE);
+        filter.addAction(Constants.ACTION_APPOINTMENT_CANCEL);
+        filter.addAction(Constants.ACTION_APPOINTMENT_DECLINE);
+        registerReceiver(appointmentEventReceiver, filter);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+
+        unregisterReceiver(appointmentEventReceiver);
     }
 
     @Override
