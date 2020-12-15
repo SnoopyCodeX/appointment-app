@@ -57,7 +57,7 @@ class Appointment {
                 $data->date = date("Y-m-d", strtotime($data->date));
                 $data->time = date("H:i:s", strtotime($data->time));
                 $data->status = self::STATUS_PENDING;
-                $data->created_at = date("Y-m-d H:i:s", now());
+                $data->created_at = date("Y-m-d H:i:s", time());
 
                 $query = "INSERT INTO " . self::$table . "(";
 

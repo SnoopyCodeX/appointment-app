@@ -45,7 +45,6 @@ Route::add('/fcm/([0-9]+)/token', function(int $userId) {
         $response->message = $res ? "Token successfully initiated!" : Database::$conn->error;
         $response->hasError = !$res;
         echo json_encode($response);
-
         return;
     }
 
@@ -111,7 +110,7 @@ Route::add('/fcm/debug/([0-9]+)/notify', function(int $userId) {
  * @param array $data The extra payload data to be sent along with the notification [OPTIONAL]
  * @return bool
  */
-function notify(int $userId, string $title, string $body, array $data = []) : bool
+function notify(int $userId, string $title, string $body, array $data = [])
 {
     $query = "SELECT * FROM fcm_users WHERE owner='$userId'";
     $res = Database::$conn->query($query);
@@ -120,28 +119,21 @@ function notify(int $userId, string $title, string $body, array $data = []) : bo
     if(!$res || $res->num_rows <= 0)
         return false;
 
-    while($db = (object) $res->fetch_assoc())
-    {
-        $active = $db->active;
+    $db = (object) $res->fetch_assoc();
 
-        // Don't send notification if user is inactive
-        if(!$active)
-            continue;
+    // Otherwise send notification
+    $client = new Client();
+    $client->setApiKey(SERVER_KEY);
+    $client->injectHttpClient(new \GuzzleHttp\Client());
 
-        // Otherwise send notification
-        $client = new Client();
-        $client->setApiKey(SERVER_KEY);
-        $client->injectHttpClient(new \GuzzleHttp\Client());
+    $deviceToken = $db->token;
+    $notif = new Notification($title, $body);
 
-        $deviceToken = $db->token;
-        $notif = new Notification($title, $body);
+    $message = new Message();
+    $message->addRecipient(new Device($deviceToken));
+    $message->setNotification($notif)->setData($data);
 
-        $message = new Message();
-        $message->addRecipient(new Device($deviceToken));
-        $message->setNotification($notif)->setData($data);
-
-        $response = $client->send($message);
-    }
+    $response = $client->send($message);
 }
 
  /**************************
@@ -217,6 +209,7 @@ Route::add('/patient/([0-9]+)/appointment/new', function(int $id) {
 
     $result = Appointment::create($data, $id);
     $db = Appointment::getFromPatient($id);
+    $data->isDoctor = true;
 
     // Send notification to the doctor if appointment has been successfully created
     if(!$result->hasError)
@@ -227,10 +220,8 @@ Route::add('/patient/([0-9]+)/appointment/new', function(int $id) {
             ['action' => 'patient_newAppointment', 'data' => json_encode($data)]
         );
 
-    if(isset($db->data))
-        unset($db->data);
-
-    echo json_encode($result);
+    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    echo json_encode($response);
 }, 'POST');
 
 /**
@@ -246,21 +237,20 @@ Route::add('/patient/([0-9]+)/appointment/([0-9]+)/delete', function(int $patien
 
     $saved = Appointment::getFromPatient($patientId, $appointmentId);
     $result = $db->hasError ? $db : Appointment::delete($appointmentId);
+    $saved->data[0]['isDoctor'] = true;
 
     // Send notification to the doctor if appointment has been successfully cancelled
     if(!$result->hasError)
         notify(
-            $saved->doctor, 
+            ((object) $saved->data[0])->doctor, 
             "Appointment Cancelled", 
             ((object) Patient::get($patientId)->data[0])->fullname . " cancelled an appointment with you.", 
             ['action' => 'patient_cancelAppointment', 'data' => json_encode($saved->data[0])]
         );
 
-    if(isset($db->data))
-        unset($db->data);
-
     Request::sendHTTPHeader(201, "");
-    echo json_encode($result);
+    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    echo json_encode($response);
 }, 'POST');
 
 /**
@@ -279,6 +269,7 @@ Route::add('/patient/([0-9]+)/appointment/([0-9]+)/update', function(int $patien
 
     $result = $db->hasError ? $db : Appointment::update($appointmentId, $data);
     $db = Appointment::getFromPatient($patientId, $appointmentId);
+    $db->data[0]['isDoctor'] = true;
 
     // Send notification to the doctor if appointment has been successfully updated
     if(!$result->hasError)
@@ -289,10 +280,8 @@ Route::add('/patient/([0-9]+)/appointment/([0-9]+)/update', function(int $patien
             ['action' => 'patient_updateAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    if(isset($db->data))
-        unset($db->data);
-
-    echo json_encode($result);
+    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    echo json_encode($response);
 }, 'POST');
 
 /**
@@ -433,7 +422,8 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/approve', function(int $doctor
             ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    echo json_encode($result);
+    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    echo json_encode($response);
 }, 'POST');
 
 /**
@@ -459,10 +449,8 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/decline', function(int $doctor
             ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    if(isset($db->data))
-        unset($db->data);
-
-    echo json_encode($result);
+    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    echo json_encode($response);
 }, 'POST');
 
 /**
@@ -488,10 +476,8 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/cancel', function(int $doctorI
             ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    if(isset($db->data))
-        unset($db->data);
-
-    echo json_encode($result);
+    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    echo json_encode($response);
 }, 'POST');
 
 /**
@@ -576,7 +562,6 @@ Route::add('/doctor/medical-fields', function() {
     }
     else
         echo json_encode(['message' => 'No doctor has that specialty', 'hasError' => true]);
-        
 }, 'POST');
 
  /***************************
