@@ -128,7 +128,7 @@ public class AppointmentListHolder extends BaseListHolder
             }
             else if(!appointment.isDoctor && appointment.status.toUpperCase().equals(AppointmentModel.Status.CANCELLED.name().toUpperCase()))
             {
-                appointmentNegativeButton.setText(R.string.fa_trash_alt);
+                appointmentNegativeButton.setText(R.string.fa_trash_alt_solid);
                 appointmentNegativeButton.setVisibility(View.VISIBLE);
                 appointmentPositiveButton.setVisibility(View.GONE);
                 appointmentNeutralButton.setVisibility(View.GONE);
@@ -242,7 +242,7 @@ public class AppointmentListHolder extends BaseListHolder
             DialogUtil.dismissDialog();
 
             new LovelyTextInputDialog(activity, R.style.TintTheme)
-                    .setTopColorRes(android.R.color.holo_orange_light)
+                    .setTopColorRes(R.color.white)
                     .setTitle("Cancel Appointment")
                     .setMessage("Type reason of cancellation below...")
                     .setIcon(appointment.gender.toLowerCase().equals("male") ? R.drawable.person_male : R.drawable.person_female)
