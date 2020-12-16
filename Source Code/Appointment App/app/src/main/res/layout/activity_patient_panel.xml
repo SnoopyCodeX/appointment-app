@@ -32,36 +32,43 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <include layout="@layout/content_scrolling" />
-
             <LinearLayout
-                android:id="@+id/parent_no_schedule"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:visibility="gone">
+                android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="5dp"
-                    android:alpha="0.4"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/no_schedule"
-                    android:contentDescription="@string/app_name"
-                    app:tint="#11A31F"/>
+                <include layout="@layout/content_scrolling" />
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/parent_no_schedule"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
                     android:gravity="center"
-                    android:alpha="0.4"
-                    android:text="@string/cdata_patient_no_schedule"
-                    android:textColor="#11A31F"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:fontFamily="@font/poppins_light"/>
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="5dp"
+                        android:alpha="0.4"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/no_schedule"
+                        android:contentDescription="@string/app_name"
+                        app:tint="#11A31F"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:gravity="center"
+                        android:alpha="0.4"
+                        android:text="@string/cdata_patient_no_schedule"
+                        android:textColor="#11A31F"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -2,6 +2,7 @@ package com.appointment.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -40,6 +41,35 @@ public class DoctorPanelActivity extends AppCompatActivity
 
         if(InternetReceiver.isConnected(this))
             AppInstance.getFCMToken(this);
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        PreferenceUtil.bindWith(this);
+        InternetReceiver.initiateSelf(this)
+                .setOnConnectivityChangedListener(isConnected -> {
+                    if(!isConnected)
+                        DialogUtil.warningDialog(this, "Network Unavailable", "You are not connected to an active network", "Wifi Settings", "Exit",
+                                dlg -> {
+                                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                },
+                                dlg -> {
+                                    dlg.dismissWithAnimation();
+                                    DoctorPanelActivity.this.finish();
+                                }, false);
+                    else
+                        DialogUtil.dismissDialog();
+                });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        InternetReceiver.unBindWith(this);
     }
 
     @Override

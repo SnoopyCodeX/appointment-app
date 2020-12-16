@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,6 +72,18 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
         appointmentList.setHasFixedSize(false);
 
         parentNoSchedule = findViewById(R.id.parent_no_schedule);
+    }
+
+    @Override
+    public void onRefresh()
+    {
+        fetchAllAppointments();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
 
         PreferenceUtil.bindWith(this);
         InternetReceiver.initiateSelf(this)
@@ -85,31 +98,18 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
                     else if(DialogUtil.isDialogShown())
                         DialogUtil.dismissDialog();
 
-
                     if(isConnected)
                     {
                         fetchAllAppointments();
                         AppInstance.getFCMToken(this);
                     }
                 });
-    }
-
-    @Override
-    public void onRefresh()
-    {
-        fetchAllAppointments();
-    }
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constants.ACTION_APPOINTMENT_APPROVE);
         filter.addAction(Constants.ACTION_APPOINTMENT_CANCEL);
         filter.addAction(Constants.ACTION_APPOINTMENT_DECLINE);
-        registerReceiver(appointmentEventReceiver, filter);
+        this.registerReceiver(appointmentEventReceiver, filter);
     }
 
     @Override
@@ -117,6 +117,7 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
     {
         super.onPause();
 
+        InternetReceiver.unBindWith(this);
         unregisterReceiver(appointmentEventReceiver);
     }
 
@@ -290,7 +291,7 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            String action = intent.getExtras().getString("action");
+            String action = intent.getAction();
 
             if(action != null && !action.isEmpty())
             {
@@ -300,15 +301,18 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
                 switch(action)
                 {
                     case Constants.ACTION_APPOINTMENT_APPROVE:
-                        adapter.updateAppointment(appointment, adapter.getIndexOf(appointment.id));
+                        adapter.moveAppointmentToTop(appointment);
+                        Toasty.success(context, "Your appointment has been approved!", Toasty.LENGTH_LONG).show();
                     break;
 
                     case Constants.ACTION_APPOINTMENT_CANCEL:
-                        adapter.updateAppointment(appointment, adapter.getIndexOf(appointment.id));
+                        adapter.moveAppointmentToTop(appointment);
+                        Toasty.error(context, "Your appointment has been cancelled!", Toasty.LENGTH_LONG).show();
                     break;
 
                     case Constants.ACTION_APPOINTMENT_DECLINE:
-                        adapter.updateAppointment(appointment, adapter.getIndexOf(appointment.id));
+                        adapter.moveAppointmentToTop(appointment);
+                        Toasty.warning(context, "Your appointment has been declined!", Toasty.LENGTH_LONG).show();
                     break;
                 }
             }

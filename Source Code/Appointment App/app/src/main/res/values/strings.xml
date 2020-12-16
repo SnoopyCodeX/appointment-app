@@ -77,4 +77,5 @@
     <string name="text_reason">Reason of Appointment</string>
     <string name="text_date">Date of Appointment</string>
     <string name="text_address">Home Address</string>
+    <string name="text_hint_patient_address">Enter patient\'s home address</string>
 </resources>

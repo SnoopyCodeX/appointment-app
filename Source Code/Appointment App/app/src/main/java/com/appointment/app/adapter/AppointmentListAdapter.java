@@ -46,7 +46,7 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<BaseListHolder>
     {
         if(this.items != null)
             this.items.addAll(items);
-        notifyDataSetChanged();
+        notifyItemRangeChanged(0, this.items.size());
     }
 
     public void removeAppointment(int position)
@@ -61,27 +61,18 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<BaseListHolder>
         if(items != null)
             items.add(0, appointment);
         notifyItemInserted(0);
-    }
-
-    public void updateAppointment(AppointmentModel appointment, int position)
-    {
-        if(items != null && items.size() > 0 && position < items.size())
-        {
-            this.items.add(position, appointment);
-            notifyItemChanged(position);
-
-            moveAppointmentToTop(appointment);
-        }
+        notifyItemRangeChanged(0, items.size());
     }
 
     public void moveAppointmentToTop(AppointmentModel appointment)
     {
         if(items != null && items.size() > 0)
         {
-            int fromIndex = items.indexOf(appointment);
+            int fromIndex = getIndexOf(appointment.id);
             this.items.remove(fromIndex);
             this.items.add(0, appointment);
             notifyItemMoved(fromIndex, 0);
+            notifyItemChanged(0);
         }
     }
 

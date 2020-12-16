@@ -1,6 +1,5 @@
 package com.appointment.app;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -102,26 +101,6 @@ public class LoginActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-
-        PreferenceUtil.bindWith(this);
-        InternetReceiver.initiateSelf(this)
-                        .setOnConnectivityChangedListener(isConnected -> {
-                            if(!isConnected)
-                            {
-                                DialogUtil.warningDialog(this, "Network Unavailable", "You are not connected to an active network", "Wifi Settings", "Exit",
-                                    dlg -> {
-                                        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                                    },
-                                    dlg -> {
-                                        dlg.dismissWithAnimation();
-                                        LoginActivity.this.finish();
-                                    }, false);
-
-                                return;
-                            }
-                            else
-                                DialogUtil.dismissDialog();
-                        });
 
         textSignInAsPatientPrompt = findViewById(R.id.text_patient_login_prompt);
         textSignUpAsPatientPrompt = findViewById(R.id.text_patient_register_prompt);
@@ -233,6 +212,22 @@ public class LoginActivity extends AppCompatActivity
     {
         super.onResume();
 
+        PreferenceUtil.bindWith(this);
+        InternetReceiver.initiateSelf(this)
+                .setOnConnectivityChangedListener(isConnected -> {
+                    if(!isConnected)
+                        DialogUtil.warningDialog(this, "Network Unavailable", "You are not connected to an active network", "Wifi Settings", "Exit",
+                                dlg -> {
+                                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                },
+                                dlg -> {
+                                    dlg.dismissWithAnimation();
+                                    LoginActivity.this.finish();
+                                }, false);
+                    else
+                        DialogUtil.dismissDialog();
+                });
+
         Class activityClass = null;
         boolean isLoggedIn = PreferenceUtil.getBoolean(Constants.PREF_KEY_LOGGED_IN, false);
         int panelType = PreferenceUtil.getInt(Constants.PREF_KEY_PANEL_TYPE, PanelType.TYPE_PATIENT_SIGNIN.value);
@@ -245,8 +240,16 @@ public class LoginActivity extends AppCompatActivity
         if(activityClass != null)
         {
             startActivity(new Intent(this, activityClass));
+            InternetReceiver.unBindWith(this);
             finish();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        InternetReceiver.unBindWith(this);
     }
 
     private void signInAsPatient()

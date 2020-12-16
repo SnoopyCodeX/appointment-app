@@ -57,22 +57,6 @@ public class DoctorApprovedFragment extends Fragment implements WaveSwipeRefresh
     {
         View root = inflater.inflate(R.layout.fragment_doctor_approved, container, false);
         PreferenceUtil.bindWith(getContext());
-        InternetReceiver.initiateSelf(getContext())
-                .setOnConnectivityChangedListener(isConnected -> {
-                    if(!isConnected)
-                        DialogUtil.warningDialog(getContext(), "Network Unavailable", "You are not connected to an active network", "Wifi Settings", "Cancel",
-                                dlg -> startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)),
-                                dlg -> {
-                                    dlg.dismissWithAnimation();
-                                    getActivity().finish();
-                                }, false);
-                    else if(DialogUtil.isDialogShown())
-                        DialogUtil.dismissDialog();
-
-
-                    if(isConnected)
-                        fetchApprovedAppointments();
-                });
 
         refreshLayout = root.findViewById(R.id.refresh_layout);
         appointmentList = root.findViewById(R.id.appointment_list);

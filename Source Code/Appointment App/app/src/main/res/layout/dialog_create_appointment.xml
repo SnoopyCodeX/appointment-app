@@ -170,7 +170,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_light"
                                 android:padding="10dp"
-                                android:inputType="text"
+                                android:inputType="text|textNoSuggestions"
                                 android:singleLine="true"
                                 android:imeOptions="actionNext"/>
 
@@ -280,7 +280,7 @@
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:textAppearanceSmall"
                             android:fontFamily="@font/poppins_light"
-                            android:text="@string/text_hint_patient_age"/>
+                            android:text="@string/text_hint_patient_address"/>
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/input_patient_address"
@@ -759,36 +759,76 @@
 
                 </LinearLayout>
 
-                <com.balysv.materialripple.MaterialRippleLayout
-                    android:id="@+id/btn_next_confirm"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
                     android:layout_marginTop="30dp"
-                    app:mrl_rippleOverlay="true"
-                    app:mrl_rippleColor="@color/white"
-                    app:mrl_rippleAlpha="0.1"
-                    app:mrl_rippleDimension="10dp"
-                    app:mrl_rippleHover="true"
-                    app:mrl_rippleRoundedCorners="6dp"
-                    app:mrl_rippleInAdapter="false"
-                    app:mrl_rippleDuration="350"
-                    app:mrl_rippleFadeDuration="75"
-                    app:mrl_rippleDelayClick="true"
-                    app:mrl_rippleBackground="@color/white"
-                    app:mrl_ripplePersistent="true">
+                    android:gravity="end"
+                    android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:layout_width="match_parent"
+                    <com.balysv.materialripple.MaterialRippleLayout
+                        android:id="@+id/btn_back"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:padding="10dp"
-                        android:text="@string/btn_text_next_confirm"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/poppins_light"
-                        android:background="@drawable/btn_info_selector"/>
+                        android:layout_gravity="bottom|start"
+                        android:layout_margin="5dp"
+                        app:mrl_rippleOverlay="true"
+                        app:mrl_rippleColor="@color/white"
+                        app:mrl_rippleAlpha="0.1"
+                        app:mrl_rippleDimension="10dp"
+                        app:mrl_rippleHover="true"
+                        app:mrl_rippleRoundedCorners="6dp"
+                        app:mrl_rippleInAdapter="false"
+                        app:mrl_rippleDuration="350"
+                        app:mrl_rippleFadeDuration="75"
+                        app:mrl_rippleDelayClick="true"
+                        app:mrl_rippleBackground="@color/white"
+                        app:mrl_ripplePersistent="true">
 
-                </com.balysv.materialripple.MaterialRippleLayout>
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:padding="10dp"
+                            android:text="@string/btn_text_next_confirm"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/poppins_light"
+                            android:background="@drawable/btn_warning_selector"/>
+
+                    </com.balysv.materialripple.MaterialRippleLayout>
+
+                    <com.balysv.materialripple.MaterialRippleLayout
+                        android:id="@+id/btn_next_confirm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="5dp"
+                        app:mrl_rippleOverlay="true"
+                        app:mrl_rippleColor="@color/white"
+                        app:mrl_rippleAlpha="0.1"
+                        app:mrl_rippleDimension="10dp"
+                        app:mrl_rippleHover="true"
+                        app:mrl_rippleRoundedCorners="6dp"
+                        app:mrl_rippleInAdapter="false"
+                        app:mrl_rippleDuration="350"
+                        app:mrl_rippleFadeDuration="75"
+                        app:mrl_rippleDelayClick="true"
+                        app:mrl_rippleBackground="@color/white"
+                        app:mrl_ripplePersistent="true">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:padding="10dp"
+                            android:text="@string/btn_text_next_confirm"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/poppins_light"
+                            android:background="@drawable/btn_info_selector"/>
+
+                    </com.balysv.materialripple.MaterialRippleLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 

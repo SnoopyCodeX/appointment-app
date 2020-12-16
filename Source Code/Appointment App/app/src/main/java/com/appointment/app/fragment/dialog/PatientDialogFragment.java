@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,6 +99,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
     private TextView previewTime;
 
     private MaterialRippleLayout btnNextConfirm;
+    private MaterialRippleLayout btnBack;
 
     // Bottom Sheet steps
     private List<LinearLayout> forms = new ArrayList<>();
@@ -257,13 +259,6 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
             if(((AppCompatButton) view).getText().toString().toLowerCase().equals("submit"))
                 submitAppointment();
 
-            if(currentStep >= forms.size()-1)
-            {
-                ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Submit"));
-                ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_success_selector);
-                return;
-            }
-
             if(isCurrentStepCleared())
             {
                 if(medicalName == null)
@@ -272,8 +267,24 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                     return;
                 }
 
-                lastStep = currentStep;
-                currentStep += 1;
+                if(currentStep < forms.size()-1)
+                    lastStep = currentStep++;
+                else
+                    return;
+
+                if(currentStep >= forms.size()-1)
+                {
+                    ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Submit"));
+                    ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_success_selector);
+                }
+
+                if(currentStep >= forms.size()-2 && currentStep < forms.size()-1)
+                {
+                    ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Preview"));
+                    ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_warning_selector);
+                }
+
+                Log.i("MOVE FORWARD", String.format("CS: %d  LS: %d", currentStep, lastStep));
 
                 forms.get(lastStep).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left));
                 forms.get(lastStep).getAnimation().setAnimationListener(new Animation.AnimationListener() {
@@ -296,15 +307,61 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                 forms.get(currentStep).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right));
                 forms.get(currentStep).setVisibility(View.VISIBLE);
 
-                if(currentStep >= forms.size()-2)
-                {
-                    ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Preview"));
-                    ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_warning_selector);
-                }
-
                 if(currentStep == 1)
                     setupDoctorNames(medicalName);
+
+                if(currentStep > 0)
+                    btnBack.setVisibility(View.VISIBLE);
             }
+        });
+
+        btnBack = parent.findViewById(R.id.btn_back);
+        btnBack.setVisibility(View.GONE);
+        ((AppCompatButton) btnBack.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Back"));
+        btnBack.setOnClickListener(view -> {
+            if(currentStep == 0)
+                return;
+
+            if(currentStep > 0)
+                lastStep = currentStep--;
+
+            if(currentStep == 0)
+                btnBack.setVisibility(View.GONE);
+
+            Log.i("MOVE BACK", String.format("CS: %d  LS: %d", currentStep, lastStep));
+
+            if(currentStep < forms.size()-1 && currentStep >= forms.size()-2)
+            {
+                ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Preview"));
+                ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_warning_selector);
+            }
+
+            if(currentStep < forms.size()-2)
+            {
+                ((AppCompatButton) btnNextConfirm.getChildView()).setText(Objects.requireNonNull(getContext()).getString(R.string.btn_text_next_confirm, "Next"));
+                ((AppCompatButton) btnNextConfirm.getChildView()).setBackgroundResource(R.drawable.btn_info_selector);
+            }
+
+            forms.get(lastStep).startAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_in_left));
+            forms.get(lastStep).getAnimation().setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation)
+                {}
+
+                @Override
+                public void onAnimationEnd(Animation animation)
+                {
+                    forms.get(lastStep).setVisibility(View.GONE);
+                    animation.cancel();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation)
+                {}
+            });
+
+            forms.get(currentStep).startAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_out_right));
+            forms.get(currentStep).setVisibility(View.VISIBLE);
         });
 
         parentMedicalField = parent.findViewById(R.id.parent_medical_field);
@@ -409,7 +466,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         {
             String value = (String) ((AppCompatSpinner) field).getSelectedItem();
 
-            if(value!= null && !value.isEmpty())
+            if(value != null && !value.isEmpty())
                 return true;
 
             Toast toast = Toasty.error(getContext(), errors.get(currentStep), Toasty.LENGTH_LONG);
@@ -473,7 +530,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         Calendar calendar = Calendar.getInstance();
         String selected = patientDateSelection.getText().toString();
 
-        if(selected != null)
+        if(selected != null && !selected.isEmpty())
         {
             try {
                 Date date = DateFormat.getDateInstance().parse(selected);
@@ -505,7 +562,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         Calendar calendar = Calendar.getInstance();
         String selected = patientTimeSelection.getText().toString();
 
-        if(selected != null)
+        if(selected != null && !selected.isEmpty())
         {
             try {
                 Date date = DateFormat.getTimeInstance().parse(selected);

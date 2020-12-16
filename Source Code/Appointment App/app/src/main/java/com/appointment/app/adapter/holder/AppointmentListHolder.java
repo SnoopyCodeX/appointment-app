@@ -36,7 +36,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-@SuppressWarnings("FieldMayBeFinal")
+@SuppressWarnings({"FieldMayBeFinal", "ALL"})
 public class AppointmentListHolder extends BaseListHolder
 {
     private List<AppointmentModel> items;
@@ -133,6 +133,13 @@ public class AppointmentListHolder extends BaseListHolder
                 appointmentPositiveButton.setVisibility(View.GONE);
                 appointmentNeutralButton.setVisibility(View.GONE);
             }
+            else if(!appointment.isDoctor && appointment.status.toUpperCase().equals(AppointmentModel.Status.DECLINED.name().toUpperCase()))
+            {
+                appointmentNegativeButton.setText(R.string.fa_trash_alt_solid);
+                appointmentNegativeButton.setVisibility(View.VISIBLE);
+                appointmentPositiveButton.setVisibility(View.GONE);
+                appointmentNeutralButton.setVisibility(View.GONE);
+            }
 
             appointmentParent.setOnClickListener(view -> showAppointmentDetails(appointment));
 
@@ -143,7 +150,7 @@ public class AppointmentListHolder extends BaseListHolder
                     false));
 
             appointmentNegativeButton.setOnClickListener(
-                    view -> DialogUtil.warningDialog(activity, "Confirm Action", String.format("Do you really want to %s this appointment? This action can not be reverted.", appointment.isDoctor ? (appointment.status.toLowerCase().equals("approved") ? "cancel" : "decline") : "cancel"), "Yes", "No",
+                    view -> DialogUtil.warningDialog(activity, "Confirm Action", String.format("Do you really want to %s this appointment? This action can not be reverted.", appointment.isDoctor ? (appointment.status.toLowerCase().equals("approved") ? "cancel" : "decline") : (appointment.status.toLowerCase().equals("cancelled") || appointment.status.toLowerCase().equals("declined")) ? "delete" : "cancel"), "Yes", "No",
                     dlg -> {
                         if(appointment.isDoctor)
                             doctorCancelDeclineAppointment(appointment);
@@ -329,9 +336,11 @@ public class AppointmentListHolder extends BaseListHolder
                 .append("<strong>").append("Gender: ").append("</strong>").append(appointment.gender.substring(0,1).toUpperCase()).append(appointment.gender.substring(1, appointment.gender.length()).toLowerCase()).append("<br/>")
                 .append("<strong>").append("Status: ").append("</strong>").append(appointment.status.substring(0,1).toUpperCase()).append(appointment.status.substring(1, appointment.status.length()).toLowerCase()).append("<br/>")
                 .append("<strong>").append("Age: ").append("</strong>").append(appointment.age).append(" yrs old").append("<br/>")
-                .append("<strong>").append("Address: ").append("</strong>").append("- - -").append("<br/>");
+                .append("<strong>").append("Address: ").append("</strong>").append(appointment.address).append("<br/>");
 
-        if(appointment.status.toLowerCase().equals(AppointmentModel.Status.CANCELLED.name().toLowerCase()))
+        if(!appointment.isDoctor && appointment.status.toLowerCase().equals(AppointmentModel.Status.CANCELLED.name().toLowerCase()))
+            str.append("<strong>").append("Reason of cancellation: ").append("</strong><br/><center>").append(appointment.reason).append("</center><br/>");
+        else
             str.append("<strong>").append("Reason: ").append("</strong>").append(appointment.reason).append("<br/>");
 
         sweet.setCustomImage(appointment.gender.toLowerCase().equals("male") ? R.drawable.person_male : R.drawable.person_female);

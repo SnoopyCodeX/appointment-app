@@ -446,7 +446,7 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/decline', function(int $doctor
             ((object) $db->data[0])->owner,  
             "Appointment Declined", 
             "Your appointment with Dr. " . ((object) Doctor::get($doctorId)->data[0])->fullname . " has been declined", 
-            ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
+            ['action' => 'doctor_declineAppointment', 'data' => json_encode($db->data[0])]
         );
 
     $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
@@ -473,7 +473,7 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/cancel', function(int $doctorI
             ((object) $db->data[0])->owner, 
             "Appointment Cancelled", 
             "Your appointment with Dr. " . ((object) Doctor::get($doctorId)->data[0])->fullname . " has been cancelled.", 
-            ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
+            ['action' => 'doctor_cancelAppointment', 'data' => json_encode($db->data[0])]
         );
 
     $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];

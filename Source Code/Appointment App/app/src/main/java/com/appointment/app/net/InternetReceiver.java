@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 public class InternetReceiver extends BroadcastReceiver
 {
     private OnConnectivityChangedListener listener;
-    private static InternetReceiver internetReceiver;
+    private static InternetReceiver saved = null;
 
     @Override
     public void onReceive(Context context, Intent intent)
@@ -28,9 +28,17 @@ public class InternetReceiver extends BroadcastReceiver
 
     public static InternetReceiver initiateSelf(@NonNull Context ctx)
     {
-        internetReceiver = new InternetReceiver();
+        InternetReceiver internetReceiver = new InternetReceiver();
         ctx.registerReceiver(internetReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        saved = internetReceiver;
         return internetReceiver;
+    }
+
+    public static void unBindWith(@NonNull Context ctx)
+    {
+        if(saved != null)
+            ctx.unregisterReceiver(saved);
+        saved = null;
     }
 
     public void setOnConnectivityChangedListener(OnConnectivityChangedListener listener)

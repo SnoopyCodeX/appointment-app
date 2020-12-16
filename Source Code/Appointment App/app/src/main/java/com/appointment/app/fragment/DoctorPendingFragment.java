@@ -59,24 +59,7 @@ public class DoctorPendingFragment extends Fragment implements WaveSwipeRefreshL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View root = inflater.inflate(R.layout.fragment_doctor_pending, container, false);
-
         PreferenceUtil.bindWith(getContext());
-        InternetReceiver.initiateSelf(getContext())
-                .setOnConnectivityChangedListener(isConnected -> {
-                    if(!isConnected)
-                        DialogUtil.warningDialog(getContext(), "Network Unavailable", "You are not connected to an active network", "Wifi Settings", "Cancel",
-                                dlg -> startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)),
-                                dlg -> {
-                                    dlg.dismissWithAnimation();
-                                    getActivity().finish();
-                                }, false);
-                    else if(DialogUtil.isDialogShown())
-                        DialogUtil.dismissDialog();
-
-
-                    if(isConnected)
-                        fetchPendingAppointments();
-                });
 
         refreshLayout = root.findViewById(R.id.refresh_layout);
         appointmentList = root.findViewById(R.id.appointment_list);
@@ -211,7 +194,7 @@ public class DoctorPendingFragment extends Fragment implements WaveSwipeRefreshL
                     break;
 
                     case Constants.ACTION_APPOINTMENT_UPDATE:
-                        adapter.updateAppointment(appointment, adapter.getIndexOf(appointment.id));
+                        adapter.moveAppointmentToTop(appointment);
                     break;
 
                     case Constants.ACTION_APPOINTMENT_NEW:
