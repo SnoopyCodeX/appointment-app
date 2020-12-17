@@ -141,7 +141,12 @@ class Appointment {
         {
             $query = "UPDATE " . self::$table . " SET ";
 
+            $data->date = date("Y-m-d", strtotime($data->date));
+            $data->time = date("H:i:s", strtotime($data->time));
+            $data->status = self::STATUS_PENDING;
+
             foreach($data as $key => $val)
+            {
                 if($key == 'ownerId' || $key == 'doctorId')
                 {
                     $key = substr($key, 0, strlen($key) - 2);
@@ -149,6 +154,8 @@ class Appointment {
                 }
                 else
                     $query .= "$key='$val', ";
+            }
+
             $query = substr($query, 0, strlen($query) - 2) . " WHERE id='$id'";
 
             $res = self::$conn->query($query);

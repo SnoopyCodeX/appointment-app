@@ -55,9 +55,6 @@ public class AppInstance extends Application
     public static void getFCMToken(Context context)
     {
         PreferenceUtil.bindWith(context);
-        if(PreferenceUtil.getBoolean(Constants.PREF_KEY_LOGGED_IN, false))
-            return;
-
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
             if(task.isSuccessful()) {

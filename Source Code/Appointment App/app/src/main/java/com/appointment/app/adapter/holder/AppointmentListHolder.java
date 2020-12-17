@@ -164,11 +164,12 @@ public class AppointmentListHolder extends BaseListHolder
                     SweetAlertDialog::cancel,
                     false));
 
-            appointmentNeutralButton.setOnClickListener(view -> {
-                patientEditAppointment(appointment);
-            });
+            appointmentNeutralButton.setOnClickListener(view -> patientEditAppointment(appointment));
         } catch(Exception e) {
             e.printStackTrace();
+
+            DialogUtil.dismissDialog();
+            DialogUtil.errorDialog(activity, "Application Error", e.getMessage(), "Okay", false);
         }
     }
 
@@ -400,7 +401,7 @@ public class AppointmentListHolder extends BaseListHolder
     }
 
     @RequiresPermission(allOf = {Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE})
-    private void patientEditAppointment(AppointmentModel appointment)
+    private void patientEditAppointment(final AppointmentModel appointment)
     {
         DialogUtil.progressDialog(activity, "Loading details...", activity.getColor(R.color.successColor), false);
         SpecialtyAPI api = AppInstance.retrofit().create(SpecialtyAPI.class);
@@ -413,7 +414,7 @@ public class AppointmentListHolder extends BaseListHolder
                 DialogUtil.dismissDialog();
 
                 if(server != null && !server.hasError)
-                    PatientEditAppointmentFragment.getInstance(appointment, server.data);
+                    PatientEditAppointmentFragment.getInstance(appointment, server.data).show(activity.getSupportFragmentManager(), AppointmentListHolder.class.getSimpleName());
                 else if(server != null && server.hasError)
                     Toasty.error(activity, server.message, Toasty.LENGTH_LONG).show();
                 else

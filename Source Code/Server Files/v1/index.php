@@ -274,7 +274,7 @@ Route::add('/patient/([0-9]+)/appointment/([0-9]+)/update', function(int $patien
     // Send notification to the doctor if appointment has been successfully updated
     if(!$result->hasError)
         notify(
-            $db->doctor, 
+            $db->data[0]['doctor'],
             "Appointment Updated", 
             ((object) Patient::get($patientId)->data[0])->fullname . " edited his/her appointment with you and still waiting for your approval.", 
             ['action' => 'patient_updateAppointment', 'data' => json_encode($db->data[0])]

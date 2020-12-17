@@ -214,6 +214,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
 
                     doctorNamesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, names);
                     doctorSelection.setAdapter(doctorNamesAdapter);
+                    doctorSelection.setSelection(0);
 
                     doctorSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override

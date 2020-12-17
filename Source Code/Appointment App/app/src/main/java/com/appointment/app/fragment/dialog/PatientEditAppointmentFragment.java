@@ -9,7 +9,9 @@ import android.os.Bundle;
 
 import android.provider.Settings;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +54,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@SuppressWarnings("ALL")
 public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
 {
     private AppCompatSpinner medicalField;
@@ -69,6 +72,8 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
     private AppointmentModel appointment;
     private List<SpecialtyModel> medicalFields;
     private ArrayAdapter<String> doctorNamesAdapter;
+
+    private int doctorId;
 
     private PatientEditAppointmentFragment(AppointmentModel appointment, List<SpecialtyModel> medicalFields)
     {
@@ -92,7 +97,7 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState)
     {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setOnShowListener(this::setupDialog);
+        dialog.setOnShowListener(di -> setupDialog(di));
         return dialog;
     }
 
@@ -125,12 +130,12 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
         btnSave = parent.findViewById(R.id.btn_save);
 
         patientName.getEditText().setText(appointment.name);
-        patientAge.getEditText().setText(appointment.age);
+        patientAge.getEditText().setText(String.valueOf(appointment.age));
         patientReason.getEditText().setText(appointment.reason);
         patientAddress.getEditText().setText(appointment.address);
 
-        patientDate.setText(appointment.date);
-        patientTime.setText(appointment.time);
+        patientDate.setText(parseDate(appointment.date));
+        patientTime.setText(parseTime(appointment.time));
 
         int defaultGenderIndex = -1;
         defaultGenderIndex = appointment.gender.toLowerCase().equals("male") ? 0 : defaultGenderIndex;
@@ -181,10 +186,10 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
             String selectedTime = patientTime.getText().toString();
 
             boolean hasChangesMade = !selectedMedicalField.equals(appointment.medicalField) ||
-                    !selectedDoctorName.equals(appointment.doctor) ||
+                    doctorId != Integer.parseInt(appointment.doctor) ||
                     !selectedGender.equals(appointment.gender) ||
                     !selectedIdentity.equals(appointment.identity) ||
-                    !editedName.equals(appointment.owner) ||
+                    !editedName.equals(appointment.name) ||
                     editedAge != appointment.age ||
                     !editedAddress.equals(appointment.address) ||
                     !editedReason.equals(appointment.reason) ||
@@ -202,7 +207,7 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
             Call<ServerResponse<AppointmentModel>> call = api.updateAppointment(PreferenceUtil.getInt("user_id", 0), appointment.id,
                     AppointmentModel.newAppointment(
                             PreferenceUtil.getInt("user_id", 0),
-                            0,
+                            doctorId,
                             selectedIdentity,
                             selectedMedicalField,
                             editedName,
@@ -223,7 +228,12 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
                     call.cancel();
 
                     if(doctorNamesAdapter != null)
-                        doctorNamesAdapter.clear();
+                    {
+                        doctorNamesAdapter = null;
+                        doctorNamesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, new String[]{""});
+                        doctorName.setAdapter(doctorNamesAdapter);
+                        doctorName.setSelection(0);
+                    }
 
                     if(server != null && !server.hasError)
                     {
@@ -257,6 +267,8 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
                 {
                     if(s.length() == 0)
                         field.setError("This field is required");
+                    else if(TextUtils.isDigitsOnly(s) && s.length() <= 0)
+                        field.setError("Age is required");
                     else if(s.length() > 0 && s.length() <= 4)
                         field.setError("Field's value is too short");
                     else
@@ -362,7 +374,12 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
                 DialogUtil.dismissDialog();
 
                 if(doctorNamesAdapter != null)
-                    doctorNamesAdapter.clear();
+                {
+                    doctorNamesAdapter = null;
+                    doctorNamesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, new String[]{""});
+                    doctorName.setAdapter(doctorNamesAdapter);
+                    doctorName.setSelection(0);
+                }
 
                 if(server != null && !server.hasError)
                     populateDoctorSpinner(server.data);
@@ -393,7 +410,27 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
 
         doctorNamesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, names);
         doctorName.setAdapter(doctorNamesAdapter);
-        doctorName.setSelection(Arrays.asList(names).indexOf(appointment.doctor));
+
+        int index = 0;
+        for(int i = 0; i < doctors.size(); i++)
+            if(Integer.parseInt(appointment.doctor) == doctors.get(i).id)
+                break;
+            else
+                index++;
+
+        doctorName.setSelection(index);
+        doctorId = doctors.get(index).id;
+        doctorName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                doctorId = doctors.get(position).id;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {}
+        });
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -425,5 +462,96 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
         }
 
         return selection;
+    }
+
+    private String parseDate(String date)
+    {
+        String[] vals = date.split("-");
+        String parsed;
+
+        String year = vals[0];
+        String month = "";
+        int m = Integer.parseInt(vals[1]);
+        String day = vals[2];
+
+        switch(m)
+        {
+            case 1:
+                month = "Jan";
+                break;
+            case 2:
+                month = "Feb";
+                break;
+            case 3:
+                month = "Mar";
+                break;
+            case 4:
+                month = "Apr";
+                break;
+            case 5:
+                month = "May";
+                break;
+            case 6:
+                month = "Jun";
+                break;
+            case 7:
+                month = "Jul";
+                break;
+            case 8:
+                month = "Aug";
+                break;
+            case 9:
+                month = "Sep";
+                break;
+            case 10:
+                month = "Oct";
+                break;
+            case 11:
+                month = "Nov";
+                break;
+            case 12:
+                month = "Dec";
+                break;
+        }
+
+        parsed = String.format("%s %s, %s", month, day, year);
+        return parsed;
+    }
+
+    private String parseTime(String time)
+    {
+        String[] vals = time.split(":");
+        String meridiem = "";
+        String parsed;
+
+        String hour = vals[0];
+        String minute = vals[1];
+
+        int hrs = Integer.parseInt(hour);
+        int min = Integer.parseInt(minute);
+
+        if(hrs >= 12 && hrs <= 23)
+            meridiem = "PM";
+
+        if(hrs >= 0 && hrs <= 11)
+            meridiem = "AM";
+
+        if(hrs > 12 && hrs <= 23)
+            hrs = hrs - 12;
+        else if(hrs == 0)
+            hrs = 12;
+
+        if(min < 10)
+            minute = "0" + min;
+        else
+            minute = String.valueOf(min);
+
+        if(hrs < 10)
+            hour = "0" + hrs;
+        else
+            hour = String.valueOf(hrs);
+
+        parsed = String.format("%s:%s %s", hour, minute, meridiem);
+        return parsed;
     }
 }
