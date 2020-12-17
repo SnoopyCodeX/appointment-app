@@ -159,7 +159,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState)
     {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setOnShowListener(dialogInterface -> setupDialog(dialogInterface));
+        dialog.setOnShowListener(this::setupDialog);
         return dialog;
     }
 

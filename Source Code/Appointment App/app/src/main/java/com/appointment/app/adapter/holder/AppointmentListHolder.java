@@ -16,11 +16,15 @@ import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.appointment.app.AppInstance;
+import com.appointment.app.PatientPanelActivity;
 import com.appointment.app.R;
 import com.appointment.app.api.DoctorAPI;
 import com.appointment.app.api.PatientAPI;
+import com.appointment.app.api.SpecialtyAPI;
+import com.appointment.app.fragment.dialog.PatientEditAppointmentFragment;
 import com.appointment.app.model.AppointmentModel;
 import com.appointment.app.model.ServerResponse;
+import com.appointment.app.model.SpecialtyModel;
 import com.appointment.app.net.InternetReceiver;
 import com.appointment.app.util.DialogUtil;
 import com.appointment.app.util.PreferenceUtil;
@@ -161,7 +165,7 @@ public class AppointmentListHolder extends BaseListHolder
                     false));
 
             appointmentNeutralButton.setOnClickListener(view -> {
-                // TODO: Edit appointment details
+                patientEditAppointment(appointment);
             });
         } catch(Exception e) {
             e.printStackTrace();
@@ -390,6 +394,39 @@ public class AppointmentListHolder extends BaseListHolder
             public void onFailure(@NonNull Call<ServerResponse<AppointmentModel>> call, @NonNull Throwable t)
             {
                 DialogUtil.errorDialog(activity, "Request Failed", t.getLocalizedMessage(), "Okay", false);
+                call.cancel();
+            }
+        });
+    }
+
+    @RequiresPermission(allOf = {Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE})
+    private void patientEditAppointment(AppointmentModel appointment)
+    {
+        DialogUtil.progressDialog(activity, "Loading details...", activity.getColor(R.color.successColor), false);
+        SpecialtyAPI api = AppInstance.retrofit().create(SpecialtyAPI.class);
+        Call<ServerResponse<SpecialtyModel>> call = api.fetchMedicalFields();
+        call.enqueue(new Callback<ServerResponse<SpecialtyModel>>() {
+            @Override
+            public void onResponse(Call<ServerResponse<SpecialtyModel>> call, Response<ServerResponse<SpecialtyModel>> response)
+            {
+                ServerResponse<SpecialtyModel> server = response.body();
+                DialogUtil.dismissDialog();
+
+                if(server != null && !server.hasError)
+                    PatientEditAppointmentFragment.getInstance(appointment, server.data);
+                else if(server != null && server.hasError)
+                    Toasty.error(activity, server.message, Toasty.LENGTH_LONG).show();
+                else
+                    Toasty.warning(activity, "An unexpected event has occured in the server", Toasty.LENGTH_LONG).show();
+
+                call.cancel();
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponse<SpecialtyModel>> call, Throwable t)
+            {
+                Toasty.warning(activity, "[Server]: " + t.getLocalizedMessage(), Toasty.LENGTH_LONG).show();
+                DialogUtil.dismissDialog();
                 call.cancel();
             }
         });

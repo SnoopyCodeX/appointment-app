@@ -21,6 +21,7 @@ import com.appointment.app.model.AppointmentModel;
 import com.appointment.app.model.ServerResponse;
 import com.appointment.app.model.SpecialtyModel;
 import com.appointment.app.net.InternetReceiver;
+import com.appointment.app.util.AlarmManagerUtil;
 import com.appointment.app.util.Constants;
 import com.appointment.app.util.DialogUtil;
 import com.appointment.app.util.PreferenceUtil;
@@ -33,8 +34,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import es.dmoral.toasty.Toasty;
@@ -104,6 +109,13 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
                         AppInstance.getFCMToken(this);
                     }
                 });
+
+        if(!PreferenceUtil.getBoolean(Constants.PREF_KEY_LOGGED_IN, false))
+        {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constants.ACTION_APPOINTMENT_APPROVE);
@@ -302,11 +314,20 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
                 {
                     case Constants.ACTION_APPOINTMENT_APPROVE:
                         adapter.moveAppointmentToTop(appointment);
+
+                        String datetime = String.format("%S %S", appointment.date, appointment.time);
+                        Date date = new Date(datetime);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(date);
+
+                        AlarmManagerUtil.getInstance(context).scheduleAlarm(calendar, appointment.id);
                         Toasty.success(context, "Your appointment has been approved!", Toasty.LENGTH_LONG).show();
                     break;
 
                     case Constants.ACTION_APPOINTMENT_CANCEL:
                         adapter.moveAppointmentToTop(appointment);
+
+                        AlarmManagerUtil.getInstance(context).cancelAlarm(appointment.id);
                         Toasty.error(context, "Your appointment has been cancelled!", Toasty.LENGTH_LONG).show();
                     break;
 

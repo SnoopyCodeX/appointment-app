@@ -1,9 +1,11 @@
-package com.appointment.app.service;
+package com.appointment.app.util;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+
+import com.appointment.app.service.AlarmReceiver;
 
 import java.util.Calendar;
 
@@ -26,21 +28,17 @@ public class AlarmManagerUtil
         return new AlarmManagerUtil(context);
     }
 
-    public AlarmManagerUtil scheduleAlarm(Calendar calendar)
+    public void scheduleAlarm(Calendar calendar, int id)
     {
         Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-
-        return this;
     }
 
-    public AlarmManagerUtil cancelAlarm()
+    public void cancelAlarm(int id)
     {
         Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         am.cancel(pendingIntent);
-
-        return this;
     }
 }

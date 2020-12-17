@@ -1,10 +1,9 @@
 <resources>
     <string name="app_name">Appointment Application</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="desc_add">desc_add</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="hint_fullname">Fullname</string>
+    <string name="hint_fullname">Full Name</string>
     <string name="hint_password">Password</string>
     <string name="btn_login">Login</string>
     <string name="patient_login_panel">Login as Patient</string>
@@ -17,18 +16,18 @@
     <string name="doctor_sign_in_text_1">Not a doctor?</string>
     <string name="doctor_sign_in_text_2">Login here</string>
     <string name="patient_register_panel">Register as Patient</string>
-    <string name="hint_gender">Gender</string>
-    <string name="hint_address">Home Address</string>
-    <string name="hint_age">Age (yrs old)</string>
+    <string name="hint_gender">Patient\'s Gender</string>
+    <string name="hint_address">Patient\'s Home Address</string>
+    <string name="hint_age">Patient\'s Age (yrs old)</string>
     <string name="btn_register">Register</string>
     <string name="doctor_prompt_text">Are you a doctor?</string>
     <string name="hint_contact_number">Contact Number</string>
     <string name="hint_specialty">Specialty</string>
     <string name="action_logout">Log Out</string>
     <string name="title_activity_patient_panel">ScrollingActivity</string>
-    <string name="template_patient_name">Patient Name</string>
+    <string name="template_patient_name">Patient\'s Name</string>
     <string name="template_patient_schedule">Schedule</string>
-    <string name="template_patient_status">Status:</string>
+    <string name="template_patient_status">Status</string>
     <string name="template_patient_gender">Gender</string>
     <string name="template_positive_button">Positive Button</string>
     <string name="template_negative_button">Negative Button</string>
@@ -45,7 +44,6 @@
 
     <!-- ignore -->
     <string name="cdata_patient_no_schedule">You have no scheduled appointments. \nTo create one, click the \'+\' button below.</string>
-    <string name="jwt_token">%s</string>
     <string name="dev_github_account" formatted="false">https://github.com/SnoopyCodeX</string>
     <string name="text_hint_medical_field">Select a medical field</string>
     <string name="text_title_schedule_appointment">Schedule Appointment</string>
@@ -66,16 +64,21 @@
     <string name="text_hint_date">Date of appointment</string>
     <string name="text_hint_time">Time of appointment</string>
     <string name="text_hint_preview">Preview your appointment</string>
+    <string name="text_hint_patient_address">Enter patient\'s home address</string>
     <string name="cdata_doctor_no_schedule">You have no scheduled appointments</string>
     <string name="cdata_doctor_no_pending_schedule">You have no pending appointments</string>
     <string name="text_medical_field">Medical Field</string>
-    <string name="text_doctor">Doctor Name</string>
-    <string name="text_patient">Patient Identity</string>
-    <string name="text_patient_name">Patient Name</string>
-    <string name="text_gender">Patient Gender</string>
-    <string name="text_age">Patient Age</string>
+    <string name="text_doctor">Doctor\'s Name</string>
+    <string name="text_patient">Patient\'s Identity</string>
+    <string name="text_patient_name">Patient\'s Name</string>
+    <string name="text_gender">Patient\'s Gender</string>
+    <string name="text_age">Patient\'s Age</string>
     <string name="text_reason">Reason of Appointment</string>
     <string name="text_date">Date of Appointment</string>
     <string name="text_address">Home Address</string>
-    <string name="text_hint_patient_address">Enter patient\'s home address</string>
+    <string name="text_title_edit_appointment">Edit Appointment</string>
+    <string name="text_patient_identity">Patient\'s Identity</string>
+    <string name="text_patient_gender">Patient\'s Gender</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_save">Save</string>
 </resources>
