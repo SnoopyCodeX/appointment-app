@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".PatientPanelActivity">
 
     <LinearLayout
@@ -30,58 +31,47 @@
         <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
             android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true">
+            android:layout_height="match_parent">
 
-            <androidx.core.widget.NestedScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fillViewport="true"
-                android:fitsSystemWindows="true">
+                android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/parent_no_schedule"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:fitsSystemWindows="true">
+                    android:gravity="center"
+                    android:visibility="visible">
 
-                    <include layout="@layout/content_scrolling" />
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="5dp"
+                        android:alpha="0.4"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/no_schedule"
+                        android:contentDescription="@string/app_name"
+                        app:tint="#11A31F"/>
 
-                    <LinearLayout
-                        android:id="@+id/parent_no_schedule"
+                    <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
                         android:gravity="center"
-                        android:visibility="visible"
-                        android:fitsSystemWindows="true">
-
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:layout_margin="5dp"
-                            android:alpha="0.4"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/no_schedule"
-                            android:contentDescription="@string/app_name"
-                            app:tint="#11A31F"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="5dp"
-                            android:gravity="center"
-                            android:alpha="0.4"
-                            android:text="@string/cdata_patient_no_schedule"
-                            android:textColor="#11A31F"
-                            android:textAppearance="?android:textAppearanceSmall"
-                            android:fontFamily="@font/poppins_light"/>
-
-                    </LinearLayout>
+                        android:alpha="0.4"
+                        android:text="@string/cdata_patient_no_schedule"
+                        android:textColor="#11A31F"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"/>
 
                 </LinearLayout>
 
-            </androidx.core.widget.NestedScrollView>
+                <include layout="@layout/content_scrolling" />
+
+            </LinearLayout>
 
         </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 
