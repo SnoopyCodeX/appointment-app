@@ -141,9 +141,10 @@ class Appointment {
         {
             $query = "UPDATE " . self::$table . " SET ";
 
-            $data->date = date("Y-m-d", strtotime($data->date));
-            $data->time = date("H:i:s", strtotime($data->time));
-            $data->status = self::STATUS_PENDING;
+            if(isset($data->date))
+                $data->date = date("Y-m-d", strtotime($data->date));
+            if(isset($data->time))
+                $data->time = date("H:i:s", strtotime($data->time));
 
             foreach($data as $key => $val)
             {

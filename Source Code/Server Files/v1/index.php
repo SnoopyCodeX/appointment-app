@@ -68,6 +68,7 @@ Route::add('/fcm/([0-9]+)/logout', function(int $userId) {
 
     if(!$db->hasError && count($db->data) > 0)
     {
+        $response = (object) ['message' => '', 'hasError' => false];
         $query = "SELECT * FROM fcm_users WHERE `owner`='$userId' AND token='" . $data->token . "'";
         $res = Database::$conn->query($query);
 
@@ -75,16 +76,11 @@ Route::add('/fcm/([0-9]+)/logout', function(int $userId) {
         {
             $query = "DELETE FROM fcm_users WHERE `owner`='$userId' AND token='" . $data->token . "'";
             $res = Database::$conn->query($query);
-
-            $response = (object) ['message' => '', 'hasError' => false];
+            
             $response->message = $res ? "" : Database::$conn->error;
             $response->hasError = !$res;
-
-            echo json_encode($response);
-            return;
         }
-
-        $response = (object) ['message' => 'User does not seem to be (re)initialized', 'hasError' => true];
+        
         echo json_encode($response);
         return;
     }

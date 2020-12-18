@@ -16,7 +16,6 @@ import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.appointment.app.AppInstance;
-import com.appointment.app.PatientPanelActivity;
 import com.appointment.app.R;
 import com.appointment.app.api.DoctorAPI;
 import com.appointment.app.api.PatientAPI;
