@@ -269,7 +269,7 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
                         field.setError("This field is required");
                     else if(TextUtils.isDigitsOnly(s) && s.length() <= 0)
                         field.setError("Age is required");
-                    else if(s.length() > 0 && s.length() <= 4)
+                    else if(!TextUtils.isDigitsOnly(s) && s.length() > 0 && s.length() <= 4)
                         field.setError("Field's value is too short");
                     else
                         field.setError("");

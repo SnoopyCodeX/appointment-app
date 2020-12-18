@@ -32,9 +32,12 @@ import com.appointment.app.util.PreferenceUtil;
 import com.robertlevonyan.views.chip.Chip;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import es.dmoral.toasty.Toasty;
@@ -222,7 +225,13 @@ public class AppointmentListHolder extends BaseListHolder
                 {
                     AppointmentModel appointment = server.data.get(0);
                     String datetime = String.format("%S %S", appointment.date, appointment.time);
-                    Date date = new Date(datetime);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d H:m:s");
+                    Date date = null;
+                    try {
+                        date = sdf.parse(datetime);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
 
