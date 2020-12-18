@@ -75,7 +75,7 @@ class Patient {
      */
     public static function check(object $data)
     {
-        $query = "SELECT * FROM " . self::$table . " WHERE email='" . $data->email . "' AND fullname='" . $data->fullname . "'";
+        $query = "SELECT * FROM " . self::$table . " WHERE email='" . $data->email . "'";
         $res = self::$conn->query($query);
 
         // Empty the data from the result

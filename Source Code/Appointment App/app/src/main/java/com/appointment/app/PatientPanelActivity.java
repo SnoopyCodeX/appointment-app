@@ -317,7 +317,7 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(date);
 
-                        AlarmManagerUtil.getInstance(context).scheduleAlarm(calendar, appointment.id);
+                        AlarmManagerUtil.getInstance(context).scheduleAlarm(calendar, appointment.id, "Appointment Reminder", "You have an scheduled appointment today with your doctor!");
                         Toasty.success(context, "Your appointment has been approved!", Toasty.LENGTH_LONG).show();
                     break;
 

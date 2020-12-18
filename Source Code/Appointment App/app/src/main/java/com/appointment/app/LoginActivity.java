@@ -76,7 +76,6 @@ public class LoginActivity extends AppCompatActivity
     private MaterialCardView doctorLoginPanel;
 
     // Patient Login Inputs
-    private TextInputLayout patientLoginFullname;
     private TextInputLayout patientLoginEmail;
     private TextInputLayout patientLoginPassword;
 
@@ -120,7 +119,6 @@ public class LoginActivity extends AppCompatActivity
         btn_patient_login = findViewById(R.id.btn_login_patient);
         btn_patient_register = findViewById(R.id.btn_register_patient);
 
-        patientLoginFullname = findViewById(R.id.input_login_patient_fullname);
         patientLoginEmail = findViewById(R.id.input_login_patient_email);
         patientLoginPassword = findViewById(R.id.input_login_patient_password);
 
@@ -254,7 +252,6 @@ public class LoginActivity extends AppCompatActivity
 
     private void signInAsPatient()
     {
-        String fullname = patientLoginFullname.getEditText().getText().toString();
         String email = patientLoginEmail.getEditText().getText().toString();
         String password = patientLoginPassword.getEditText().getText().toString();
 
@@ -267,9 +264,7 @@ public class LoginActivity extends AppCompatActivity
             return;
         }
 
-        if(fullname.isEmpty() || fullname.length() < 4)
-            patientLoginFullname.setError("Please enter a valid fullname");
-        else if(email.isEmpty() || !email.matches("([a-zA-Z0-9\\-\\_\\.\\@]+)$"))
+        if(email.isEmpty() || !email.matches("([a-zA-Z0-9\\-\\_\\.\\@]+)$"))
             patientLoginEmail.setError("Please enter a valid email address");
         else if(password.isEmpty() || password.length() < 8)
             patientLoginPassword.setError("Please enter a valid password");
@@ -277,7 +272,7 @@ public class LoginActivity extends AppCompatActivity
         {
             DialogUtil.progressDialog(this, "Logging in...", Color.parseColor("#11A31F"), false);
             PatientAPI api = AppInstance.retrofit().create(PatientAPI.class);
-            Call<ServerResponse<PatientModel>> call = api.login(PatientModel.loginModel(fullname, email, password));
+            Call<ServerResponse<PatientModel>> call = api.login(PatientModel.loginModel(email, password));
             call.enqueue(new Callback<ServerResponse<PatientModel>>() {
                 @Override
                 public void onResponse(Call<ServerResponse<PatientModel>> call, Response<ServerResponse<PatientModel>> response)

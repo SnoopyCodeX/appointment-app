@@ -61,11 +61,10 @@ public class PatientModel
         this.password = password;
     }
 
-    private PatientModel(String fullname, String email, String password)
+    private PatientModel(String email, String password)
     {
-        this.fullname = fullname;
-        this.email = email;
         this.password = password;
+        this.email = email;
 
         this.gender = "";
         this.age = "";
@@ -78,8 +77,8 @@ public class PatientModel
         return new PatientModel(fullname, gender, age, address, contactNumber, email, password);
     }
 
-    public static PatientModel loginModel(String fullname, String email, String password)
+    public static PatientModel loginModel(String email, String password)
     {
-        return new PatientModel(fullname, email, password);
+        return new PatientModel(email, password);
     }
 }

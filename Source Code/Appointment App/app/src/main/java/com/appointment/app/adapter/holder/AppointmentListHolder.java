@@ -2,6 +2,7 @@ package com.appointment.app.adapter.holder;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.content.Intent;
 import android.provider.Settings;
 import android.text.Html;
@@ -25,11 +26,14 @@ import com.appointment.app.model.AppointmentModel;
 import com.appointment.app.model.ServerResponse;
 import com.appointment.app.model.SpecialtyModel;
 import com.appointment.app.net.InternetReceiver;
+import com.appointment.app.util.AlarmManagerUtil;
 import com.appointment.app.util.DialogUtil;
 import com.appointment.app.util.PreferenceUtil;
 import com.robertlevonyan.views.chip.Chip;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -215,7 +219,17 @@ public class AppointmentListHolder extends BaseListHolder
                 DialogUtil.dismissDialog();
 
                 if(server != null && !server.hasError)
+                {
+                    AppointmentModel appointment = server.data.get(0);
+                    String datetime = String.format("%S %S", appointment.date, appointment.time);
+                    Date date = new Date(datetime);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+
+                    AlarmManagerUtil.getInstance(activity).scheduleAlarm(calendar, appointment.id, "Appointment Reminder", "You have an scheduled appointment today with your patient!");
+
                     Toasty.success(activity, "Appointment has been approved successfully, refresh list now!", Toasty.LENGTH_LONG).show();
+                }
                 else if(server != null)
                     DialogUtil.warningDialog(activity, "Process Unsuccessful", server.message, "Okay", false);
                 else
@@ -272,8 +286,11 @@ public class AppointmentListHolder extends BaseListHolder
                                 ServerResponse<AppointmentModel> server = response.body();
                                 DialogUtil.dismissDialog();
 
-                                if(server != null && !server.hasError)
+                                if(server != null && !server.hasError) {
+                                    AppointmentModel appointment = server.data.get(0);
+                                    AlarmManagerUtil.getInstance(activity).cancelAlarm(appointment.id);
                                     Toasty.success(activity, "Appointment has been cancelled successfully, refresh list now!", Toasty.LENGTH_LONG).show();
+                                }
                                 else if(server != null)
                                     DialogUtil.warningDialog(activity, "Process Unsuccessful", server.message, "Okay", false);
                                 else

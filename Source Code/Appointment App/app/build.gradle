@@ -35,6 +35,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'android.arch.work:work-runtime:1.0.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
     // Retrofit Dependencies
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -58,15 +61,14 @@ dependencies {
 
     // Firebase Dependencies
     implementation 'com.google.firebase:firebase-core:18.0.0'
-    implementation 'com.google.firebase:firebase-messaging:21.0.0'
+    implementation 'com.google.firebase:firebase-messaging:21.0.1'
+    implementation 'com.google.firebase:firebase-iid:21.0.1'
 
     // ImageBadgeView Dependencies
     implementation 'com.github.nikartm:image-support:1.0.5'
 
     // Material Chips View
     implementation 'com.robertlevonyan.view:MaterialChipView:2.0.4'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
     // Material DateTime Picker
     implementation 'com.wdullaer:materialdatetimepicker:4.2.3'

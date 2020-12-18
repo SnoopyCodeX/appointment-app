@@ -245,7 +245,7 @@ Route::add('/patient/([0-9]+)/appointment/([0-9]+)/delete', function(int $patien
         );
 
     Request::sendHTTPHeader(201, "");
-    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message, 'data' => $saved->data];
     echo json_encode($response);
 }, 'POST');
 
@@ -276,7 +276,7 @@ Route::add('/patient/([0-9]+)/appointment/([0-9]+)/update', function(int $patien
             ['action' => 'patient_updateAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message, 'data' => $db->data];
     echo json_encode($response);
 }, 'POST');
 
@@ -418,7 +418,7 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/approve', function(int $doctor
             ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message, 'data' => $db->data];
     echo json_encode($response);
 }, 'POST');
 
@@ -445,7 +445,7 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/decline', function(int $doctor
             ['action' => 'doctor_declineAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message, 'data' => $db->data];
     echo json_encode($response);
 }, 'POST');
 
@@ -472,7 +472,7 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/cancel', function(int $doctorI
             ['action' => 'doctor_cancelAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message, 'data' => $db->data];
     echo json_encode($response);
 }, 'POST');
 

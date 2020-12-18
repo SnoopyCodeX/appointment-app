@@ -32,36 +32,6 @@
             android:gravity="center"/>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_login_patient_fullname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:hint="@string/hint_fullname"
-            android:fontFamily="@font/roboto_regular"
-            app:errorEnabled="true"
-            app:boxCornerRadiusBottomEnd="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusTopStart="8dp"
-            app:endIconMode="custom"
-            app:endIconDrawable="@android:drawable/ic_lock_lock"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_light"
-                android:padding="10dp"
-                android:inputType="text"
-                android:singleLine="true"
-                android:imeOptions="actionNext"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_login_patient_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
