@@ -313,7 +313,13 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
                         adapter.moveAppointmentToTop(appointment);
 
                         String datetime = String.format("%S %S", appointment.date, appointment.time);
-                        Date date = new Date(datetime);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d H:m:s");
+                        Date date = null;
+                        try {
+                            date = sdf.parse(datetime);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(date);
 
