@@ -140,28 +140,30 @@ class Appointment {
         {
             $query = "UPDATE " . self::$table . " SET ";
 
-            if(isset($data->date))
-                $data->date = date("Y-m-d", strtotime($data->date));
-            if(isset($data->time))
-                $data->time = date("H:i:s", strtotime($data->time));
-
-            $check = "SELECT * FROM " . self::$table . " WHERE ";
-
-            if(isset($data->date))
-                $check .= $data->date;
-
-            if(isset($data->time) && !isset($data->date))
-                $check .= $data->time;
-            else if(isset($data->time) && isset($data->date))
-                $check .= " AND " . $data->time;
-
-            $check .= " AND status='" . self::STATUS_APPROVED . "'";
-            $check = self::$conn->query($check);
-            if($check->num_rows > 0)
+            if(isset($data->date) || isset($data->time))
             {
-                self::$result->message = $check ? "The date/time you selected is already occupied!" : self::$conn->error;
-                self::$result->hasError = true;
-                return self::$result;
+                if(isset($data->date))
+                    $data->date = date("Y-m-d", strtotime($data->date));
+                if(isset($data->time))
+                    $data->time = date("H:i:s", strtotime($data->time));
+
+                $check = "SELECT * FROM " . self::$table . " WHERE id <> '$id' AND status='" . self::STATUS_APPROVED . "'";
+
+                if(isset($data->date))
+                    $check .= " AND date='" . $data->date . "'";
+
+                if(isset($data->time) && !isset($data->date))
+                    $check .= " AND time='" . $data->time . "'";
+                else if(isset($data->time) && isset($data->date))
+                    $check .= " AND time='" . $data->time . "'";
+
+                $rcheck = self::$conn->query($check);
+                if($rcheck && $rcheck->num_rows > 0)
+                {
+                    self::$result->message = $rcheck ? "The time/date you selected is already occupied" : self::$conn->error;
+                    self::$result->hasError = true;
+                    return self::$result;
+                }
             }
 
             foreach($data as $key => $val)

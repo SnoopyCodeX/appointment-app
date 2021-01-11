@@ -236,7 +236,6 @@ public class AppointmentListHolder extends BaseListHolder
                     calendar.setTime(date);
 
                     AlarmManagerUtil.getInstance(activity).scheduleAlarm(calendar, appointment.id, "Appointment Reminder", "You have an scheduled appointment today with your patient!");
-
                     Toasty.success(activity, "Appointment has been approved successfully, refresh list now!", Toasty.LENGTH_LONG).show();
                 }
                 else if(server != null)
