@@ -33,6 +33,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -312,7 +314,7 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
                     case Constants.ACTION_APPOINTMENT_APPROVE:
                         adapter.moveAppointmentToTop(appointment);
 
-                        String datetime = String.format("%S %S", appointment.date, appointment.time);
+                        String datetime = String.format("%s %s", appointment.date, appointment.time);
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d H:m:s");
                         Date date = null;
                         try {

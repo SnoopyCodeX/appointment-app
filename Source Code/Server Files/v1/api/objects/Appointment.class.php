@@ -44,18 +44,17 @@ class Appointment {
     public static function create(object $data, int $patientId)
     {
         $db = Patient::get($patientId);
-
         $data = Security::escapeData($data);
 
         if(!$db->hasError && count($db->data) > 0)
         {
+            $data->date = date("Y-m-d", strtotime($data->date));
+            $data->time = date("H:i:s", strtotime($data->time));
             $query = "SELECT * FROM " . self::$table . " WHERE date='" . $data->date . "' AND time='" . $data->time . "' AND status='" . self::STATUS_APPROVED . "'";
             $res = self::$conn->query($query);
 
             if($res && $res->num_rows <= 0)
             {
-                $data->date = date("Y-m-d", strtotime($data->date));
-                $data->time = date("H:i:s", strtotime($data->time));
                 $data->status = self::STATUS_PENDING;
                 $data->created_at = date("Y-m-d H:i:s", time());
 
@@ -145,6 +144,25 @@ class Appointment {
                 $data->date = date("Y-m-d", strtotime($data->date));
             if(isset($data->time))
                 $data->time = date("H:i:s", strtotime($data->time));
+
+            $check = "SELECT * FROM " . self::$table . " WHERE ";
+
+            if(isset($data->date))
+                $check .= $data->date;
+
+            if(isset($data->time) && !isset($data->date))
+                $check .= $data->time;
+            else if(isset($data->time) && isset($data->date))
+                $check .= " AND " . $data->time;
+
+            $check .= " AND status='" . self::STATUS_APPROVED . "'";
+            $check = self::$conn->query($check);
+            if($check->num_rows > 0)
+            {
+                self::$result->message = $check ? "The date/time you selected is already occupied!" : self::$conn->error;
+                self::$result->hasError = true;
+                return self::$result;
+            }
 
             foreach($data as $key => $val)
             {

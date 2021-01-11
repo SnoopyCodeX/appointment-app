@@ -224,7 +224,7 @@ public class AppointmentListHolder extends BaseListHolder
                 if(server != null && !server.hasError)
                 {
                     AppointmentModel appointment = server.data.get(0);
-                    String datetime = String.format("%S %S", appointment.date, appointment.time);
+                    String datetime = String.format("%s %s", appointment.date, appointment.time);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d H:m:s");
                     Date date = null;
                     try {
