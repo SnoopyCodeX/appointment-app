@@ -76,6 +76,11 @@ public class FCMNotificationService extends FirebaseMessagingService
                 case "patient_newAppointment":
                     trigger = Constants.ACTION_APPOINTMENT_NEW;
                 break;
+
+                case "doctor_rescheduleAppointment":
+                case "patient_rescheduleAppointment":
+                    trigger = Constants.ACTION_APPOINTMENT_RESCHEDULE;
+                break;
             }
 
             Intent event = new Intent(trigger);

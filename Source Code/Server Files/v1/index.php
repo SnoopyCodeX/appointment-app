@@ -204,11 +204,12 @@ Route::add('/patient/([0-9]+)/appointment/new', function(int $id) {
     $data = json_decode($data);
 
     $result = Appointment::create($data, $id);
+    $bool = $result->hasError;
     $db = Appointment::getFromPatient($id);
     $data->isDoctor = true;
 
     // Send notification to the doctor if appointment has been successfully created
-    if(!$result->hasError)
+    if(!$bool)
         notify(
             $data->doctorId, 
             "New Appointment Request", 
@@ -216,7 +217,7 @@ Route::add('/patient/([0-9]+)/appointment/new', function(int $id) {
             ['action' => 'patient_newAppointment', 'data' => json_encode($data)]
         );
 
-    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message];
+    $response = (object) ['hasError' => $bool, 'message' => $result->message];
     echo json_encode($response);
 }, 'POST');
 
@@ -264,11 +265,12 @@ Route::add('/patient/([0-9]+)/appointment/([0-9]+)/update', function(int $patien
     $db = Patient::get($patientId);
 
     $result = $db->hasError ? $db : Appointment::update($appointmentId, $data);
+    $bool = $result->hasError;
     $db = Appointment::getFromPatient($patientId, $appointmentId);
     $db->data[0]['isDoctor'] = true;
 
     // Send notification to the doctor if appointment has been successfully updated
-    if(!$result->hasError)
+    if(!$bool)
         notify(
             $db->data[0]['doctor'],
             "Appointment Updated", 
@@ -276,7 +278,7 @@ Route::add('/patient/([0-9]+)/appointment/([0-9]+)/update', function(int $patien
             ['action' => 'patient_updateAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message, 'data' => $db->data];
+    $response = (object) ['hasError' => $bool, 'message' => $result->message, 'data' => $db->data];
     echo json_encode($response);
 }, 'POST');
 
@@ -407,10 +409,11 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/approve', function(int $doctor
     $db = Doctor::get($doctorId);
 
     $result = $db->hasError ? $db : Appointment::update($appointmentId, ((object) ['status' => Appointment::STATUS_APPROVED]));
+    $bool = $result->hasError;
     $db = Appointment::getFromDoctor($doctorId, $appointmentId);
 
     // Send notification to the patient if appointment has been successfully approved
-    if(!$result->hasError)
+    if(!$bool)
         notify(
             ((object) $db->data[0])->owner, 
             "Appointment Approved", 
@@ -418,7 +421,38 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/approve', function(int $doctor
             ['action' => 'doctor_approveAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message, 'data' => $db->data];
+    $response = (object) ['hasError' => $bool, 'message' => $result->message, 'data' => $db->data];
+    echo json_encode($response);
+}, 'POST');
+
+/**
+ * Handles rescheduling of appointments
+ * 
+ * @param int $doctorId The id of the doctor that sent the request
+ * @param int $appointmentId The id of the appointment to be rescheduled
+ * @return string $result The json_encoded result of the request
+ * @method HTTP_POST
+ */
+Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/reschedule', function(int $doctorId, int $appointmentId) {
+    $data = file_get_contents('php://input');
+    $data = json_decode($data);
+    $db = Doctor::get($doctorId);
+
+    $data->status = Appointment::STATUS_RESCHEDULED;
+    $result = $db->hasError ? $db : Appointment::update($appointmentId, $data);
+    $bool = $result->hasError;
+    $db = Appointment::getFromDoctor($doctorId, $appointmentId);
+
+    // Send notification to the patient if appointment has been successfully approved
+    if(!$bool)
+        notify(
+            ((object) $db->data[0])->owner, 
+            "Appointment Rescheduled", 
+            "Your appointment with Dr. " . ((object) Doctor::get($doctorId)->data[0])->fullname . " has been rescheduled.", 
+            ['action' => 'doctor_rescheduleAppointment', 'data' => json_encode($db->data[0])]
+        );
+
+    $response = (object) ['hasError' => $bool, 'message' => $result->message, 'data' => $db->data];
     echo json_encode($response);
 }, 'POST');
 
@@ -434,10 +468,11 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/decline', function(int $doctor
     $db = Doctor::get($doctorId);
 
     $result = $db->hasError ? $db : Appointment::update($appointmentId, ((object) ['status' => Appointment::STATUS_DECLINED]));
+    $bool = $result->hasError;
     $db = Appointment::getFromDoctor($doctorId, $appointmentId);
 
     // Send notification to the patient if appointment has been successfully approved
-    if(!$result->hasError)
+    if(!$bool)
         notify(
             ((object) $db->data[0])->owner,  
             "Appointment Declined", 
@@ -445,7 +480,7 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/decline', function(int $doctor
             ['action' => 'doctor_declineAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message, 'data' => $db->data];
+    $response = (object) ['hasError' => $bool, 'message' => $result->message, 'data' => $db->data];
     echo json_encode($response);
 }, 'POST');
 
@@ -461,10 +496,11 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/cancel', function(int $doctorI
     $db = Doctor::get($doctorId);
 
     $result = $db->hasError ? $db : Appointment::update($appointmentId, ((object) ['status' => Appointment::STATUS_CANCELLED]));
+    $bool = $result->hasError;
     $db = Appointment::getFromDoctor($doctorId, $appointmentId);
 
     // Send notification to the patient if appointment has been successfully approved
-    if(!$result->hasError)
+    if(!$bool)
         notify(
             ((object) $db->data[0])->owner, 
             "Appointment Cancelled", 
@@ -472,7 +508,7 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)/cancel', function(int $doctorI
             ['action' => 'doctor_cancelAppointment', 'data' => json_encode($db->data[0])]
         );
 
-    $response = (object) ['hasError' => $result->hasError, 'message' => $result->message, 'data' => $db->data];
+    $response = (object) ['hasError' => $bool, 'message' => $result->message, 'data' => $db->data];
     echo json_encode($response);
 }, 'POST');
 
@@ -497,7 +533,7 @@ Route::add('/doctor/([0-9]+)/appointment/([0-9]+)', function(int $doctorId, int 
  * @method HTTP_GET
  */
 Route::add('/doctor/([0-9]+)/appointment/approved', function(int $doctorId) {
-    $result = Appointment::getFromDoctor($doctorId, null, Appointment::STATUS_APPROVED);
+    $result = Appointment::getFromDoctor($doctorId, null, Appointment::STATUS_APPROVED . " " . Appointment::STATUS_RESCHEDULED);
     echo json_encode($result);
 }, 'GET');
 

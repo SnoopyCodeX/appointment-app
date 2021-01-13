@@ -67,6 +67,9 @@ public class DoctorApprovedFragment extends Fragment implements WaveSwipeRefresh
         refreshLayout.setOnRefreshListener(this::onRefresh);
         refreshLayout.setWaveColor(getContext().getResources().getColor(R.color.successColor));
 
+        fetchApprovedAppointments();
+        refreshLayout.setRefreshing(true);
+
         return root;
     }
 

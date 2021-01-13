@@ -12,6 +12,7 @@ class Appointment {
     const STATUS_PENDING = "pending";
     const STATUS_CANCELLED = "cancelled";
     const STATUS_DECLINED = "declined";
+    const STATUS_RESCHEDULED = "rescheduled";
 
     private static string $table = 'appointments';
     private static object $result;
@@ -20,7 +21,7 @@ class Appointment {
     private function __construct(mysqli $conn)
     {
         self::$conn = $conn;
-        self::$result = ((object) ['message' => "", 'hasError' => false]);
+        self::$result = ((object) []);
     }
 
     /**
@@ -212,7 +213,10 @@ class Appointment {
                 $query .= " AND id='$appointmentId'";
             
             if(isset($status) && !empty($status))
-                $query .= " AND status='$status'";
+                if(strtolower($status) == (self::STATUS_APPROVED . " " . self::STATUS_RESCHEDULED))
+                    $query .= " AND status='" . self::STATUS_RESCHEDULED . "' AND status='" . self::STATUS_APPROVED . "'";
+                else
+                    $query .= " AND status='$status'";
             
            $res = self::$conn->query($query);
            
@@ -263,8 +267,11 @@ class Appointment {
             if(isset($appointmentId))
                 $query .= " AND id='$appointmentId'";
             
-            if(isset($status) && !empty($status))
-                $query .= " AND status='$status'";
+                if(isset($status) && !empty($status))
+                    if(strtolower($status) == (self::STATUS_APPROVED . " " . self::STATUS_RESCHEDULED))
+                        $query .= " AND status='" . self::STATUS_RESCHEDULED . "' AND status='" . self::STATUS_APPROVED . "'";
+                    else
+                        $query .= " AND status='$status'";
 
 
             $res = self::$conn->query($query);

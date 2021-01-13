@@ -1,12 +1,11 @@
-# appointment-app
- Doctor Appointment App
+## :mask: Doctor Appointment App :mask:
 
-## Database Credentials:
+### :key: Database Credentials:
 - Username: id15542625_mbc_appointment_app
 - Password: mia@DARP2020
 - Link: https://databases.000webhost.com
 
-## Web FTP Credentials:
+### :globe_with_meridians: Web FTP Credentials:
 - Host name: ftp://files.000webhost.com
 - Username: doctor-appointment-rest-api
 - Password: mia@DARP2020
@@ -18,25 +17,25 @@
 - FTP Username: doctor-appointment-rest-api
 - FTP Password: mia@DARP2020
 
-## Folders in this Project
+### :open_file_folder: Folders in this Project
 - Application Source code: "Appointment App" folder
 - Server Source code: "Server files" folder
 
-## File extensions
+### :page_with_curl: File extensions
 - xxx.java & xxx.xml - Used for the android application itself
 - xxx.htaccess & xxx.php - Used for the Server side of the application
 
-## Coding Design Used
+### :memo: Coding Design Used
 - REST (Representational Stateless Transfer) - Server Side
 - Structural Design: Application(Client) Side
 
-## Author's Notice
+### :bookmark_tabs: Author's Notice
 - Ignore the LICENSE file that is with this file
 
-## Server Side
+## :ticket: Server Side
 - Link: http://api.doctor-appointment-app.ml/
 
-## Url Endpoints of the REST API
+### :link: Url Endpoints of the REST API
 - https://api.doctor-appointment-app.ml/ - The root url of the API (Application Programming Interface)
 - /v1/ - Version definition of the API
 
@@ -47,5 +46,5 @@
 - /v1/doctor/{doctorId}/appointments/approved - Returns the list of doctor's approved appointments which he/she has already approved
 - /v1/doctor/{doctorId}/appointments/{appointmentId} - Returns a specific appointment from the doctor's list of appointments
 
-## Request and Response formats used by both Server and Client Application
+### :trident: Request and Response formats used by both Server and Client Application
 - JSON Format (Javascript Object Notation) 

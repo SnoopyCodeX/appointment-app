@@ -9,6 +9,7 @@ public class Constants
 
     public static final int MAX_REASON_LENGTH = 255;
 
+    public static final String ACTION_APPOINTMENT_RESCHEDULE = "com.appointment.app.action.APPOINTMENT_RESCHEDULE";
     public static final String ACTION_APPOINTMENT_APPROVE = "com.appointment.app.action.APPOINTMENT_APPROVE";
     public static final String ACTION_APPOINTMENT_DECLINE = "com.appointment.app.action.APPOINTMENT_DECLINE";
     public static final String ACTION_APPOINTMENT_CANCEL = "com.appointment.app.action.APPOINTMENT_CANCEL";

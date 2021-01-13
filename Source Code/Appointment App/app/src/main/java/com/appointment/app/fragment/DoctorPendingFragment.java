@@ -83,6 +83,9 @@ public class DoctorPendingFragment extends Fragment implements WaveSwipeRefreshL
         filter.addAction(Constants.ACTION_APPOINTMENT_NEW);
         filter.addAction(Constants.ACTION_APPOINTMENT_UPDATE);
         getContext().registerReceiver(appointmentStatusReceiver, filter);
+
+        fetchPendingAppointments();
+        refreshLayout.setRefreshing(true);
     }
 
     @Override

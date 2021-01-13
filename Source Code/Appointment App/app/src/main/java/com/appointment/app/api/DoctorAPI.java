@@ -27,14 +27,14 @@ public interface DoctorAPI
     @POST("doctor/{doctorId}/appointment/{appointmentId}/approve")
     Call<ServerResponse<AppointmentModel>> approveAppointment(@Path("doctorId") int doctorId, @Path("appointmentId") int appointmentId);
 
+    @POST("doctor/{doctorId}/appointment/{appointmentId}/reschedule")
+    Call<ServerResponse<AppointmentModel>> rescheduleAppointment(@Path("doctorId") int doctorId, @Path("appointmentId") int appointmentId, @Body AppointmentModel appointment);
+
     @POST("doctor/{doctorId}/appointment/{appointmentId}/decline")
     Call<ServerResponse<AppointmentModel>> declineAppointment(@Path("doctorId") int doctorId, @Path("appointmentId") int appointmentId);
 
     @POST("doctor/{doctorId}/appointment/{appointmentId}/cancel")
     Call<ServerResponse<AppointmentModel>> cancelAppointment(@Path("doctorId") int doctorId, @Path("appointmentId") int appointmentId);
-
-    @GET("doctor/{doctorId}/appointment/{appointmentId}")
-    Call<ServerResponse<AppointmentModel>> fetchAppointment(@Path("doctorId") int doctorId, @Path("appointmentId") int appointmentId);
 
     @GET("doctor/{doctorId}/appointment/approved")
     Call<ServerResponse<AppointmentModel>> fetchApprovedAppointments(@Path("doctorId") int doctorId);

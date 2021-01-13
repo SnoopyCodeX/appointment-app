@@ -19,7 +19,8 @@ public class AppointmentModel
         APPROVED(-1),
         DECLINED(0),
         PENDING(1),
-        CANCELLED(2);
+        CANCELLED(2),
+        RESCHEDULED(3);
 
         private int value;
         Status(int value)

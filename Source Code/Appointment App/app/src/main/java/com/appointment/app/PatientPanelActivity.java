@@ -53,7 +53,7 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
     private AppointmentListAdapter adapter;
     private RecyclerView appointmentList;
     private LinearLayout parentNoSchedule;
-    WaveSwipeRefreshLayout refreshLayout;
+    private WaveSwipeRefreshLayout refreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -120,6 +120,7 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
         filter.addAction(Constants.ACTION_APPOINTMENT_APPROVE);
         filter.addAction(Constants.ACTION_APPOINTMENT_CANCEL);
         filter.addAction(Constants.ACTION_APPOINTMENT_DECLINE);
+        filter.addAction(Constants.ACTION_APPOINTMENT_RESCHEDULE);
         this.registerReceiver(appointmentEventReceiver, filter);
     }
 
@@ -339,6 +340,11 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
                     case Constants.ACTION_APPOINTMENT_DECLINE:
                         adapter.moveAppointmentToTop(appointment);
                         Toasty.warning(context, "Your appointment has been declined!", Toasty.LENGTH_LONG).show();
+                    break;
+
+                    case Constants.ACTION_APPOINTMENT_RESCHEDULE:
+                        adapter.moveAppointmentToTop(appointment);
+                        Toasty.warning(context, "Your appointment has been rescheduled!", Toasty.LENGTH_LONG).show();
                     break;
                 }
             }

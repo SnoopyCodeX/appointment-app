@@ -66,7 +66,8 @@ public class DoctorPanelActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
 
         InternetReceiver.unBindWith(this);
