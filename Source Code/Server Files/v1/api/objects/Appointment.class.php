@@ -214,30 +214,30 @@ class Appointment {
             
             if(isset($status) && !empty($status))
                 if(strtolower($status) == (self::STATUS_APPROVED . " " . self::STATUS_RESCHEDULED))
-                    $query .= " AND status='" . self::STATUS_RESCHEDULED . "' AND status='" . self::STATUS_APPROVED . "'";
+                    $query .= " AND status='" . self::STATUS_RESCHEDULED . "' OR status='" . self::STATUS_APPROVED . "'";
                 else
                     $query .= " AND status='$status'";
             
-           $res = self::$conn->query($query);
+            $res = self::$conn->query($query);
            
-           if($res && $res->num_rows > 0)
-           {
-                $data = [];
+            if($res && $res->num_rows > 0)
+            {
+                    $data = [];
 
-                while($row = $res->fetch_assoc())
-                {
-                    $row['isDoctor'] = true;
-                    array_push($data, $row);
-                }
+                    while($row = $res->fetch_assoc())
+                    {
+                        $row['isDoctor'] = true;
+                        array_push($data, $row);
+                    }
 
-                self::$result->data = $data;
-                self::$result->hasError = false;
-           }
-           else
-           {
-                self::$result->message = $res ? "No scheduled appointments" : self::$conn->error;
-                self::$result->hasError = true;
-           }
+                    self::$result->data = $data;
+                    self::$result->hasError = false;
+            }
+            else
+            {
+                    self::$result->message = $res ? "No scheduled appointments" : self::$conn->error;
+                    self::$result->hasError = true;
+            }
         }
         else
         {
@@ -269,7 +269,7 @@ class Appointment {
             
                 if(isset($status) && !empty($status))
                     if(strtolower($status) == (self::STATUS_APPROVED . " " . self::STATUS_RESCHEDULED))
-                        $query .= " AND status='" . self::STATUS_RESCHEDULED . "' AND status='" . self::STATUS_APPROVED . "'";
+                        $query .= " AND status='" . self::STATUS_RESCHEDULED . "' OR status='" . self::STATUS_APPROVED . "'";
                     else
                         $query .= " AND status='$status'";
 

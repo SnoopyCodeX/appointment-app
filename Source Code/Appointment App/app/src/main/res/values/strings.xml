@@ -81,4 +81,5 @@
     <string name="text_patient_gender">Patient\'s Gender</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_save">Save</string>
+    <string name="admin_login_panel">Login as Admin</string>
 </resources>

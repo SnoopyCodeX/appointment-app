@@ -168,7 +168,7 @@ public class AppointmentListHolder extends BaseListHolder implements DatePickerD
             }
             else if(!appointment.isDoctor && appointment.status.toUpperCase().equals(AppointmentModel.Status.RESCHEDULED.name().toUpperCase()))
             {
-                appointmentNegativeButton.setText(R.string.fa_trash_alt_solid);
+                appointmentNegativeButton.setText(R.string.fa_window_close_solid);
                 appointmentPositiveButton.setText(R.string.fa_calendar_day_solid);
 
                 appointmentNegativeButton.setVisibility(View.VISIBLE);
@@ -179,17 +179,23 @@ public class AppointmentListHolder extends BaseListHolder implements DatePickerD
             appointmentParent.setOnClickListener(view -> showAppointmentDetails(appointment));
 
             appointmentPositiveButton.setOnClickListener(
-                view -> DialogUtil.warningDialog(activity, "Confirm Action", String.format("Are you sure you want to %s this appointment?", appointment.status.toLowerCase().equals("approved") ? "reschedule" : "approve"), "Yes", "No",
-                dlg -> {
-                    if(appointment.isDoctor && appointment.status.toLowerCase().equals("approved"))
-                        rescheduleAppointment(appointment.id);
-                    else if(!appointment.isDoctor && appointment.status.toLowerCase().equals("rescheduled"))
+                view -> {
+                    if(!appointment.isDoctor && appointment.status.equals("rescheduled"))
+                    {
                         acceptRescheduleAppointment(appointment.id);
-                    else if(appointment.isDoctor && appointment.status.toLowerCase().equals("pending"))
-                        approveAppointment(appointment.id);
-                },
-                SweetAlertDialog::cancel,
-                false));
+                        return;
+                    }
+
+                    DialogUtil.warningDialog(activity, "Confirm Action", String.format("Are you sure you want to %s this appointment?", appointment.status.toLowerCase().equals("approved") ? "reschedule" : "approve"), "Yes", "No",
+                            dlg -> {
+                                if(appointment.isDoctor && appointment.status.toLowerCase().equals("approved"))
+                                    rescheduleAppointment(appointment.id);
+                                else if(appointment.isDoctor && appointment.status.toLowerCase().equals("pending"))
+                                    approveAppointment(appointment.id);
+                            },
+                            SweetAlertDialog::cancel,
+                            false);
+                });
 
             appointmentNegativeButton.setOnClickListener(
                 view -> DialogUtil.warningDialog(activity, "Confirm Action", String.format("Do you really want to %s this appointment? This action can not be reverted.", appointment.isDoctor ? (appointment.status.toLowerCase().equals("approved") ? "cancel" : "decline") : (appointment.status.toLowerCase().equals("cancelled") || appointment.status.toLowerCase().equals("declined")) ? "delete" : "cancel"), "Yes", "No",
@@ -295,7 +301,16 @@ public class AppointmentListHolder extends BaseListHolder implements DatePickerD
 
     private void showDatePicker()
     {
+        String datetime = String.format("%s %s", appointment.date, appointment.time);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d H:m:s");
+        Date date = null;
+        try {
+            date = sdf.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
         calendar.setLenient(true);
 
         DatePickerDialog dpd = DatePickerDialog.newInstance(this::onDateSet, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
@@ -316,7 +331,16 @@ public class AppointmentListHolder extends BaseListHolder implements DatePickerD
 
     private void showTimePicker()
     {
+        String datetime = String.format("%s %s", appointment.date, appointment.time);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d H:m:s");
+        Date date = null;
+        try {
+            date = sdf.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
         calendar.setLenient(true);
 
         TimePickerDialog tpd = TimePickerDialog.newInstance(this::onTimeSet, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);

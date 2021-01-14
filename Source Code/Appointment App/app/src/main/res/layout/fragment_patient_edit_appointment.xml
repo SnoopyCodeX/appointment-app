@@ -177,7 +177,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.5"
                                 android:text="@string/radio_choice_lgbtqp"
-                                android:fontFamily="@font/poppins_light"/>
+                                android:fontFamily="@font/poppins_light"
+                                android:visibility="gone"/>
 
                         </RadioGroup>
 

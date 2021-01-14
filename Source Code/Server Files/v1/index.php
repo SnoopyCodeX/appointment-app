@@ -555,6 +555,15 @@ Route::add('/doctor/([0-9]+)/appointment/pending', function(int $doctorId) {
 
 
 
+/**********************
+ * START ADMIN ROUTES *
+ **********************/
+
+
+ 
+/********************
+ * END ADMIN ROUTES *
+ ********************/
 
 
 /******************************
