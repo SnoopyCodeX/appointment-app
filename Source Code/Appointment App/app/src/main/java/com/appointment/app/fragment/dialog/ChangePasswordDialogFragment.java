@@ -131,7 +131,7 @@ public class ChangePasswordDialogFragment extends BottomSheetDialogFragment
             }
             else if(!strOldPassword.isEmpty() && !passwordHasAlphaNumericsAndSpecialChars(strOldPassword))
             {
-                oldPassword.setError("Password must be a combination of numbers, uppercase and lowercase letters and underscores( '_' )");
+                oldPassword.setError("Password must be a combination of special and alphanumeric characters!");
                 hasError = true;
             }
 
@@ -142,7 +142,7 @@ public class ChangePasswordDialogFragment extends BottomSheetDialogFragment
             }
             else if(!strNewPassword.isEmpty() && !passwordHasAlphaNumericsAndSpecialChars(strNewPassword))
             {
-                newPassword.setError("Password must be a combination of numbers, uppercase and lowercase letters and underscores( '_' )");
+                newPassword.setError("Password must be a combination of special and alphanumeric characters!");
                 hasError = true;
             }
             else if(!strNewPassword.isEmpty() && strNewPassword.equals(strOldPassword))
@@ -171,7 +171,7 @@ public class ChangePasswordDialogFragment extends BottomSheetDialogFragment
 
     private boolean passwordHasAlphaNumericsAndSpecialChars(String password)
     {
-        return (password.matches("[0-9a-zA-Z\\_\\@]+"));
+        return (password.matches("[0-9]+") && password.matches("[a-z]+") && password.matches("[A-Z]+") && password.matches("[\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\_\\+\\=]+"));
     }
 
     private void admin_changePassword(String oldPassword, String newPassword)
