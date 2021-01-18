@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    tools:context=".LoginActivity"
+    tools:context=".activity.LoginActivity"
     android:gravity="center">
 
     <RelativeLayout
@@ -65,6 +65,11 @@
                     android:id="@+id/doctor_login_ui"
                     android:visibility="gone"
                     layout="@layout/login_doctor"/>
+
+                <include
+                    android:id="@+id/admin_login_ui"
+                    android:visibility="gone"
+                    layout="@layout/login_admin"/>
 
                 <include
                     android:id="@+id/patient_register_ui"
@@ -192,6 +197,69 @@
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:fontFamily="@font/poppins_light"
                         android:text="@string/doctor_sign_in_text_2"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/separator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/gray_btn_bg_color"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".09"
+                        android:gravity="center"
+                        android:text="@string/or"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/gray_btn_bg_color"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/admin_prompt_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:visibility="visible"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"
+                        android:text="@string/admin_prompt_text"/>
+
+                    <TextView
+                        android:id="@+id/text_login_as_admin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="#16AA24"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:fontFamily="@font/poppins_light"
+                        android:text="@string/admin_sign_in_text"/>
 
                 </LinearLayout>
 

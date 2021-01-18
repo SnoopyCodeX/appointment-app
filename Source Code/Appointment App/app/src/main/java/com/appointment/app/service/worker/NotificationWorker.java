@@ -16,7 +16,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.appointment.app.R;
-import com.appointment.app.SplashActivity;
+import com.appointment.app.activity.SplashActivity;
 
 public class NotificationWorker extends Worker
 {

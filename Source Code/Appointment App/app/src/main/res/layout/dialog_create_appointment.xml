@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragment.dialog.PatientDialogFragment">
+    tools:context=".fragment.dialog.PatientCreateAppointmentDialogFragment">
 
     <com.google.android.material.circularreveal.cardview.CircularRevealCardView
         android:layout_width="match_parent"

@@ -11,7 +11,6 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +54,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 @SuppressWarnings("ALL")
-public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
+public class PatientEditAppointmentDialogFragment extends BottomSheetDialogFragment
 {
     private AppCompatSpinner medicalField;
     private AppCompatSpinner doctorName;
@@ -75,15 +74,15 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
 
     private int doctorId;
 
-    private PatientEditAppointmentFragment(AppointmentModel appointment, List<SpecialtyModel> medicalFields)
+    private PatientEditAppointmentDialogFragment(AppointmentModel appointment, List<SpecialtyModel> medicalFields)
     {
         this.appointment = appointment;
         this.medicalFields = medicalFields;
     }
 
-    public static PatientEditAppointmentFragment getInstance(AppointmentModel appointment, List<SpecialtyModel> medicalFields)
+    public static PatientEditAppointmentDialogFragment getInstance(AppointmentModel appointment, List<SpecialtyModel> medicalFields)
     {
-        return new PatientEditAppointmentFragment(appointment, medicalFields);
+        return new PatientEditAppointmentDialogFragment(appointment, medicalFields);
     }
 
     @Override
@@ -320,7 +319,7 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
             clone.add(Calendar.YEAR, clone.get(Calendar.YEAR) + 10);
             dpd.setMaxDate(clone);
 
-            dpd.show(getFragmentManager(), PatientEditAppointmentFragment.class.getSimpleName().toUpperCase());
+            dpd.show(getFragmentManager(), PatientEditAppointmentDialogFragment.class.getSimpleName().toUpperCase());
         });
 
         patientTime.setOnClickListener(view -> {
@@ -344,7 +343,7 @@ public class PatientEditAppointmentFragment extends BottomSheetDialogFragment
             tpd.setVersion(TimePickerDialog.Version.VERSION_2);
             tpd.setTitle("Pick time of appointment");
             tpd.enableSeconds(false);
-            tpd.show(getFragmentManager(), PatientEditAppointmentFragment.class.getSimpleName().toUpperCase());
+            tpd.show(getFragmentManager(), PatientEditAppointmentDialogFragment.class.getSimpleName().toUpperCase());
         });
 
         patientIdentity.setOnCheckedChangeListener((group, checkedId) -> {});

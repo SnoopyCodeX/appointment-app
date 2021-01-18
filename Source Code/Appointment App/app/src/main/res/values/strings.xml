@@ -82,4 +82,26 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_save">Save</string>
     <string name="admin_login_panel">Login as Admin</string>
+    <string name="template_doctor_name">Doctor\'s Name</string>
+    <string name="template_doctor_gender">Gender</string>
+    <string name="template_doctor_schedule">Schedule</string>
+    <string name="template_doctor_specialty">Specialty</string>
+    <string name="hint_doctor_full_name">Full Name</string>
+    <string name="hint_doctor_number">Contact Number</string>
+    <string name="hint_doctor_email_address">Email Address</string>
+    <string name="hint_doctor_room_number">Room Number</string>
+    <string name="hint_doctor_schedule">Schedule</string>
+    <string name="hint_doctor_time">Time</string>
+    <string name="hint_doctor_text_patient_gender">Gender</string>
+    <string name="hint_doctor_text_medical_field">Specialty</string>
+    <string name="text_title_edit_doctor">Edit Details</string>
+    <string name="cdata_no_doctors">No records to display.\nTo create one, just click the \'+\' button below.</string>
+    <string name="text_title_create_doctor">Create New Doctor</string>
+    <string name="or">OR</string>
+    <string name="admin_prompt_text">Are you an admin?</string>
+    <string name="admin_sign_in_text">Login here</string>
+    <string name="action_change_password">Change Password</string>
+    <string name="text_title_change_password">Change Password</string>
+    <string name="hint_old_password">Old Password</string>
+    <string name="hint_new_password">New Password</string>
 </resources>

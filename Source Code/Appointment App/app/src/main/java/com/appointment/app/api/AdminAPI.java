@@ -6,19 +6,27 @@ import com.appointment.app.model.ServerResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface AdminAPI
 {
     @POST("admin/login")
     Call<ServerResponse<AdminModel>> login(@Body AdminModel adminModel);
 
-    @POST("admin/doctor/new")
-    Call<ServerResponse<DoctorAPI>> newDoctor(@Body DoctorModel doctorModel);
+    @POST("admin/{adminId}/doctor/new")
+    Call<ServerResponse<DoctorModel>> newDoctor(@Path("adminId") int adminId, @Body DoctorModel doctorModel);
 
-    @POST("admin/doctor/delete")
-    Call<ServerResponse<DoctorAPI>> deleteDoctor(@Body DoctorModel doctorModel);
+    @POST("admin/{adminId]/doctor/{doctorId}/delete")
+    Call<ServerResponse<DoctorModel>> deleteDoctor(@Path("adminId") int adminId, @Path("doctorId") int doctorId);
 
-    @POST("admin/doctor/update")
-    Call<ServerResponse<DoctorAPI>> updateDoctor(@Body DoctorModel doctorModel);
+    @POST("admin/{adminId}/doctor/{doctorId}/update")
+    Call<ServerResponse<DoctorModel>> updateDoctor(@Path("adminId") int adminId, @Path("doctorId") int doctorId, @Body DoctorModel doctorModel);
+
+    @GET("admin/{adminId}/doctor")
+    Call<ServerResponse<DoctorModel>> getAllDoctors(@Path("adminId") int adminId);
+
+    @POST("admin/{adminId}/changePassword")
+    Call<ServerResponse<AdminModel>> changePassword(@Path("adminId") int adminId, @Body AdminModel adminModel);
 }

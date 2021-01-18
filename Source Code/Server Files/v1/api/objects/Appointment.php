@@ -1,5 +1,12 @@
 <?php
 
+namespace JRLC\DARP\objects;
+
+use JRLC\DARP\config\Database;
+use JRLC\DARP\objects\Patient;
+use JRLC\DARP\objects\Doctor;
+use JRLC\DARP\core\Security;
+
 /**
  * This class handles all the CRUD operations
  * for all of the appointments
@@ -16,9 +23,9 @@ class Appointment {
 
     private static string $table = 'appointments';
     private static object $result;
-    private static mysqli $conn;
+    private static \mysqli $conn;
 
-    private function __construct(mysqli $conn)
+    private function __construct(\mysqli $conn)
     {
         self::$conn = $conn;
         self::$result = ((object) []);
@@ -30,7 +37,7 @@ class Appointment {
      * @param mysqli $conn The connection to the database
      * @return object Appointment.class
      */
-    public static function init(mysqli $conn)
+    public static function init(\mysqli $conn)
     {
         return (new Appointment($conn));
     }

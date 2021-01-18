@@ -53,7 +53,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 @SuppressWarnings("ALL")
-public class PatientDialogFragment extends BottomSheetDialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener
+public class PatientCreateAppointmentDialogFragment extends BottomSheetDialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener
 {
     private AppCompatSpinner medicalFieldSelection;
     private AppCompatSpinner doctorSelection;
@@ -77,22 +77,22 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
     private ArrayAdapter<String> medicalFieldNamesAdapter;
     private ArrayAdapter<String> doctorNamesAdapter;
 
-    private PatientDialogFragment()
+    private PatientCreateAppointmentDialogFragment()
     {}
 
-    private PatientDialogFragment(String[] medicalNames)
+    private PatientCreateAppointmentDialogFragment(String[] medicalNames)
     {
         this.names = medicalNames;
     }
 
-    public static PatientDialogFragment getInstance()
+    public static PatientCreateAppointmentDialogFragment getInstance()
     {
-        return new PatientDialogFragment();
+        return new PatientCreateAppointmentDialogFragment();
     }
 
-    public static PatientDialogFragment getInstance(String[] medicalNames)
+    public static PatientCreateAppointmentDialogFragment getInstance(String[] medicalNames)
     {
-        return new PatientDialogFragment(medicalNames);
+        return new PatientCreateAppointmentDialogFragment(medicalNames);
     }
 
     @Override
@@ -177,7 +177,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                 }
                 else if(server != null && server.hasError)
                 {
-                    PatientDialogFragment.this.dismiss();
+                    PatientCreateAppointmentDialogFragment.this.dismiss();
                     Toasty.error(getContext(), server.message, Toasty.LENGTH_LONG).show();
                 }
                 else
@@ -358,7 +358,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         maxDate.add(Calendar.YEAR, year + 10);
         dpd.setMaxDate(maxDate);
 
-        dpd.show(getFragmentManager(), PatientDialogFragment.class.getSimpleName().toUpperCase());
+        dpd.show(getFragmentManager(), PatientCreateAppointmentDialogFragment.class.getSimpleName().toUpperCase());
     }
 
     private void showTimePicker()
@@ -381,7 +381,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
         tpd.setVersion(TimePickerDialog.Version.VERSION_2);
         tpd.setTitle("Pick appointment time");
         tpd.enableSeconds(false);
-        tpd.show(getFragmentManager(), PatientDialogFragment.class.getSimpleName().toUpperCase());
+        tpd.show(getFragmentManager(), PatientCreateAppointmentDialogFragment.class.getSimpleName().toUpperCase());
     }
 
     private void submitAppointment()
@@ -436,7 +436,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                 else
                     DialogUtil.errorDialog(getContext(), "Server Error", "Server failed to respond to your request", "Okay", false);
 
-                PatientDialogFragment.this.dismiss();
+                PatientCreateAppointmentDialogFragment.this.dismiss();
             }
 
             @Override
@@ -446,7 +446,7 @@ public class PatientDialogFragment extends BottomSheetDialogFragment implements 
                 DialogUtil.errorDialog(getContext(), "Server Error", t.getLocalizedMessage(), "Okay", false);
                 call.cancel();
 
-                PatientDialogFragment.this.dismiss();
+                PatientCreateAppointmentDialogFragment.this.dismiss();
             }
         });
     }

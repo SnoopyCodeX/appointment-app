@@ -1,0 +1,13 @@
+{
+    "name": "jrlc/darp",
+    "description": "Doctor appointment application",
+    "require": {
+        "phpmailer/phpmailer": "^6.2",
+        "paragraph1/php-fcm": "^0.7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "JRLC\\DARP\\": "api/"
+        }
+    }
+}

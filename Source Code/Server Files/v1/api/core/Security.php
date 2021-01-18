@@ -1,4 +1,8 @@
 <?php
+namespace JRLC\DARP\core;
+
+use JRLC\DARP\config\Database;
+use JRLC\DARP\core\Request;
 
 use Zend\Config\Config;
 use Zend\Config\Factory;

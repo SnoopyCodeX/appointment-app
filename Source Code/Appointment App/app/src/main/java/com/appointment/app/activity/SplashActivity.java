@@ -1,9 +1,12 @@
-package com.appointment.app;
+package com.appointment.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.appointment.app.R;
+import com.appointment.app.activity.LoginActivity;
 
 public class SplashActivity extends AppCompatActivity
 {

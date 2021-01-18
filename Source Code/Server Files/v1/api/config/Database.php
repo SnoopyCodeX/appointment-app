@@ -1,5 +1,6 @@
 <?php
 
+namespace JRLC\DARP\config;
 /**
  * This class holds the database configuration
  * such as host name, username, password and 
@@ -12,11 +13,11 @@
  * @see $host, $username, $password, $db_name  (Change their values if you have your own hosting)
  */
 class Database {
-    public static mysqli $conn;
+    public static \mysqli $conn;
 	
 	private function __construct()
 	{
-		self::$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+		self::$conn = new \mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 	}
 	
 	/**

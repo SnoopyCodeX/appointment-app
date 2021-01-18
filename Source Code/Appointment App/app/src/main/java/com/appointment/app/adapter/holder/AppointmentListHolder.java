@@ -20,7 +20,7 @@ import com.appointment.app.R;
 import com.appointment.app.api.DoctorAPI;
 import com.appointment.app.api.PatientAPI;
 import com.appointment.app.api.SpecialtyAPI;
-import com.appointment.app.fragment.dialog.PatientEditAppointmentFragment;
+import com.appointment.app.fragment.dialog.PatientEditAppointmentDialogFragment;
 import com.appointment.app.model.AppointmentModel;
 import com.appointment.app.model.ServerResponse;
 import com.appointment.app.model.SpecialtyModel;
@@ -81,7 +81,7 @@ public class AppointmentListHolder extends BaseListHolder implements DatePickerD
     private String selectedDate;
     private String selectedTime;
 
-    public AppointmentListHolder(@NonNull View itemView, List<AppointmentModel> items, @NonNull AppCompatActivity activity)
+    public AppointmentListHolder(@NonNull View itemView, @NonNull List<AppointmentModel> items, @NonNull AppCompatActivity activity)
     {
         super(itemView);
 
@@ -672,7 +672,19 @@ public class AppointmentListHolder extends BaseListHolder implements DatePickerD
     @RequiresPermission(allOf = {Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE})
     private void patientEditAppointment(final AppointmentModel appointment)
     {
-        DialogUtil.progressDialog(activity, "Loading details...", activity.getColor(R.color.successColor), false);
+        if(!InternetReceiver.isConnected(activity))
+        {
+            DialogUtil.warningDialog(activity, "Network Unavailable", "You are not connected to an active network", "Wifi Settings", "Cancel",
+                    dlg -> activity.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)),
+                    dlg -> {
+                        dlg.dismissWithAnimation();
+                        activity.finish();
+                    }, false);
+
+            return;
+        }
+
+        DialogUtil.progressDialog(activity, "Loading details...", activity.getColor(R.color.warningColor), false);
         SpecialtyAPI api = AppInstance.retrofit().create(SpecialtyAPI.class);
         Call<ServerResponse<SpecialtyModel>> call = api.fetchMedicalFields();
         call.enqueue(new Callback<ServerResponse<SpecialtyModel>>() {
@@ -683,7 +695,7 @@ public class AppointmentListHolder extends BaseListHolder implements DatePickerD
                 DialogUtil.dismissDialog();
 
                 if(server != null && !server.hasError)
-                    PatientEditAppointmentFragment.getInstance(appointment, server.data).show(activity.getSupportFragmentManager(), AppointmentListHolder.class.getSimpleName());
+                    PatientEditAppointmentDialogFragment.getInstance(appointment, server.data).show(activity.getSupportFragmentManager(), AppointmentListHolder.class.getSimpleName());
                 else if(server != null && server.hasError)
                     Toasty.error(activity, server.message, Toasty.LENGTH_LONG).show();
                 else

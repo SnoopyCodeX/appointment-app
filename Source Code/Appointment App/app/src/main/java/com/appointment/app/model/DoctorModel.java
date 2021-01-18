@@ -26,63 +26,81 @@ public class DoctorModel
     @Expose
     public String gender;
 
-    @SerializedName("age")
-    @Expose
-    public String age;
-
-    @SerializedName("address")
-    @Expose
-    public String address;
-
     @SerializedName("contact_number")
     @Expose
     public String contactNumber;
+
+    @SerializedName("email_address")
+    @Expose
+    public String emailAddress;
+
+    @SerializedName("room_number")
+    @Expose
+    public String roomNumber;
+
+    @SerializedName("password")
+    @Expose(deserialize = false)
+    public String password;
 
     @SerializedName("specialty")
     @Expose
     public String specialty;
 
     @SerializedName("time")
-    @Expose(serialize = false)
+    @Expose
     public String time;
 
     @SerializedName("schedule")
-    @Expose(serialize = false)
+    @Expose
     public String schedule;
+
+    @SerializedName("old_password")
+    @Expose(deserialize = false)
+    public String oldPassword;
+
+    @SerializedName("new_password")
+    @Expose(deserialize = false)
+    public String newPassword;
 
     private DoctorModel()
     {}
 
-    private DoctorModel(String fullname, String gender, String age, String address, String contactNumber, String specialty, String time)
+    private DoctorModel(String fullname, String password, String gender, String emailAddress, String contactNumber, String roomNumber, String specialty, String schedule, String time)
     {
         this.fullname = fullname;
         this.gender = gender;
-        this.age = age;
-        this.address = address;
         this.contactNumber = contactNumber;
+        this.emailAddress = emailAddress;
         this.time = time;
         this.specialty = specialty;
+        this.roomNumber = roomNumber;
+        this.password = password;
     }
 
-    private DoctorModel(String fullname, String specialty)
+    private DoctorModel(String fullname, String password)
     {
         this.fullname = fullname;
-        this.specialty = specialty;
-
-        this.gender = "";
-        this.age = "";
-        this.address = "";
-        this.time = "";
-        this.contactNumber = "";
+        this.password = password;
     }
 
-    public static DoctorModel newDoctor(String fullname, String gender, String age, String address, String contactNumber, String specialty, String time)
+    private DoctorModel(int stub, String oldPassword, String newPassword)
     {
-        return new DoctorModel(fullname, gender, age, address, contactNumber, specialty, time);
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
     }
 
-    public static DoctorModel loginModel(String fullname, String specialty)
+    public static DoctorModel loginModel(String fullname, String password)
     {
-        return new DoctorModel(fullname, specialty);
+        return new DoctorModel(fullname, password);
+    }
+
+    public static DoctorModel changePassword(int stub, String oldPassword, String newPassword)
+    {
+        return new DoctorModel(stub, oldPassword, newPassword);
+    }
+
+    public static DoctorModel newDoctor(String fullname, String password, String gender, String emailAddress, String contactNumber, String roomNumber, String specialty, String schedule, String time)
+    {
+        return new DoctorModel(fullname, password, gender, emailAddress, contactNumber, roomNumber, specialty, schedule, time);
     }
 }

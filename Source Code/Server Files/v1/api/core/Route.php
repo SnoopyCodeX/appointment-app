@@ -1,5 +1,5 @@
 <?php
-
+namespace JRLC\DARP\core;
 
 /**
  * Manages url routes based on assigned

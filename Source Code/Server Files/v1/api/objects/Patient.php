@@ -1,47 +1,48 @@
 <?php
 
+namespace JRLC\DARP\objects;
+
+use JRLC\DARP\config\Database;
+use JRLC\DARP\core\Security;
+
 /**
  * This class handles all the CRUD operations
- * for all of the doctor accounts
+ * for all of the patient accounts
  * 
  * @author John Roy L. Calimlim
  * @package /api/objects
  */
-class Doctor {
-    private static string $table = 'doctors';
+class Patient {
+    private static string $table = 'patients';
     private static object $result;
-    private static mysqli $conn;
+    private static \mysqli $conn;
 
-    private function __construct(mysqli $conn)
+    private function __construct(\mysqli $conn)
     {
         self::$conn = $conn;
         self::$result = ((object) ['message' => "", 'hasError' => false]);
     }
 
     /**
-     * Handles initiation of the Doctor class.
+     * Handles initiation of the Patient class.
      * 
      * @param mysqli $conn The connection to the database
-     * @return Doctor.class
+     * @return Patient.class
      */
-    public static function init(mysqli $conn)
+    public static function init(\mysqli $conn)
     {
-        return (new Doctor($conn));
+        return (new Patient($conn));
     }
 
     /**
-     * Checks the information of the doctor
+     * Gets the information of the patient
      * 
-     * @param int $id The id of the doctor (optional, default: -1 = means fetch all doctor account from the database)
+     * @param int $id The id of the patient (optional, default: -1 = means fetch all patient account from the database)
      * @return object $result A result object that contains the error message and data of the request
      */
     public static function get(int $id = -1)
     {
         $query = "SELECT * FROM " . self::$table;
-
-        // Empty the data from the result
-        if(isset(self::$result->data))
-            unset(self::$result->data);
 
         if($id > 0)
             $query .= " WHERE id=('$id')";
@@ -68,19 +69,15 @@ class Doctor {
     }
 
     /**
-     * Gets the information of the doctor
+     * Checks the information of the patient
      * 
-     * @param object $data The data of the doctor
+     * @param int $id The data of the patient
      * @return object $result A result object that contains the error message and data of the request
      */
     public static function check(object $data)
     {
-        $query = "SELECT * FROM " . self::$table . " WHERE fullname='" . $data->fullname . "' AND specialty='" . $data->specialty . "'";
+        $query = "SELECT * FROM " . self::$table . " WHERE email='" . $data->email . "'";
         $res = self::$conn->query($query);
-
-        // Empty the data from the result
-        if(isset(self::$result->data))
-            unset(self::$result->data);
 
         $data = Security::escapeData($data);
 
@@ -99,19 +96,15 @@ class Doctor {
     }
 
     /**
-     * Handles adding new Doctor account in the database
+     * Handles adding new Patient account in the database
      * 
-     * @param object $data The data of the new Doctor account
+     * @param object $data The data of the new Patient account
      * @return object $result A result object that contains the error message and data of the request
      */
     public static function add(object $data)
     {
         $query = "SELECT * FROM " . self::$table . " WHERE fullname=('" . $data->fullname . "') AND email=('" . $data->email . "')";
         $res = self::$conn->query($query);
-
-        // Empty the data from the result
-        if(isset(self::$result->data))
-            unset(self::$result->data);
 
         $data = Security::escapeData($data);
 
@@ -136,7 +129,7 @@ class Doctor {
         }
         else
         {
-            self::$result->message = $res ? "The name you entered appears to be already registered in the database" : self::$conn->error;
+            self::$result->message = $res ? "The name and email you entered appears to be already registered in the database" : self::$conn->error;
             self::$result->hasError = true;
         }
 
@@ -144,18 +137,14 @@ class Doctor {
     }
 
     /**
-     * Handles deletion of the doctor account from the database
+     * Handles deletion of the patient account from the database
      * 
-     * @param int $id The id of the doctor
+     * @param int $id The id of the patient
      * @return object $result A result object that contains the error message and data of the request
      */
     public static function delete(int $id)
     {
         $db = self::get($id);
-
-        // Empty the data from the result
-        if(isset(self::$result->data))
-            unset(self::$result->data);
 
         if(!$db->hasError && count($db->data) > 0)
         {
@@ -175,19 +164,15 @@ class Doctor {
     }
 
     /**
-     * Updates the information of the doctor
+     * Updates the information of the patient
      * 
-     * @param object $data The updated information of the doctor
-     * @param int $id The id of the doctor to be updated
+     * @param object $data The updated information of the patient
+     * @param int $id The id of the patient to be updated
      * @return object $result A result object that contains the error message and data of the request
      */
     public static function update(object $data, int $id)
     {
         $db = self::get($id);
-
-        // Empty the data from the result
-        if(isset(self::$result->data))
-            unset(self::$result->data);
 
         $data = Security::escapeData($data);
 

@@ -1,4 +1,5 @@
 <?php
+namespace JRLC\DARP\core;
 
 class FileUtil {
 	public function __construct()

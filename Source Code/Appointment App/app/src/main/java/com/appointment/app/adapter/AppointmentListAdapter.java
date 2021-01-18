@@ -46,7 +46,7 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<BaseListHolder>
     {
         if(this.items != null)
             this.items.addAll(items);
-        notifyItemRangeChanged(0, this.items.size());
+        notifyItemRangeChanged(0, this.items == null ? 0 : this.items.size());
     }
 
     public void removeAppointment(int position)

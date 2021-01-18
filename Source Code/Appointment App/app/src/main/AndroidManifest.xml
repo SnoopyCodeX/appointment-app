@@ -42,7 +42,7 @@
         <receiver android:name=".service.AlarmReceiver" android:process=":alarm_receiver"/>
 
         <activity
-            android:name=".SplashActivity"
+            android:name=".activity.SplashActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppointmentApplication.NoActionBar"
             tools:ignore="AllowBackup">
@@ -53,19 +53,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DoctorPanelActivity"
+            android:name=".activity.DoctorPanelActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppointmentApplication.NoActionBar"
             tools:ignore="AllowBackup" />
         <activity
-            android:name=".PatientPanelActivity"
+            android:name=".activity.PatientPanelActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppointmentApplication.NoActionBar"
             tools:ignore="AllowBackup" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.LoginActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppointmentApplication.NoActionBar"
+            tools:ignore="AllowBackup" />
+        <activity
+            android:name=".activity.AdminPanelActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppointmentApplication.NoActionBar"

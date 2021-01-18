@@ -1,6 +1,7 @@
-package com.appointment.app;
+package com.appointment.app.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +13,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.appointment.app.AppInstance;
+import com.appointment.app.R;
 import com.appointment.app.adapter.AppointmentListAdapter;
 import com.appointment.app.api.PatientAPI;
 import com.appointment.app.api.SpecialtyAPI;
-import com.appointment.app.fragment.dialog.PatientDialogFragment;
+import com.appointment.app.fragment.dialog.ChangePasswordDialogFragment;
+import com.appointment.app.fragment.dialog.PatientCreateAppointmentDialogFragment;
 import com.appointment.app.model.AppointmentModel;
 import com.appointment.app.model.ServerResponse;
 import com.appointment.app.model.SpecialtyModel;
@@ -104,6 +108,7 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
 
                     if(isConnected)
                     {
+                        refreshLayout.setRefreshing(true);
                         fetchAllAppointments();
                         AppInstance.getFCMToken(this);
                     }
@@ -136,33 +141,43 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        getMenuInflater().inflate(R.menu.menu_patient_doctor_panel, menu);
+        getMenuInflater().inflate(R.menu.menu_patient_doctor_admin_panel, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
     {
-        DialogUtil.warningDialog(this, "Confirm Log Out", "Do you really want to log out of this account?", "Yes", "No",
-                dlg -> {
-                    AppInstance.logoutFCMToken(this, ((message, success) -> {
-                        if(!success)
-                        {
-                            Toasty.error(this, message, Toasty.LENGTH_LONG).show();
-                            dlg.dismissWithAnimation();
-                            return;
-                        }
+        switch(item.getItemId())
+        {
+            case R.id.action_logout:
+                DialogUtil.warningDialog(this, "Confirm Log Out", "Do you really want to log out of this account?", "Yes", "No",
+                        dlg -> {
+                            AppInstance.logoutFCMToken(this, ((message, success) -> {
+                                if(!success)
+                                {
+                                    Toasty.error(this, message, Toasty.LENGTH_LONG).show();
+                                    dlg.dismissWithAnimation();
+                                    return;
+                                }
 
-                        PreferenceUtil.getPreference().edit().clear().apply();
-                        dlg.dismissWithAnimation();
-                        startActivity(new Intent(this, LoginActivity.class));
-                        finish();
-                    }));
-                },
-                SweetAlertDialog::dismissWithAnimation,
-                false);
+                                PreferenceUtil.getPreference().edit().clear().apply();
+                                dlg.dismissWithAnimation();
+                                startActivity(new Intent(this, LoginActivity.class));
+                                finish();
+                            }));
+                        },
+                        SweetAlertDialog::dismissWithAnimation,
+                        false);
+                return true;
 
-        return true;
+            case R.id.action_change_password:
+                changePassword();
+                return true;
+        }
+
+        return false;
     }
 
     @RequiresPermission(allOf = {Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE})
@@ -252,15 +267,15 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
 
     private void showCreateNewAppointmentModal(String[] medicalNames)
     {
-        PatientDialogFragment createFragmentDialog = PatientDialogFragment.getInstance(medicalNames);
-        createFragmentDialog.show(getSupportFragmentManager(), PatientDialogFragment.class.getSimpleName());
+        PatientCreateAppointmentDialogFragment createFragmentDialog = PatientCreateAppointmentDialogFragment.getInstance(medicalNames);
+        createFragmentDialog.show(getSupportFragmentManager(), PatientCreateAppointmentDialogFragment.class.getSimpleName());
         refreshLayout.setRefreshing(false);
     }
 
     @RequiresPermission(allOf = {Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE})
     private void setupMedicalFields()
     {
-        DialogUtil.progressDialog(this, "Fetching medical fields...", this.getResources().getColor(R.color.successColor), false);
+        DialogUtil.progressDialog(this, "Fetching medical fields...", this.getResources().getColor(R.color.warningColor), false);
         SpecialtyAPI api = AppInstance.retrofit().create(SpecialtyAPI.class);
         Call<ServerResponse<SpecialtyModel>> call = api.fetchMedicalFields();
         call.enqueue(new Callback<ServerResponse<SpecialtyModel>>() {
@@ -296,6 +311,28 @@ public class PatientPanelActivity extends AppCompatActivity implements WaveSwipe
                 call.cancel();
             }
         });
+    }
+
+    @RequiresPermission(allOf = {Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE})
+    private void changePassword()
+    {
+        if(!InternetReceiver.isConnected(this))
+        {
+            DialogUtil.warningDialog(this, "Network Unavailable", "You are not connected to an active network", "Wifi Settings", "Cancel",
+                    dlg -> startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)),
+                    dlg -> {
+                        dlg.dismissWithAnimation();
+                        PatientPanelActivity.this.finish();
+                    }, false);
+
+            refreshLayout.setRefreshing(false);
+            return;
+        }
+
+        ChangePasswordDialogFragment.getInstance()
+                .setOwnerId(PreferenceUtil.getInt("user_id", 0))
+                .setRole(ChangePasswordDialogFragment.Role.PATIENT)
+                .show(getSupportFragmentManager(), PatientPanelActivity.class.getName());
     }
 
     private BroadcastReceiver appointmentEventReceiver = new BroadcastReceiver()

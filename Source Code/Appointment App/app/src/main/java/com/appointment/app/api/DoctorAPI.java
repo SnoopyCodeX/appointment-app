@@ -41,4 +41,7 @@ public interface DoctorAPI
 
     @GET("doctor/{doctorId}/appointment/pending")
     Call<ServerResponse<AppointmentModel>> fetchPendingAppointments(@Path("doctorId") int doctorId);
+
+    @POST("doctor/{doctorId}/changePassword")
+    Call<ServerResponse<DoctorModel>> changePassword(@Path("doctorId") int doctorId, @Body DoctorModel doctorModel);
 }

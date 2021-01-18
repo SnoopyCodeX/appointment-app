@@ -32,14 +32,14 @@
             android:gravity="center"/>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_login_doctor_fullname"
+            android:id="@+id/input_login_doctor_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
-            android:hint="@string/hint_fullname"
+            android:hint="@string/hint_email_address"
             android:fontFamily="@font/roboto_regular"
             app:errorEnabled="true"
             app:boxCornerRadiusBottomEnd="8dp"
@@ -55,29 +55,28 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_light"
                 android:padding="10dp"
-                android:inputType="text"
+                android:inputType="textEmailAddress"
                 android:singleLine="true"
                 android:imeOptions="actionNext"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_login_doctor_specialty"
+            android:id="@+id/input_login_doctor_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
-            android:hint="@string/hint_specialty"
+            android:hint="@string/hint_password"
             android:fontFamily="@font/roboto_regular"
             app:errorEnabled="true"
             app:boxCornerRadiusBottomEnd="8dp"
             app:boxCornerRadiusTopEnd="8dp"
             app:boxCornerRadiusBottomStart="8dp"
             app:boxCornerRadiusTopStart="8dp"
-            app:endIconMode="custom"
-            app:endIconDrawable="@android:drawable/ic_lock_lock"
+            app:endIconMode="password_toggle"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -85,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_light"
                 android:padding="10dp"
-                android:inputType="text"
+                android:inputType="textPassword"
                 android:singleLine="true"
                 android:imeOptions="actionNext"/>
 

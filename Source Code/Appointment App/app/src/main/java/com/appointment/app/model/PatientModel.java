@@ -47,6 +47,14 @@ public class PatientModel
     @Expose(deserialize = false)
     public String password;
 
+    @SerializedName("old_password")
+    @Expose(deserialize = false)
+    public String oldPassword;
+
+    @SerializedName("new_password")
+    @Expose(deserialize = false)
+    public String newPassword;
+
     private PatientModel()
     {}
 
@@ -72,6 +80,12 @@ public class PatientModel
         this.contactNumber = "";
     }
 
+    private PatientModel(int stub, String oldPassword, String newPassword)
+    {
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
+    }
+
     public static PatientModel newPatient(String fullname, String gender, String age, String address, String contactNumber, String email, String password)
     {
         return new PatientModel(fullname, gender, age, address, contactNumber, email, password);
@@ -80,5 +94,10 @@ public class PatientModel
     public static PatientModel loginModel(String email, String password)
     {
         return new PatientModel(email, password);
+    }
+
+    public static PatientModel changePassword(int stub, String oldPassword, String newPassword)
+    {
+        return new PatientModel(stub, oldPassword, newPassword);
     }
 }

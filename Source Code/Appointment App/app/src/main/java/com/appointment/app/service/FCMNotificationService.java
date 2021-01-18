@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.appointment.app.R;
-import com.appointment.app.SplashActivity;
+import com.appointment.app.activity.SplashActivity;
 import com.appointment.app.util.Constants;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;

@@ -1,11 +1,28 @@
 <?php
-require_once('api/autoload.php');
 require_once('vendor/autoload.php');
+
+use \JRLC\DARP\config\Config;
+use \JRLC\DARP\config\Database;
+use \JRLC\DARP\core\Route;
+use \JRLC\DARP\core\Security;
+use \JRLC\DARP\core\PHPMailer;
+
+use \JRLC\DARP\objects\Admin;
+use \JRLC\DARP\objects\Appointment;
+use \JRLC\DARP\objects\Doctor;
+use \JRLC\DARP\objects\Patient;
 
 use paragraph1\phpFCM\Client;
 use paragraph1\phpFCM\Message;
 use paragraph1\phpFCM\Recipient\Device;
 use paragraph1\phpFCM\Notification;
+
+Config::init();
+Database::init();
+Admin::init(Database::$conn);
+Doctor::init(Database::$conn);
+Patient::init(Database::$conn);
+Appointment::init(Database::$conn);
 
 /****************************
  * START PUSH NOTIFICATIONS *
@@ -26,7 +43,7 @@ Route::add('/fcm/([0-9]+)/token', function(int $userId) {
 
     if($db->hasError || count($db->data) <= 0)
         $db = Doctor::get($userId);
-
+    
     if(!$db->hasError && count($db->data) > 0)
     {
         $query = "SELECT * FROM fcm_users WHERE owner='$userId'";
@@ -84,16 +101,24 @@ Route::add('/fcm/([0-9]+)/logout', function(int $userId) {
         echo json_encode($response);
         return;
     }
-
+    
     echo json_encode($db);
 }, 'POST');
 
-Route::add('/fcm/debug/([0-9]+)/notify', function(int $userId) {
+Route::add('/debug/fcm/([0-9]+)/notify', function(int $userId) {
     $data = file_get_contents("php://input");
     $data = json_decode($data);
     $data = Security::escapeData($data);
 
     echo json_encode(['success' => notify($userId, $data->title, $data->body, $data->data)]);
+}, 'POST');
+
+Route::add('/debug/phpmailer/send', function() {
+    $data = file_get_contents("php://input");
+    $data = json_decode($data);
+    $data = Security::escapeData($data);
+
+    echo json_encode(['success' => PHPMailer::sendMail($data->to, $data->subject, $data->message, $data->from, $data->isHtml)]);
 }, 'POST');
 
 /**
@@ -331,6 +356,28 @@ Route::add('/patient/([0-9]+)/appointment', function(int $patientId) {
     echo json_encode($result);
 }, 'GET');
 
+Route::add('/patient/([0-9]+)/changePassword', function(int $patientId) {
+    $data = file_get_contents("php://input");
+    $data = json_decode($data);
+    $result = Patient::get($patientId);
+    
+    if(!$result->hasError)
+    {
+        $oldPassword = $data->old_password;
+        $newPassword = password_hash($data->new_password, PASSWORD_BCRYPT);
+
+        if(password_verify($oldPassword, $result->data[0]['password']))
+            $result = Patient::update((object) ['password' => $newPassword], $patientId);
+        else
+        {
+            $result->message = "The old password you entered is incorrect, please try again.";
+            $result->hasError = true;
+        }
+    }
+
+    echo json_encode($result);
+}, 'POST');
+
 /**********************
  * END PATIENT ROUTES *
  **********************/
@@ -363,19 +410,19 @@ Route::add('/doctor/login', function() {
     
     if(!$result->hasError && count($result->data) > 0)
     {
-        $specialty = $data->specialty;
+        $password = $data->password;
         
-        if($specialty ==  ((object) $result->data[0])->specialty)
+        if(password_verify($password, $result->data['password']))
             $result->hasError = false;
         else
         {
-            $result->message = 'The specialty you entered is incorrect';
+            $result->message = 'The password you entered is incorrect';
             $result->hasError = true;
         }
     }
     else
     {
-        $result->message = 'The name you entered is not registered in our database';
+        $result->message = 'The email you entered is not registered in our database';
         $result->hasError = true;
     }
 
@@ -549,6 +596,28 @@ Route::add('/doctor/([0-9]+)/appointment/pending', function(int $doctorId) {
     echo json_encode($result);
 }, 'GET');
 
+Route::add('/doctor/([0-9]+)/changePassword', function(int $doctorId) {
+    $data = file_get_contents("php://input");
+    $data = json_decode($data);
+    $result = Doctor::get($doctorId);
+    
+    if(!$result->hasError)
+    {
+        $oldPassword = $data->old_password;
+        $newPassword = password_hash($data->new_password, PASSWORD_BCRYPT);
+
+        if(password_verify($oldPassword, $result->data[0]['password']))
+            $result = Doctor::update((object) ['password' => $newPassword], $doctorId);
+        else
+        {
+            $result->message = "The old password you entered is incorrect, please try again.";
+            $result->hasError = true;
+        }
+    }
+
+    echo json_encode($result);
+}, 'POST');
+
 /*********************
  * END DOCTOR ROUTES *
  *********************/
@@ -559,7 +628,125 @@ Route::add('/doctor/([0-9]+)/appointment/pending', function(int $doctorId) {
  * START ADMIN ROUTES *
  **********************/
 
+Route::add('/admin/login', function() {
+    $data = file_get_contents("php://input");
+    $data = json_decode($data);
+    $check = Admin::check((object) ["email_address" => $data->email_address]);
+    
+    if(!$check->hasError)
+    {
+        if(password_verify($data->password, $check->data[0]['password']))
+            $check->hasError = false;
+        else
+        {
+            if(isset($check->data))
+                unset($check->data);
 
+            $check->message = "The password you entered is incorrect, please try again.";
+            $check->hasError = true;
+        }
+    }
+    else
+    {
+        if(isset($check->data))
+            unset($check->data);
+
+        $check->message = "The email address you entered does not exist in the database!";
+        $check->hasError = true;
+    }
+
+    echo json_encode($check);
+}, 'POST');
+
+Route::add('/admin/([0-9]+)/changePassword', function(int $adminId) {
+    $data = file_get_contents("php://input");
+    $data = json_decode($data);
+    $result = Admin::get($adminId);
+    
+    if(!$result->hasError)
+    {
+        $oldPassword = $data->old_password;
+        $newPassword = password_hash($data->new_password, PASSWORD_BCRYPT);
+
+        if(password_verify($oldPassword, $result->data[0]['password']))
+            $result = Admin::update($adminId, (object) ['password' => $newPassword]);
+        else
+        {
+            $result->message = "The old password you entered is incorrect, please try again.";
+            $result->hasError = true;
+        }
+    }
+
+    echo json_encode($result);
+}, 'POST');
+
+Route::add('/admin/([0-9]+)/doctor/new', function(int $adminId) {
+    $data = file_get_contents("php://input");
+    $data = json_decode($data);
+    $result = Admin::get($adminId);
+
+    if(!$result->hasError)
+    {
+        $password = uniqid('darp_');
+        $result = Doctor::add($data);
+
+        if(!$result->hasError)
+            $result = (object) [
+                'hasError' => PHPMailer::sendMail(
+                    $data->email_address,
+                    "Account Registration",
+                    "<html lang='en'>
+                        <head>
+                            <meta charset='utf-8'/>
+                            <meta name='viewport' content='width=display-width, initial-scale=1.0'/>
+                            <title>Account Registration</title>
+                        </head>
+                        <body>
+                            <p> <strong>IMPORTANT: </strong> <span style='color: red;'>Don't share your password with anyone!</span> </p>
+                            <p> <strong>Password: </strong> {$password}</p>
+                            <p> You can change your password later when you log in on the app. </p>
+                        </body>
+                    </html>",
+                    "admin@us-imm-node1b.000webhost.io",
+                    true
+                ), 
+                'message' => PHPMailer::$success ? "Successfully sent doctor's password to his/her email address" : "We have failed to send doctor's generated password to his/her email address."
+            ];
+        else
+            $result->message = "Failed to create another account, try again later.\n\nCause: " . !isset(Database::$conn->error) ? $result->message : Database::$conn->error;
+    }
+
+    echo json_encode($result);
+ }, 'POST');
+
+ Route::add('/admin/([0-9]+)/doctor/([0-9+])/delete', function(int $adminId, int $doctorId) {
+    $result = Admin::get($adminId);
+
+    if(!$result->hasError)
+        $result = Doctor::delete($doctorId);
+    
+    echo json_encode($result);
+ }, 'POST');
+
+ Route::add('/admin/([0-9]+)/doctor/([0-9]+)/update', function(int $adminId, int $doctorId) {
+    $data = file_get_contents("php://input");
+    $data = json_decode($data);
+    $result = Admin::get($adminId);
+
+    if(!$result->hasError)
+        $result = Doctor::update($data, $doctorId);
+    
+    echo json_encode($result);
+ }, 'POST');
+
+ Route::add('/admin/([0-9]+)/doctor', function(int $adminId) {
+    $result = Admin::get($adminId);
+
+    if(!$result->hasError)
+        $result = Doctor::get();
+
+    echo json_encode($result);
+ }, 'GET');
  
 /********************
  * END ADMIN ROUTES *

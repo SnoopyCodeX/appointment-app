@@ -47,4 +47,7 @@ public interface PatientAPI
 
     @GET("patient/{patientId}/appointment")
     Call<ServerResponse<AppointmentModel>> fetchAllAppointments(@Path("patientId") int patientId);
+
+    @POST("patient/{patientId}/changePassword")
+    Call<ServerResponse<PatientModel>> changePassword(@Path("patientId") int patientId, @Body PatientModel patientModel);
 }

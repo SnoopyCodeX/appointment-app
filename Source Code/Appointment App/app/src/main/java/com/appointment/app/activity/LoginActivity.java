@@ -1,4 +1,4 @@
-package com.appointment.app;
+package com.appointment.app.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,13 +9,18 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.appointment.app.AppInstance;
+import com.appointment.app.R;
+import com.appointment.app.api.AdminAPI;
 import com.appointment.app.api.DoctorAPI;
 import com.appointment.app.api.PatientAPI;
+import com.appointment.app.model.AdminModel;
 import com.appointment.app.model.DoctorModel;
 import com.appointment.app.model.PatientModel;
 import com.appointment.app.model.ServerResponse;
@@ -39,7 +44,8 @@ public class LoginActivity extends AppCompatActivity
     {
         TYPE_PATIENT_SIGNIN(0),
         TYPE_PATIENT_SIGNUP(1),
-        TYPE_DOCTOR_SIGNIN(2);
+        TYPE_DOCTOR_SIGNIN(2),
+        TYPE_ADMIN_SIGNIN(3);
 
         private int value;
         PanelType(int value)
@@ -57,31 +63,42 @@ public class LoginActivity extends AppCompatActivity
     private MaterialRippleLayout btn_patient_login;
     private MaterialRippleLayout btn_patient_register;
     private MaterialRippleLayout btn_doctor_login;
+    private MaterialRippleLayout btn_admin_login;
 
     // Bottom text prompts
     private TextView textSignInAsPatientPrompt; // Already have an account? Login here  -> From: Patient Register Panel
     private TextView textSignUpAsPatientPrompt; // Not registered yet? Register here  -> From: Patient Login Panel
     private TextView textSignInAsDoctorPrompt; // Are you a doctor? Login here  -> From: Patient Login &/Or Register Panel
+    private TextView textSignInAsAdminPrompt; // Are you an admin? Login here -> From: Any login panel
     private TextView textSignInPrompt; // Not a doctor? Login here  -> From: Doctor Login Panel
 
     // Bottom text prompt parent layouts
     private LinearLayout parentSignInAsPatientPrompt; // Already have an account? Login here  -> From: Patient Register Panel
     private LinearLayout parentSignUpAsPatientPrompt; // Not registered yet? Register here  -> From: Patient Login Panel
     private LinearLayout parentSignInAsDoctorPrompt; // Are you a doctor? Login here  -> From: Patient Login &/Or Register Panel
+    private LinearLayout parentSignInAsAdminPrompt; // Are you an admin? Login here  -> From: Any login panel
     private LinearLayout parentSignInPrompt; // Not a doctor? Login here  -> From: Doctor Login Panel
+
+    // Separator
+    private LinearLayout parentSeparator;
 
     // Patient & Doctor Panels
     private MaterialCardView patientLoginPanel;
     private MaterialCardView patientRegisterPanel;
     private MaterialCardView doctorLoginPanel;
+    private MaterialCardView adminLoginPanel;
 
     // Patient Login Inputs
     private TextInputLayout patientLoginEmail;
     private TextInputLayout patientLoginPassword;
 
     // Doctor Login Inputs
-    private TextInputLayout doctorLoginFullname;
-    private TextInputLayout doctorLoginSpecialty;
+    private TextInputLayout doctorLoginEmail;
+    private TextInputLayout doctorLoginPassword;
+
+    // Admin Login Inputs
+    private TextInputLayout adminLoginEmail;
+    private TextInputLayout adminLoginPassword;
 
     // Patient Register Inputs
     private TextInputLayout patientRegisterFullname;
@@ -104,17 +121,23 @@ public class LoginActivity extends AppCompatActivity
         textSignInAsPatientPrompt = findViewById(R.id.text_patient_login_prompt);
         textSignUpAsPatientPrompt = findViewById(R.id.text_patient_register_prompt);
         textSignInAsDoctorPrompt = findViewById(R.id.text_login_as_doctor);
+        textSignInAsAdminPrompt = findViewById(R.id.text_login_as_admin);
         textSignInPrompt = findViewById(R.id.text_login_as_patient);
 
         parentSignInAsPatientPrompt = findViewById(R.id.patient_sign_up_text);
         parentSignUpAsPatientPrompt = findViewById(R.id.patient_sign_in_text);
         parentSignInAsDoctorPrompt = findViewById(R.id.doctor_prompt_text);
+        parentSignInAsAdminPrompt = findViewById(R.id.admin_prompt_text);
         parentSignInPrompt = findViewById(R.id.doctor_sign_in_text);
+
+        parentSeparator = findViewById(R.id.separator);
 
         patientLoginPanel = findViewById(R.id.patient_login_ui);
         patientRegisterPanel = findViewById(R.id.patient_register_ui);
         doctorLoginPanel = findViewById(R.id.doctor_login_ui);
+        adminLoginPanel = findViewById(R.id.admin_login_ui);
 
+        btn_admin_login = findViewById(R.id.btn_login_admin);
         btn_doctor_login = findViewById(R.id.btn_login_doctor);
         btn_patient_login = findViewById(R.id.btn_login_patient);
         btn_patient_register = findViewById(R.id.btn_register_patient);
@@ -122,8 +145,11 @@ public class LoginActivity extends AppCompatActivity
         patientLoginEmail = findViewById(R.id.input_login_patient_email);
         patientLoginPassword = findViewById(R.id.input_login_patient_password);
 
-        doctorLoginFullname = findViewById(R.id.input_login_doctor_fullname);
-        doctorLoginSpecialty = findViewById(R.id.input_login_doctor_specialty);
+        doctorLoginEmail = findViewById(R.id.input_login_doctor_email);
+        doctorLoginPassword = findViewById(R.id.input_login_doctor_password);
+
+        adminLoginEmail = findViewById(R.id.input_login_admin_email);
+        adminLoginPassword = findViewById(R.id.input_login_admin_password);
 
         patientRegisterFullname = findViewById(R.id.input_register_patient_fullname);
         patientRegisterEmail = findViewById(R.id.input_register_patient_email);
@@ -147,6 +173,10 @@ public class LoginActivity extends AppCompatActivity
                 case TYPE_DOCTOR_SIGNIN:
                     signInAsDoctor();
                     break;
+
+                case TYPE_ADMIN_SIGNIN:
+                    signInAsAdmin();
+                    break;
             }
         });
 
@@ -164,6 +194,10 @@ public class LoginActivity extends AppCompatActivity
                 case TYPE_DOCTOR_SIGNIN:
                     signInAsDoctor();
                     break;
+
+                case TYPE_ADMIN_SIGNIN:
+                    signInAsAdmin();
+                    break;
             }
         });
 
@@ -180,6 +214,31 @@ public class LoginActivity extends AppCompatActivity
 
                 case TYPE_DOCTOR_SIGNIN:
                     signInAsDoctor();
+                    break;
+
+                case TYPE_ADMIN_SIGNIN:
+                    signInAsAdmin();
+                    break;
+            }
+        });
+
+        btn_admin_login.setOnClickListener(v -> {
+            switch(panelType)
+            {
+                case TYPE_PATIENT_SIGNIN:
+                    signInAsPatient();
+                    break;
+
+                case TYPE_PATIENT_SIGNUP:
+                    signUpAsPatient();
+                    break;
+
+                case TYPE_DOCTOR_SIGNIN:
+                    signInAsDoctor();
+                    break;
+
+                case TYPE_ADMIN_SIGNIN:
+                    signInAsAdmin();
                     break;
             }
         });
@@ -200,9 +259,14 @@ public class LoginActivity extends AppCompatActivity
             showPatientSignIn();
         });
 
+        textSignInAsAdminPrompt.setOnClickListener(v -> {
+            showAdminSignIn();
+        });
+
         hookEditorAction(patientRegisterPanel.getChildAt(0));
         hookEditorAction(patientLoginPanel.getChildAt(0));
         hookEditorAction(doctorLoginPanel.getChildAt(0));
+        hookEditorAction(adminLoginPanel.getChildAt(0));
     }
 
     @Override
@@ -234,6 +298,8 @@ public class LoginActivity extends AppCompatActivity
             activityClass = PatientPanelActivity.class;
         else if(isLoggedIn && panelType == PanelType.TYPE_DOCTOR_SIGNIN.value)
             activityClass = DoctorPanelActivity.class;
+        else if(isLoggedIn && panelType == PanelType.TYPE_ADMIN_SIGNIN.value)
+            activityClass = AdminPanelActivity.class;
 
         if(activityClass != null)
         {
@@ -264,7 +330,7 @@ public class LoginActivity extends AppCompatActivity
             return;
         }
 
-        if(email.isEmpty() || !email.matches("([a-zA-Z0-9\\-\\_\\.\\@]+)$"))
+        if(email.isEmpty() || !email.matches(Patterns.EMAIL_ADDRESS.pattern()))
             patientLoginEmail.setError("Please enter a valid email address");
         else if(password.isEmpty() || password.length() < 8)
             patientLoginPassword.setError("Please enter a valid password");
@@ -279,6 +345,7 @@ public class LoginActivity extends AppCompatActivity
                 {
                     DialogUtil.dismissDialog();
                     ServerResponse<PatientModel> server = response.body();
+                    call.cancel();
 
                     if(!call.isCanceled())
                         call.cancel();
@@ -296,8 +363,6 @@ public class LoginActivity extends AppCompatActivity
                         PreferenceUtil.putInt("user_id", server.data.get(0).id);
                         LoginActivity.this.finish();
                     }
-
-                    call.cancel();
                 }
 
                 @Override
@@ -314,8 +379,8 @@ public class LoginActivity extends AppCompatActivity
 
     private void signInAsDoctor()
     {
-        String fullname = doctorLoginFullname.getEditText().getText().toString();
-        String specialty = doctorLoginSpecialty.getEditText().getText().toString();
+        String email = doctorLoginEmail.getEditText().getText().toString();
+        String password = doctorLoginPassword.getEditText().getText().toString();
 
         if(!InternetReceiver.isConnected(this))
         {
@@ -326,21 +391,22 @@ public class LoginActivity extends AppCompatActivity
             return;
         }
 
-        if(fullname.isEmpty() || fullname.length() < 4)
-            doctorLoginFullname.setError("Please enter a valid fullname");
-        else if(specialty.isEmpty() || !specialty.matches("([a-zA-Z0-9\\-\\s]+)$"))
-            doctorLoginSpecialty.setError("Please enter a valid specialty, eg: Neurologist, etc.");
+        if(email.isEmpty() || !email.matches(Patterns.EMAIL_ADDRESS.pattern()))
+            doctorLoginEmail.setError("Please enter a valid email address");
+        else if(password.isEmpty() || password.length() < 8)
+            doctorLoginPassword.setError("Password must be atleast 8 characters long!");
         else
         {
             DialogUtil.progressDialog(this, "Logging in...", Color.parseColor("#11A31F"), false);
             DoctorAPI api = AppInstance.retrofit().create(DoctorAPI.class);
-            Call<ServerResponse<DoctorModel>> call = api.login(DoctorModel.loginModel(fullname, specialty));
+            Call<ServerResponse<DoctorModel>> call = api.login(DoctorModel.loginModel(email, password));
             call.enqueue(new Callback<ServerResponse<DoctorModel>>() {
                 @Override
                 public void onResponse(Call<ServerResponse<DoctorModel>> call, Response<ServerResponse<DoctorModel>> response)
                 {
                     DialogUtil.dismissDialog();
                     ServerResponse<DoctorModel> server = response.body();
+                    call.cancel();
 
                     if(server != null && server.hasError)
                         DialogUtil.errorDialog(LoginActivity.this, "Login Failed", server.message,"Okay",  false);
@@ -355,8 +421,6 @@ public class LoginActivity extends AppCompatActivity
                         PreferenceUtil.putInt("user_id", server.data.get(0).id);
                         LoginActivity.this.finish();
                     }
-
-                    call.cancel();
                 }
 
                 @Override
@@ -364,7 +428,63 @@ public class LoginActivity extends AppCompatActivity
                 {
                     DialogUtil.dismissDialog();
                     DialogUtil.errorDialog(LoginActivity.this, "Server Error", t.getMessage(), "Okay", false);
+                    call.cancel();
+                }
+            });
+        }
+    }
 
+    private void signInAsAdmin()
+    {
+        String email = adminLoginEmail.getEditText().getText().toString();
+        String password = adminLoginPassword.getEditText().getText().toString();
+
+        if(!InternetReceiver.isConnected(this))
+        {
+            DialogUtil.warningDialog(this, "Disconnected", "You are not connected to an active network", "Wifi Settings", dlg -> {
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+            }, false);
+
+            return;
+        }
+
+        if(email.isEmpty() || !email.matches(Patterns.EMAIL_ADDRESS.pattern()))
+            adminLoginEmail.setError("Please enter a valid email address");
+        else if(password.isEmpty() || password.length() < 8)
+            adminLoginPassword.setError("Password must be atleast 8 characters long!");
+        else
+        {
+            DialogUtil.progressDialog(this, "Logging in...", Color.parseColor("#11A31F"), false);
+            AdminAPI api = AppInstance.retrofit().create(AdminAPI.class);
+            Call<ServerResponse<AdminModel>> call = api.login(AdminModel.authenticate(email, password));
+            call.enqueue(new Callback<ServerResponse<AdminModel>>() {
+                @Override
+                public void onResponse(Call<ServerResponse<AdminModel>> call, Response<ServerResponse<AdminModel>> response)
+                {
+                    DialogUtil.dismissDialog();
+                    ServerResponse<AdminModel> server = response.body();
+                    call.cancel();
+
+                    if(server != null && server.hasError)
+                        DialogUtil.errorDialog(LoginActivity.this, "Login Failed", server.message,"Okay",  false);
+                    else if(server == null)
+                        DialogUtil.errorDialog(LoginActivity.this, "Login Failed", "The server did not responded to your login request","Okay",  false);
+                    else if(server != null && !server.hasError)
+                    {
+                        startActivity(new Intent(LoginActivity.this, AdminPanelActivity.class));
+                        PreferenceUtil.putBoolean(Constants.PREF_KEY_LOGGED_IN, true);
+                        PreferenceUtil.putInt(Constants.PREF_KEY_PANEL_TYPE, panelType.value);
+                        PreferenceUtil.putString("user_name", server.data.get(0).emailAddress);
+                        PreferenceUtil.putInt("user_id", server.data.get(0).id);
+                        LoginActivity.this.finish();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ServerResponse<AdminModel>> call, Throwable t)
+                {
+                    DialogUtil.dismissDialog();
+                    DialogUtil.errorDialog(LoginActivity.this, "Server Error", t.getMessage(), "Okay", false);
                     call.cancel();
                 }
             });
@@ -447,7 +567,10 @@ public class LoginActivity extends AppCompatActivity
         patientLoginPanel.setVisibility(View.VISIBLE);
         patientRegisterPanel.setVisibility(View.GONE);
         doctorLoginPanel.setVisibility(View.GONE);
+        adminLoginPanel.setVisibility(View.GONE);
 
+        parentSeparator.setVisibility(View.VISIBLE);
+        parentSignInAsAdminPrompt.setVisibility(View.VISIBLE);
         parentSignUpAsPatientPrompt.setVisibility(View.VISIBLE);
         parentSignInAsDoctorPrompt.setVisibility(View.VISIBLE);
         parentSignInAsPatientPrompt.setVisibility(View.GONE);
@@ -457,6 +580,7 @@ public class LoginActivity extends AppCompatActivity
 
         clearEditTexts(patientRegisterPanel.getChildAt(0));
         clearEditTexts(doctorLoginPanel.getChildAt(0));
+        clearEditTexts(adminLoginPanel.getChildAt(0));
     }
 
     private void showPatientSignUp()
@@ -464,7 +588,10 @@ public class LoginActivity extends AppCompatActivity
         patientRegisterPanel.setVisibility(View.VISIBLE);
         patientLoginPanel.setVisibility(View.GONE);
         doctorLoginPanel.setVisibility(View.GONE);
+        adminLoginPanel.setVisibility(View.GONE);
 
+        parentSeparator.setVisibility(View.VISIBLE);
+        parentSignInAsAdminPrompt.setVisibility(View.VISIBLE);
         parentSignInAsPatientPrompt.setVisibility(View.VISIBLE);
         parentSignInAsDoctorPrompt.setVisibility(View.VISIBLE);
         parentSignUpAsPatientPrompt.setVisibility(View.GONE);
@@ -474,6 +601,7 @@ public class LoginActivity extends AppCompatActivity
 
         clearEditTexts(patientLoginPanel.getChildAt(0));
         clearEditTexts(doctorLoginPanel.getChildAt(0));
+        clearEditTexts(adminLoginPanel.getChildAt(0));
     }
 
     private void showDoctorSignIn()
@@ -481,7 +609,10 @@ public class LoginActivity extends AppCompatActivity
         doctorLoginPanel.setVisibility(View.VISIBLE);
         patientRegisterPanel.setVisibility(View.GONE);
         patientLoginPanel.setVisibility(View.GONE);
+        adminLoginPanel.setVisibility(View.GONE);
 
+        parentSeparator.setVisibility(View.VISIBLE);
+        parentSignInAsAdminPrompt.setVisibility(View.VISIBLE);
         parentSignInPrompt.setVisibility(View.VISIBLE);
         parentSignInAsDoctorPrompt.setVisibility(View.GONE);
         parentSignUpAsPatientPrompt.setVisibility(View.GONE);
@@ -491,6 +622,28 @@ public class LoginActivity extends AppCompatActivity
 
         clearEditTexts(patientRegisterPanel.getChildAt(0));
         clearEditTexts(patientLoginPanel.getChildAt(0));
+        clearEditTexts(adminLoginPanel.getChildAt(0));
+    }
+
+    private void showAdminSignIn()
+    {
+        doctorLoginPanel.setVisibility(View.GONE);
+        patientRegisterPanel.setVisibility(View.GONE);
+        patientLoginPanel.setVisibility(View.GONE);
+        adminLoginPanel.setVisibility(View.VISIBLE);
+
+        parentSeparator.setVisibility(View.GONE);
+        parentSignInAsAdminPrompt.setVisibility(View.GONE);
+        parentSignInPrompt.setVisibility(View.GONE);
+        parentSignInAsDoctorPrompt.setVisibility(View.VISIBLE);
+        parentSignUpAsPatientPrompt.setVisibility(View.GONE);
+        parentSignInAsPatientPrompt.setVisibility(View.GONE);
+
+        panelType = PanelType.TYPE_ADMIN_SIGNIN;
+
+        clearEditTexts(patientRegisterPanel.getChildAt(0));
+        clearEditTexts(patientLoginPanel.getChildAt(0));
+        clearEditTexts(doctorLoginPanel.getChildAt(0));
     }
 
     private void clearEditTexts(View parent)
@@ -519,7 +672,8 @@ public class LoginActivity extends AppCompatActivity
             {
                 if(((TextInputLayout) child).getId() == R.id.input_login_patient_password ||
                         ((TextInputLayout) child).getId() == R.id.input_register_patient_password ||
-                        ((TextInputLayout) child).getId() == R.id.input_login_doctor_specialty)
+                        ((TextInputLayout) child).getId() == R.id.input_login_doctor_password ||
+                        ((TextInputLayout) child).getId() == R.id.input_login_admin_password)
                     ((TextInputLayout) child).getEditText().setOnEditorActionListener((textView, id, keyEvent) -> {
                         switch (panelType)
                         {
@@ -533,6 +687,10 @@ public class LoginActivity extends AppCompatActivity
 
                             case TYPE_DOCTOR_SIGNIN:
                                 signInAsDoctor();
+                                return true;
+
+                            case TYPE_ADMIN_SIGNIN:
+                                signInAsAdmin();
                                 return true;
                         }
                         return false;

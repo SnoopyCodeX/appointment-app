@@ -1,4 +1,7 @@
 <?php
+namespace JRLC\DARP\core;
+
+use \JRLC\DARP\core\Security;
 
 class Request {
     private function __construct()

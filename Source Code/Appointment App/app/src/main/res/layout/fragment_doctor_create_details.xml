@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.dialog.PatientEditAppointmentDialogFragment">
+    tools:context=".fragment.dialog.DoctorEditDialogFragment">
 
     <com.google.android.material.circularreveal.cardview.CircularRevealCardView
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
                 android:gravity="center"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:fontFamily="@font/poppins_light"
-                android:text="@string/text_title_edit_appointment"
+                android:text="@string/text_title_create_doctor"
                 android:textStyle="bold"
                 android:textColor="?attr/colorPrimaryVariant"/>
 
@@ -57,80 +57,15 @@
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:textAppearanceSmall"
                             android:fontFamily="@font/poppins_light"
-                            android:text="@string/text_medical_field"/>
+                            android:text="@string/hint_doctor_text_medical_field"/>
 
                         <androidx.appcompat.widget.AppCompatSpinner
-                            android:id="@+id/spinner_medical_field"
+                            android:id="@+id/spinner_specialty"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center|start"
                             android:padding="6dp"
                             android:spinnerMode="dropdown"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/parent_doctor"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:textAppearanceSmall"
-                            android:fontFamily="@font/poppins_light"
-                            android:text="@string/text_doctor"/>
-
-                        <androidx.appcompat.widget.AppCompatSpinner
-                            android:id="@+id/spinner_doctor"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center|start"
-                            android:padding="6dp"
-                            android:spinnerMode="dropdown"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/parent_patient"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:textAppearanceSmall"
-                            android:fontFamily="@font/poppins_light"
-                            android:text="@string/text_patient_identity"/>
-
-                        <RadioGroup
-                            android:id="@+id/radio_patient"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:weightSum="1">
-
-                            <androidx.appcompat.widget.AppCompatRadioButton
-                                android:id="@+id/radio_choice_myself"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.5"
-                                android:text="@string/radio_choice_myself"
-                                android:fontFamily="@font/poppins_light"/>
-
-                            <androidx.appcompat.widget.AppCompatRadioButton
-                                android:id="@+id/radio_choice_other"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.5"
-                                android:text="@string/radio_choice_other"
-                                android:fontFamily="@font/poppins_light"/>
-
-                        </RadioGroup>
 
                     </LinearLayout>
 
@@ -146,7 +81,7 @@
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:textAppearanceSmall"
                             android:fontFamily="@font/poppins_light"
-                            android:text="@string/text_patient_gender"/>
+                            android:text="@string/hint_doctor_text_patient_gender"/>
 
                         <RadioGroup
                             android:id="@+id/radio_gender"
@@ -171,26 +106,17 @@
                                 android:text="@string/radio_choice_female"
                                 android:fontFamily="@font/poppins_light"/>
 
-                            <androidx.appcompat.widget.AppCompatRadioButton
-                                android:id="@+id/radio_choice_lgbtqp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.5"
-                                android:text="@string/radio_choice_lgbtqp"
-                                android:fontFamily="@font/poppins_light"
-                                android:visibility="gone"/>
-
                         </RadioGroup>
 
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_patient_full_name"
+                        android:id="@+id/input_doctor_full_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="6dp"
-                        android:hint="@string/hint_full_name"
+                        android:hint="@string/hint_doctor_full_name"
                         android:fontFamily="@font/roboto_regular"
                         app:errorEnabled="true"
                         app:boxCornerRadiusBottomEnd="8dp"
@@ -211,11 +137,11 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_patient_age"
+                        android:id="@+id/input_doctor_number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:hint="@string/hint_age"
+                        android:hint="@string/hint_doctor_number"
                         android:fontFamily="@font/roboto_regular"
                         app:errorEnabled="true"
                         app:boxCornerRadiusBottomEnd="8dp"
@@ -229,18 +155,18 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_light"
                             android:padding="10dp"
-                            android:inputType="number"
+                            android:inputType="phone"
                             android:singleLine="true"
                             android:imeOptions="actionNext"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_patient_address"
+                        android:id="@+id/input_doctor_email_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:hint="@string/hint_address"
+                        android:hint="@string/hint_doctor_email_address"
                         android:fontFamily="@font/roboto_regular"
                         app:errorEnabled="true"
                         app:boxCornerRadiusBottomEnd="8dp"
@@ -254,18 +180,18 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_light"
                             android:padding="10dp"
-                            android:inputType="text"
+                            android:inputType="textEmailAddress"
                             android:singleLine="true"
                             android:imeOptions="actionNext"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/input_patient_reason"
+                        android:id="@+id/input_doctor_room_number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:hint="@string/hint_patient_reason"
+                        android:hint="@string/hint_doctor_room_number"
                         android:fontFamily="@font/roboto_regular"
                         app:errorEnabled="true"
                         app:boxCornerRadiusBottomEnd="8dp"
@@ -280,101 +206,63 @@
                             android:fontFamily="@font/poppins_light"
                             android:padding="10dp"
                             android:gravity="top|start"
-                            android:inputType="textMultiLine"
+                            android:inputType="text|textNoSuggestions"
                             android:singleLine="false"
                             android:imeOptions="actionDone"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <LinearLayout
-                        android:id="@+id/parent_date"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/input_doctor_schedule"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:orientation="vertical">
+                        android:layout_gravity="center_horizontal"
+                        android:hint="@string/hint_doctor_schedule"
+                        android:fontFamily="@font/roboto_regular"
+                        app:errorEnabled="true"
+                        app:boxCornerRadiusBottomEnd="8dp"
+                        app:boxCornerRadiusTopEnd="8dp"
+                        app:boxCornerRadiusBottomStart="8dp"
+                        app:boxCornerRadiusTopStart="8dp"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
-                        <TextView
+                        <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?android:textAppearanceSmall"
                             android:fontFamily="@font/poppins_light"
-                            android:text="@string/text_hint_date"/>
+                            android:padding="10dp"
+                            android:gravity="top|start"
+                            android:inputType="text|textNoSuggestions"
+                            android:singleLine="false"
+                            android:imeOptions="actionDone"/>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:background="@drawable/input_underline"
-                            android:padding="16dp">
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                            <TextView
-                                android:id="@+id/input_date"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:textAppearance="?android:textAppearanceSmall"
-                                android:textColor="@color/black"
-                                android:hint="@string/text_hint_date"
-                                android:inputType="date"
-                                tools:ignore="NestedWeights,TextViewEdits" />
-
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:layout_marginStart="8dp"
-                                android:layout_gravity="center_vertical"
-                                android:src="@drawable/calendar"
-                                app:tint="#5E676C"
-                                android:contentDescription="@string/desc_add" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/parent_time"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/input_doctor_time"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:orientation="vertical">
+                        android:layout_gravity="center_horizontal"
+                        android:hint="@string/hint_doctor_time"
+                        android:fontFamily="@font/roboto_regular"
+                        app:errorEnabled="true"
+                        app:boxCornerRadiusBottomEnd="8dp"
+                        app:boxCornerRadiusTopEnd="8dp"
+                        app:boxCornerRadiusBottomStart="8dp"
+                        app:boxCornerRadiusTopStart="8dp"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
-                        <TextView
+                        <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?android:textAppearanceSmall"
                             android:fontFamily="@font/poppins_light"
-                            android:text="@string/text_hint_date"/>
+                            android:padding="10dp"
+                            android:gravity="top|start"
+                            android:inputType="text|textNoSuggestions"
+                            android:singleLine="false"
+                            android:imeOptions="actionDone"/>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:background="@drawable/input_underline"
-                            android:padding="16dp">
-
-                            <TextView
-                                android:id="@+id/input_time"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:textAppearance="?android:textAppearanceSmall"
-                                android:textColor="@color/black"
-                                android:hint="@string/text_hint_time"
-                                android:inputType="date"
-                                tools:ignore="NestedWeights,TextViewEdits" />
-
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:layout_marginStart="8dp"
-                                android:layout_gravity="center_vertical"
-                                android:src="@drawable/calendar"
-                                app:tint="#5E676C"
-                                android:contentDescription="@string/desc_add" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"

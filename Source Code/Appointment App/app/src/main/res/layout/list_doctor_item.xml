@@ -11,7 +11,7 @@
     app:cardBackgroundColor="@color/white"
     app:cardUseCompatPadding="false"
     app:cardPreventCornerOverlap="true"
-    tools:context=".activity.PatientPanelActivity">
+    tools:context=".activity.DoctorPanelActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/appointment_parent"
+            android:id="@+id/doctor_parent"
             android:layout_width="match_parent"
             android:layout_height="105dp"
             android:orientation="horizontal"
@@ -28,72 +28,71 @@
             android:focusable="true">
 
             <ImageView
-                android:id="@+id/appointment_profile"
+                android:id="@+id/doctor_profile"
                 android:layout_width="70dp"
                 android:layout_height="80dp"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/desc_add"
                 android:scaleType="centerInside"
-                android:src="@drawable/person_male"/>
+                android:src="@drawable/doctor_male"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:gravity="center_vertical">
 
                 <TextView
-                    android:id="@+id/appointment_name"
+                    android:id="@+id/doctor_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/template_patient_name"
+                    android:text="@string/template_doctor_name"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:fontFamily="@font/roboto_regular"/>
 
                 <TextView
-                    android:id="@+id/appointment_gender"
+                    android:id="@+id/doctor_gender"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/template_patient_gender"
+                    android:text="@string/template_doctor_gender"
                     android:textColor="@color/black"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:fontFamily="@font/roboto_regular"/>
 
                 <TextView
-                    android:id="@+id/appointment_schedule"
+                    android:id="@+id/doctor_schedule"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/template_patient_schedule"
+                    android:text="@string/template_doctor_schedule"
                     android:textColor="@color/black"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:fontFamily="@font/roboto_regular"/>
 
-                <com.robertlevonyan.views.chip.Chip
-                    android:id="@+id/appointment_status"
+                <TextView
+                    android:id="@+id/doctor_specialty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    app:mcv_backgroundColor="@color/warningColor"
-                    app:mcv_textColor="@color/white"
-                    app:mcv_cornerRadius="30dp"
-                    app:mcv_closable="false"
-                    app:mcv_selectable="false"/>
+                    android:text="@string/template_doctor_specialty"
+                    android:textColor="@color/black"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:fontFamily="@font/roboto_regular"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/appointment_btn_parent"
+            android:id="@+id/doctor_btn_parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <info.androidhive.fontawesome.FontTextView
-                android:id="@+id/appointment_btn_positive"
+                android:id="@+id/doctor_btn_neutral"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -101,32 +100,14 @@
                 android:gravity="center"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="@string/fa_calendar_check_solid"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/white"
-                android:background="@color/successColor"
-                tools:ignore="NestedWeights"
-                android:visibility="gone"
-                app:solid_icon="true"/>
-
-            <info.androidhive.fontawesome.FontTextView
-                android:id="@+id/appointment_btn_neutral"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="10dp"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/fa_pencil_alt_solid"
+                android:text="@string/fa_edit_solid"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/white"
                 android:background="@color/infoColor"
-                android:visibility="gone"
                 app:solid_icon="true"/>
 
             <info.androidhive.fontawesome.FontTextView
-                android:id="@+id/appointment_btn_negative"
+                android:id="@+id/doctor_btn_negative"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -134,11 +115,10 @@
                 android:gravity="center"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="@string/fa_window_close_solid"
+                android:text="@string/fa_trash_solid"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/white"
                 android:background="@color/errorColor"
-                android:visibility="gone"
                 app:solid_icon="true"/>
 
         </LinearLayout>
