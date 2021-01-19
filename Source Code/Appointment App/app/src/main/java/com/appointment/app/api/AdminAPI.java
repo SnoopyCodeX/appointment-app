@@ -18,7 +18,7 @@ public interface AdminAPI
     @POST("admin/{adminId}/doctor/new")
     Call<ServerResponse<DoctorModel>> newDoctor(@Path("adminId") int adminId, @Body DoctorModel doctorModel);
 
-    @POST("admin/{adminId]/doctor/{doctorId}/delete")
+    @POST("admin/{adminId}/doctor/{doctorId}/delete")
     Call<ServerResponse<DoctorModel>> deleteDoctor(@Path("adminId") int adminId, @Path("doctorId") int doctorId);
 
     @POST("admin/{adminId}/doctor/{doctorId}/update")

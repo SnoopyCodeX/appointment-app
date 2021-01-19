@@ -692,7 +692,7 @@ Route::add('/admin/([0-9]+)/doctor/new', function(int $adminId) {
 
         if(!$result->hasError)
             $result = (object) [
-                'hasError' => PHPMailer::sendMail(
+                'hasError' => !PHPMailer::sendMail(
                     $data->email_address,
                     "Account Registration",
                     "<html lang='en'>
@@ -719,7 +719,7 @@ Route::add('/admin/([0-9]+)/doctor/new', function(int $adminId) {
     echo json_encode($result);
  }, 'POST');
 
- Route::add('/admin/([0-9]+)/doctor/([0-9+])/delete', function(int $adminId, int $doctorId) {
+ Route::add('/admin/([0-9]+)/doctor/([0-9]+)/delete', function(int $adminId, int $doctorId) {
     $result = Admin::get($adminId);
 
     if(!$result->hasError)

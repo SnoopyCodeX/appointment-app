@@ -2,6 +2,7 @@ package com.appointment.app.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.appointment.app.AppInstance;
@@ -103,7 +106,7 @@ public class LoginActivity extends AppCompatActivity
     // Patient Register Inputs
     private TextInputLayout patientRegisterFullname;
     private TextInputLayout patientRegisterEmail;
-    private TextInputLayout patientRegisterGender;
+    private RadioGroup patientRegisterGender;
     private TextInputLayout patientRegisterContactNumber;
     private TextInputLayout patientRegisterAge;
     private TextInputLayout patientRegisterAddress;
@@ -156,7 +159,7 @@ public class LoginActivity extends AppCompatActivity
         patientRegisterAddress = findViewById(R.id.input_register_patient_address);
         patientRegisterContactNumber = findViewById(R.id.input_register_patient_number);
         patientRegisterAge = findViewById(R.id.input_register_patient_age);
-        patientRegisterGender = findViewById(R.id.input_register_patient_gender);
+        patientRegisterGender = findViewById(R.id.radio_gender);
         patientRegisterPassword = findViewById(R.id.input_register_patient_password);
 
         btn_doctor_login.setOnClickListener(v -> {
@@ -497,7 +500,7 @@ public class LoginActivity extends AppCompatActivity
         String email = patientRegisterEmail.getEditText().getText().toString();
         String address = patientRegisterAddress.getEditText().getText().toString();
         String number = patientRegisterContactNumber.getEditText().getText().toString();
-        String gender = patientRegisterGender.getEditText().getText().toString();
+        String gender = getSelectedRadioItem(patientRegisterGender.getCheckedRadioButtonId());
         String age = patientRegisterAge.getEditText().getText().toString();
         String password = patientRegisterPassword.getEditText().getText().toString();
 
@@ -518,8 +521,6 @@ public class LoginActivity extends AppCompatActivity
             patientRegisterAddress.setError("Please enter a valid home address");
         else if(number.isEmpty() || number.length() < 3)
             patientRegisterContactNumber.setError("Please enter a valid mobile number");
-        else if(gender.isEmpty() || gender.length() < 3)
-            patientRegisterGender.setError("Please enter a valid gender");
         else if(age.isEmpty())
             patientRegisterAge.setError("Please enter a valid village");
         else if(password.isEmpty() || password.length() < 8)
@@ -562,6 +563,37 @@ public class LoginActivity extends AppCompatActivity
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
+    private String getSelectedRadioItem(int radioButtonId)
+    {
+        String selection = "";
+
+        switch(radioButtonId)
+        {
+            case R.id.radio_choice_myself:
+                selection = "Myself";
+                break;
+
+            case R.id.radio_choice_other:
+                selection = "Other";
+                break;
+
+            case R.id.radio_choice_male:
+                selection = "Male";
+                break;
+
+            case R.id.radio_choice_female:
+                selection = "Female";
+                break;
+
+            case R.id.radio_choice_lgbtqp:
+                selection = "LGBTQ+";
+                break;
+        }
+
+        return selection;
+    }
+
     private void showPatientSignIn()
     {
         patientLoginPanel.setVisibility(View.VISIBLE);
@@ -599,6 +631,7 @@ public class LoginActivity extends AppCompatActivity
 
         panelType = PanelType.TYPE_PATIENT_SIGNUP;
 
+        ((RadioButton) patientRegisterGender.getChildAt(0)).setChecked(true);
         clearEditTexts(patientLoginPanel.getChildAt(0));
         clearEditTexts(doctorLoginPanel.getChildAt(0));
         clearEditTexts(adminLoginPanel.getChildAt(0));

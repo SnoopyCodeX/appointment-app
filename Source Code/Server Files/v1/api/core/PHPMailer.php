@@ -30,7 +30,7 @@ class PHPMailer {
      */
     public static function sendMail(string $to, string $subject, string $message, string $from, bool $isHtml = false) : bool
     {
-        $mail = new _PHPMailer_(self::$enable_exceptions);
+        $mail = new _PHPMailer_(true);
 
         try {
             $mail->isMail();

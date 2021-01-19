@@ -154,7 +154,7 @@ public class DoctorCreateDialogFragment extends BottomSheetDialogFragment
                 hasError = true;
             }
 
-            if(strTime.isEmpty() || !strTime.matches("([0-9]{2}\\:[0-9]{2})[\\s\\n\\-a-zA-Z]+"))
+            if(strTime.isEmpty())
             {
                 doctorTime.setError("Please enter a valid time slot!");
                 hasError = true;
@@ -176,7 +176,10 @@ public class DoctorCreateDialogFragment extends BottomSheetDialogFragment
                         call.cancel();
 
                         if(server != null && !server.hasError)
+                        {
                             Toasty.success(getContext(), server.message, Toasty.LENGTH_LONG).show();
+                            dismiss();
+                        }
                         else if(server != null)
                             DialogUtil.errorDialog(getContext(), "Request Failed", server.message, "Okay", false);
                         else

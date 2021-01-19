@@ -381,7 +381,10 @@ public class PatientEditAppointmentDialogFragment extends BottomSheetDialogFragm
                 }
 
                 if(server != null && !server.hasError)
-                    populateDoctorSpinner(server.data);
+                    if(server.data.size() > 0)
+                        populateDoctorSpinner(server.data);
+                    else
+                        Toasty.error(getActivity(), "No doctors is assigned in this medical field", Toasty.LENGTH_LONG).show();
                 else if(server != null)
                     Toasty.error(getContext(), "No doctor is associated with that medical field", Toasty.LENGTH_LONG).show();
                 else
@@ -413,9 +416,10 @@ public class PatientEditAppointmentDialogFragment extends BottomSheetDialogFragm
         int index = 0;
         for(int i = 0; i < doctors.size(); i++)
             if(Integer.parseInt(appointment.doctor) == doctors.get(i).id)
+            {
+                index = i;
                 break;
-            else
-                index++;
+            }
 
         doctorName.setSelection(index);
         doctorId = doctors.get(index).id;

@@ -178,7 +178,10 @@ public class DoctorEditDialogFragment extends BottomSheetDialogFragment
                         call.cancel();
 
                         if(server != null && !server.hasError)
+                        {
                             Toasty.success(getContext(), server.message, Toasty.LENGTH_LONG).show();
+                            dismiss();
+                        }
                         else if(server != null)
                             DialogUtil.errorDialog(getContext(), "Request Failed", server.message, "Okay", false);
                         else

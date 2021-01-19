@@ -121,35 +121,57 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_register_patient_gender"
+        <LinearLayout
+            android:id="@+id/parent_gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:hint="@string/hint_gender"
-            android:fontFamily="@font/roboto_regular"
-            app:errorEnabled="true"
-            app:boxCornerRadiusBottomEnd="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusTopStart="8dp"
-            app:endIconMode="custom"
-            app:endIconDrawable="@android:drawable/ic_lock_lock"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:textAppearanceSmall"
                 android:fontFamily="@font/poppins_light"
-                android:padding="10dp"
-                android:inputType="text"
-                android:singleLine="true"
-                android:imeOptions="actionNext"/>
+                android:text="@string/text_patient_gender"/>
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <RadioGroup
+                android:id="@+id/radio_gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/radio_choice_male"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/radio_choice_male"
+                    android:fontFamily="@font/poppins_light"/>
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/radio_choice_female"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/radio_choice_female"
+                    android:fontFamily="@font/poppins_light"/>
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/radio_choice_lgbtqp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/radio_choice_lgbtqp"
+                    android:fontFamily="@font/poppins_light"
+                    android:visibility="gone"/>
+
+            </RadioGroup>
+
+        </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_register_patient_address"

@@ -72,6 +72,7 @@ public class DoctorModel
         this.contactNumber = contactNumber;
         this.emailAddress = emailAddress;
         this.time = time;
+        this.schedule = schedule;
         this.specialty = specialty;
         this.roomNumber = roomNumber;
         this.password = password;
