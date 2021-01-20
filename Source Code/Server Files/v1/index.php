@@ -412,7 +412,7 @@ Route::add('/doctor/login', function() {
     {
         $password = $data->password;
         
-        if(password_verify($password, $result->data['password']))
+        if(password_verify($password, $result->data[0]['password']))
             $result->hasError = false;
         else
         {
