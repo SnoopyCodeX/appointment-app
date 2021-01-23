@@ -129,20 +129,10 @@ public class ChangePasswordDialogFragment extends BottomSheetDialogFragment
                 oldPassword.setError("Password must be atleast 8 characters long!");
                 hasError = true;
             }
-            else if(!strOldPassword.isEmpty() && !passwordHasAlphaNumericsAndSpecialChars(strOldPassword))
-            {
-                oldPassword.setError("Password must be a combination of special and alphanumeric characters!");
-                hasError = true;
-            }
 
             if(strNewPassword.isEmpty() || strNewPassword.length() < 8)
             {
                 newPassword.setError("Password must be atleast 8 characters long!");
-                hasError = true;
-            }
-            else if(!strNewPassword.isEmpty() && !passwordHasAlphaNumericsAndSpecialChars(strNewPassword))
-            {
-                newPassword.setError("Password must be a combination of special and alphanumeric characters!");
                 hasError = true;
             }
             else if(!strNewPassword.isEmpty() && strNewPassword.equals(strOldPassword))

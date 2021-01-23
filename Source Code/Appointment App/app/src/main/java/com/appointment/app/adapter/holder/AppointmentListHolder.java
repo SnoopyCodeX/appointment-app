@@ -612,6 +612,9 @@ public class AppointmentListHolder extends BaseListHolder implements DatePickerD
                 .append("<strong>").append("Age: ").append("</strong>").append(appointment.age).append(" yrs old").append("<br/>")
                 .append("<strong>").append("Address: ").append("</strong>").append(appointment.address).append("<br/>");
 
+        if(!appointment.isDoctor)
+            str.append("<strong>").append("Doctor: ").append("</strong>").append(appointment.doctorName).append("<br/>");
+
         if(!appointment.isDoctor && appointment.status.toLowerCase().equals(AppointmentModel.Status.CANCELLED.name().toLowerCase()))
             str.append("<strong>").append("Reason of cancellation: ").append("</strong><br/><center>").append(appointment.reason).append("</center><br/>");
         else

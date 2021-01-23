@@ -687,7 +687,8 @@ Route::add('/admin/([0-9]+)/doctor/new', function(int $adminId) {
 
     if(!$result->hasError)
     {
-        $password = uniqid('darp_');
+        $password = uniqid('DARP_');
+        $data->password = $password;
         $result = Doctor::add($data);
 
         if(!$result->hasError)

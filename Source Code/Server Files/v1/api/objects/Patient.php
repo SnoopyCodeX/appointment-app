@@ -42,6 +42,14 @@ class Patient {
      */
     public static function get(int $id = -1)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $query = "SELECT * FROM " . self::$table;
 
         if($id > 0)
@@ -76,7 +84,15 @@ class Patient {
      */
     public static function check(object $data)
     {
-        $query = "SELECT * FROM " . self::$table . " WHERE email='" . $data->email . "'";
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
+        $query = "SELECT * FROM " . self::$table . " WHERE email='{$data->email}'";
         $res = self::$conn->query($query);
 
         $data = Security::escapeData($data);
@@ -103,7 +119,15 @@ class Patient {
      */
     public static function add(object $data)
     {
-        $query = "SELECT * FROM " . self::$table . " WHERE fullname=('" . $data->fullname . "') AND email=('" . $data->email . "')";
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
+        $query = "SELECT * FROM " . self::$table . " WHERE email=('{$data->email}')";
         $res = self::$conn->query($query);
 
         $data = Security::escapeData($data);
@@ -144,6 +168,14 @@ class Patient {
      */
     public static function delete(int $id)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $db = self::get($id);
 
         if(!$db->hasError && count($db->data) > 0)
@@ -172,6 +204,14 @@ class Patient {
      */
     public static function update(object $data, int $id)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $db = self::get($id);
 
         $data = Security::escapeData($data);

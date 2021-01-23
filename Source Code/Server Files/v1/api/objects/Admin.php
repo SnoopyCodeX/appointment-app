@@ -42,6 +42,14 @@ class Admin {
      */
     public static function check(object $data) : object
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+            
         $query = "SELECT * FROM " . self::$table. " WHERE ";
         $data = Security::escapeData($data);
 
@@ -75,6 +83,14 @@ class Admin {
      */
     public static function get(int $id) : object
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $query = "SELECT * FROM " . self::$table . " WHERE id='$id'";
         $res = self::$conn->query($query);
 
@@ -103,6 +119,13 @@ class Admin {
      */
     public static function add(object $data) : object
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
         $check = self::check($data);
         $data = Security::escapeData($data);
 
@@ -146,6 +169,14 @@ class Admin {
      */
     public static function update(int $id, object $data) : object
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $check = self::check((object) ['id' => $id]);
         $data = Security::escapeData($data);
 
@@ -183,6 +214,14 @@ class Admin {
      */
     public static function delete(int $id) : object
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $check = self::check((object) ['id' => $id]);
         $data = Security::escapeData($data);
 

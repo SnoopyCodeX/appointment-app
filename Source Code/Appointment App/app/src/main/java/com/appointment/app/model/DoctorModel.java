@@ -78,9 +78,9 @@ public class DoctorModel
         this.password = password;
     }
 
-    private DoctorModel(String fullname, String password)
+    private DoctorModel(String email, String password)
     {
-        this.fullname = fullname;
+        this.emailAddress = email;
         this.password = password;
     }
 
@@ -90,9 +90,9 @@ public class DoctorModel
         this.newPassword = newPassword;
     }
 
-    public static DoctorModel loginModel(String fullname, String password)
+    public static DoctorModel loginModel(String email, String password)
     {
-        return new DoctorModel(fullname, password);
+        return new DoctorModel(email, password);
     }
 
     public static DoctorModel changePassword(int stub, String oldPassword, String newPassword)

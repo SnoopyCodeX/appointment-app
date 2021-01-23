@@ -98,6 +98,10 @@ public class AppointmentModel
     @Expose(serialize = false)
     public boolean isDoctor = false;
 
+    @SerializedName("doctor_name")
+    @Expose(serialize = false)
+    public String doctorName;
+
     public AppointmentModel(int ownerId, int doctorId, String identity, String medicalField, String name, String gender, String address, int age, String reason, String date, String time, String status)
     {
         this.ownerId = ownerId;

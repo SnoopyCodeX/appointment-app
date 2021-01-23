@@ -42,6 +42,14 @@ class Doctor {
      */
     public static function get(int $id = -1)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+            
         $query = "SELECT * FROM " . self::$table;
 
         if($id > 0)
@@ -76,6 +84,14 @@ class Doctor {
      */
     public static function check(object $data)
     {
+       // Empty the result before doing any tasks
+       if(isset(self::$result))
+       {
+           self::$result->message = "";
+           self::$result->hasError = false;
+           self::$result->data = [];
+       }
+
         $query = "SELECT * FROM " . self::$table . " WHERE email_address='{$data->email_address}'";
         $res = self::$conn->query($query);
         $data = Security::escapeData($data);
@@ -102,6 +118,14 @@ class Doctor {
      */
     public static function add(object $data)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $query = "SELECT * FROM " . self::$table . " WHERE email_address=('{$data->email_address}')";
         $res = self::$conn->query($query);
         $data = Security::escapeData($data);
@@ -142,6 +166,14 @@ class Doctor {
      */
     public static function delete(int $id)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $db = self::get($id);
 
         if(!$db->hasError && count($db->data) > 0)
@@ -170,6 +202,14 @@ class Doctor {
      */
     public static function update(object $data, int $id)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $db = self::get($id);
         $data = Security::escapeData($data);
 

@@ -51,6 +51,14 @@ class Appointment {
      */
     public static function create(object $data, int $patientId)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $db = Patient::get($patientId);
         $data = Security::escapeData($data);
 
@@ -110,6 +118,14 @@ class Appointment {
      */
     public static function delete(int $id)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $query = "SELECT * FROM " . self::$table . " WHERE id='$id'";
         $res = self::$conn->query($query);
 
@@ -139,6 +155,14 @@ class Appointment {
      */
     public static function update(int $id, object $data)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $query = "SELECT * FROM " . self::$table . " WHERE id='$id'";
         $res = self::$conn->query($query);
 
@@ -210,6 +234,14 @@ class Appointment {
      */
     public static function getFromDoctor(int $doctorId, ?int $appointmentId = null, ?string $status = null)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $db = Doctor::get($doctorId);
 
         if(!$db->hasError && count($db->data) > 0)
@@ -221,7 +253,7 @@ class Appointment {
             
             if(isset($status) && !empty($status))
                 if(strtolower($status) == (self::STATUS_APPROVED . " " . self::STATUS_RESCHEDULED))
-                    $query .= " AND status='" . self::STATUS_RESCHEDULED . "' OR status='" . self::STATUS_APPROVED . "'";
+                    $query .= " AND status='" . self::STATUS_RESCHEDULED . "' OR doctor='$doctorId' AND status='" . self::STATUS_APPROVED . "'";
                 else
                     $query .= " AND status='$status'";
             
@@ -265,6 +297,14 @@ class Appointment {
      */
     public static function getFromPatient(int $patientId, ?int $appointmentId = null, ?string $status = null)
     {
+        // Empty the result before doing any tasks
+        if(isset(self::$result))
+        {
+            self::$result->message = "";
+            self::$result->hasError = false;
+            self::$result->data = [];
+        }
+
         $db = Patient::get($patientId);
 
         if(!$db->hasError && count($db->data) > 0)
@@ -288,8 +328,10 @@ class Appointment {
                 $data = array();
 
                 while($row = $res->fetch_assoc())
+                {
+                    $row['doctor_name'] = Doctor::get($row['doctor'])->data[0]['fullname'];
                     array_push($data, $row);
-                
+                }
                 self::$result->data = $data;
                 self::$result->hasError = false;
             }
