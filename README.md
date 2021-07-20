@@ -1,22 +1,5 @@
 ## :mask: Doctor Appointment App :mask:
 
-### :key: Database Credentials:
-- Username: id15542625_mbc_appointment_app
-- Password: mia@DARP2020
-- Link: https://databases.000webhost.com
-
-### :globe_with_meridians: Web FTP Credentials:
-- Host name: ftp://files.000webhost.com
-- Username: doctor-appointment-rest-api
-- Password: mia@DARP2020
-
-- Software to use (if ayaw nyo maglogin via browser such as chrome): FileZilla (For Desktop/PC) ; AndFTP (For Android Phones -- available sa playstore at google)
-- FTP Link (If ayaw nyo magdl ng third party services at gusto nyo direct na lang sa browser): https://files.000webhost.com
-
-- FTP Hostname: files.000webhost.com
-- FTP Username: doctor-appointment-rest-api
-- FTP Password: mia@DARP2020
-
 ### :open_file_folder: Folders in this Project
 - Application Source code: "Appointment App" folder
 - Server Source code: "Server files" folder
